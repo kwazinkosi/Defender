@@ -115,3 +115,53 @@ bool StateStack::isEmpty() const
     // Returns true if the vector is empty, false otherwise.
     return mStack.empty();
 }
+// Private functions
+/**
+ * @brief Creates a new state and adds it to the stack.
+ *
+ * - The stateID is used to find the corresponding lambda function in the mFactories map.
+ * - The lambda function creates a new state and returns a pointer to it, which is then added to the stack.
+ * - This function is called by pushState().
+ *
+ * @param stateID The ID of the state to be created (see StateIdentifiers.hpp).
+ * @return State::Ptr
+ */
+State::Ptr StateStack::createState(States stateID)
+{
+    
+    std::cout<<"creating splashstate"<<std::endl;
+    
+    auto found = mFactories.find(stateID);
+    if (found == mFactories.end())
+    {
+        throw StateStackException{};
+    }
+    return found->second(); // Calls the lambda function stored in the map that corresponds
+                            // to the stateID and creates a new state.
+}
+/**
+ * @brief Applies any pending changes to the stack.
+ *
+ * - This function iterates through each pending change in the mPendingList vector and applies it to the stack.
+ * - If the action is Push, then a new state is created and added to the stack.
+ * - If the action is Pop, then the top state is removed from the stack, and the state below it becomes the active state.
+ */
+void StateStack::applyPendingChanges()
+{
+    for (PendingChange change : mPendingList)
+    {
+        switch (change.action)
+        {
+        case Action::Push:
+            mStack.push_back(createState(change.stateID)); // Creates a new state and adds it to the stack.
+            break;
+        case Action::Pop:
+            mStack.pop_back(); // Removes the top state from the stack.
+            break;
+        case Action::Clear:
+            mStack.clear(); // Removes all the states from the stack.
+            break;
+        }
+    }
+    mPendingList.clear(); // Clears the pending list.
+}
