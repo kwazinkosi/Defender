@@ -165,3 +165,47 @@ void StateStack::applyPendingChanges()
     }
     mPendingList.clear(); // Clears the pending list.
 }
+/**
+ * @brief Returns the name of the state.
+ *
+ * @param stateID The ID of the state (see StateIdentifiers.hpp).
+ * @return std::string
+ */
+std::string StateStack::getStateName(States stateID) const
+{
+    switch (stateID)
+    {
+    case States::LoadingState:
+        return "LoadingState";
+    case States::SplashState:
+        return "SplashState";
+    case States::MainMenuState:
+        return "MainMenuState";
+    case States::GameState:
+        return "GameState";
+    case States::HelpState:
+        return "HelpState";
+    case States::GameOverState:
+        return "GameOverState";
+    case States::PauseState:
+        return "PauseState";
+    /*case States::OptionsState:
+        return "OptionsState";*/
+    default:
+        return "Unknown state";
+    }
+    return "Unknown state";
+}
+
+bool StateStack::hasState(States stateID) const
+{
+     for (auto itr = mStack.rbegin(); itr != mStack.rend(); ++itr)
+    {
+        if ((*itr)->getStateID() == getStateName(stateID))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
