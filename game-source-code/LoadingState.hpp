@@ -3,6 +3,7 @@
 
 #include "ResourceManager.hpp"
 #include "State.hpp"
+#include "ParallelTask.hpp"
 #include "StateStack.hpp"
 
 class  LoadingState : public State  
@@ -16,7 +17,7 @@ class  LoadingState : public State
         virtual std::string getStateID() const;
 
     private:
-
+        ParallelTask mLoadingTask; // The task that loads the resources
         sf::Font mLoadingFont;
         sf::Text mLoadingText;
         sf::Time mElapsedTime; // The elapsed time since the last update

@@ -1,14 +1,20 @@
 #include "LoadingState.hpp"
 
-LoadingState::LoadingState(StateStack &stack, Context &context) : State(stack, context)
+LoadingState::LoadingState(StateStack &stack, Context &context) : State(stack, context), mLoadingTask(context)
 {
-
+    //ctor
+    if (!mLoadingFont.loadFromFile("resources/fonts/SpaceObsessed.ttf"))
+    {
+        throw std::runtime_error("Font not found");
+    }
+    executeLoadingTask(context.mWindow);
 
 }
 
 void LoadingState::centerOrigin(sf::Text &text)
 {
-
+    sf::FloatRect bounds = text.getLocalBounds();
+    text.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
 }
 
 void LoadingState::setCompletion(float percent)
@@ -33,6 +39,11 @@ void LoadingState::executeLoadingTask(sf::RenderWindow &window)
     mProgressBarBackground.setPosition(10, mLoadingText.getPosition().y + 40);
     mProgressBar.setFillColor(sf::Color(100, 100, 100));
 
+    mProgressBar.setSize(sf::Vector2f(200, 10));
+    mProgressBar.setPosition(10, mLoadingText.getPosition().y + 40);
+
+    setCompletion(0.f);     // at this point the task has not started yet
+    mLoadingTask.execute();
 }
 
 bool LoadingState::update(sf::Time dt)
