@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
-
+#include "Context.hpp"
 class Game
 {
     public:
@@ -18,6 +18,7 @@ class Game
         void render();
 
         const sf::Time mTimePerFrame = sf::seconds(1.f/60.f); // The time per frame, used to update the game state.
+        Context mContext; // The context of the game (e.g., window, resource managers).
 };
 
 #endif // GAME_HPP
