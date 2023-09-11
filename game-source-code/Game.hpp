@@ -5,6 +5,11 @@
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 #include "StateStack.hpp"
+#include "LoadingState.hpp"
+#include "SplashState.hpp"
+#include "MainMenuState.hpp"
+#include "GameState.hpp"
+#include "PauseState.hpp"
 #include "Context.hpp"
 class Game
 {
