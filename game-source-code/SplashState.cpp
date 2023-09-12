@@ -37,3 +37,50 @@ void SplashState::draw(sf::RenderWindow &window)
 
 
 }
+/**
+ * @brief Updates the splash screen.
+ * 
+ * @param dt The time elapsed since the last update.
+ * @return true 
+ */
+bool SplashState::update(sf::Time dt) 
+{
+    mElapsedTime += dt;
+    if (mElapsedTime >= sf::seconds(0.7f))
+    {  
+        //std::cout << "Updating the SplashState::update() function" << dt.asSeconds() << std::endl;
+        mShowText = !mShowText;
+        mElapsedTime = sf::Time::Zero;
+    }
+    return true;
+}
+
+/**
+ * @brief Handles the splash screen events.
+ * 
+ * If the user presses any key, the splash screen is popped from the stack and the menu screen is pushed onto the stack.
+ * 
+ * @param event The event to be handled.
+ * @return true 
+ * @return false 
+ */
+bool SplashState::handleEvent(const sf::Event &event, sf::RenderWindow &window)
+{
+    if (event.type == sf::Event::Closed)
+    {
+        std::cout << "Closing the window, in SplashState.cpp| handleEvent() function" << std::endl;
+        requestStateClear(); // Clear the stack
+        window.close();
+    }
+    if (event.type == sf::Event::KeyPressed)
+    {
+        requestStackPop();
+        requestStackPush(States::MainMenuState);
+    }
+    return true;
+}
+
+std::string SplashState::getStateID() const
+{
+    return "SplashState";
+}
