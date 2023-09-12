@@ -1,5 +1,6 @@
 #include "MainMenuState.hpp"
 
+
 MainMenuState::MainMenuState(StateStack &stack, Context &context) : State(stack, context)
 {
     //loading of resources is done in the constructor of the State class 
@@ -141,9 +142,6 @@ void MainMenuState::setupMenuOptions()
         text.setFont(mContext->mFonts->getResourceById(Fonts::SpaceObsessed));
     }
 }
-
-
-
 void MainMenuState::drawMenuOptions(sf::RenderWindow &window)
 {
     for (auto &text : mMenuOptions)
