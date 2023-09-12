@@ -19,6 +19,10 @@ void LoadingState::centerOrigin(sf::Text &text)
 
 void LoadingState::setCompletion(float percent)
 {
+    if (percent > 1.f) // 100%
+        percent = 1.f;
+    // Update the progress bar and text
+    mProgressBar.setSize(sf::Vector2f(mProgressBarBackground.getSize().x * percent, mProgressBar.getSize().y));
 }
 
 void LoadingState::executeLoadingTask(sf::RenderWindow &window)
@@ -48,10 +52,29 @@ void LoadingState::executeLoadingTask(sf::RenderWindow &window)
 
 bool LoadingState::update(sf::Time dt)
 {
+    // Update the progress bar from the remote task or finish it
+    if (mLoadingTask.isFinished())
+    {
+        requestStackPop();
+        requestStackPush(States::SplashState);
+    }
+    else
+    {
+        setCompletion(mLoadingTask.getCompletion());
+    }
+
+    return true;
 }
 
 bool LoadingState::handleEvent(const sf::Event &event, sf::RenderWindow &window)
 {
+    // if window  closed
+    if (event.type == sf::Event::Closed)
+    {
+        requestStackPop();
+        window.close();
+    }
+    return true;
 }
 
 std::string LoadingState::getStateID() const
@@ -61,5 +84,9 @@ std::string LoadingState::getStateID() const
 
 void LoadingState::draw(sf::RenderWindow &window)
 {
+    window.setView(window.getDefaultView());
+    window.draw(mLoadingText);
+    window.draw(mProgressBarBackground);
+    window.draw(mProgressBar);
 }
 
