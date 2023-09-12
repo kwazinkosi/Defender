@@ -98,3 +98,59 @@ bool MainMenuState::handleEvent(const sf::Event &event, sf::RenderWindow &window
     updateOptionText();
     return true;
 }
+void MainMenuState::updateOptionText()
+{
+    if (mMenuOptions.empty())
+    {
+        std::cout << "Menu options empty\n";
+        return;
+    }
+
+    // White all texts
+    for (auto &text : mMenuOptions)
+        text.setFillColor(sf::Color::White);
+
+    // Check if the iterator is within valid range
+    if (mMenuOptionsIterator >= mMenuOptions.begin() && mMenuOptionsIterator < mMenuOptions.end())
+    {
+        // Yellow the selected text  
+        mMenuOptions[mMenuOptionsIterator - mMenuOptions.begin()].setFillColor(sf::Color::Yellow);
+    }
+}
+
+
+void MainMenuState::setupMenuOptions()
+{
+    sf::Text play, options, help, exit;
+
+    // The first argument is the text, the second is the position, the third is the color, the fourth is the style, and the fifth is the size
+    play = mTextFormater.formatText("Play", sf::Vector2f(400.f, 250.f), sf::Color::White, sf::Text::Style::Regular, 20);
+    options = mTextFormater.formatText("Options", sf::Vector2f(400.f, 300.f), sf::Color::White, sf::Text::Style::Regular, 20);   
+    help = mTextFormater.formatText("Help", sf::Vector2f(400.f, 350.f), sf::Color::White, sf::Text::Style::Regular, 20);
+    exit = mTextFormater.formatText("Exit", sf::Vector2f(400.f, 400.f), sf::Color::White, sf::Text::Style::Regular, 20);
+
+    // Add the menu options to the vector of menu options
+    mMenuOptions.push_back(play);
+    mMenuOptions.push_back(options);
+    mMenuOptions.push_back(help);
+    mMenuOptions.push_back(exit);
+
+    // Set the font for all the menu options
+    for (auto& text : mMenuOptions)
+    {
+        text.setFont(mContext->mFonts->getResourceById(Fonts::SpaceObsessed));
+    }
+}
+
+
+
+void MainMenuState::drawMenuOptions(sf::RenderWindow &window)
+{
+    for (auto &text : mMenuOptions)
+        window.draw(text);
+}
+
+std::string MainMenuState::getStateID() const
+{
+    return "MainMenuState";
+}
