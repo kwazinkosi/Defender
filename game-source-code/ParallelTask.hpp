@@ -16,10 +16,16 @@ class ParallelTask
         float getCompletion();
 
     private:
-        
+        void runTask();
+        void loadResources();
+        void loadTextures();
+        void loadFonts();
         Context *mContext;
         sf::Thread mThread; // Thread running the function
         bool mFinished;
+        sf::Clock mElapsedTime;
+        sf::Mutex mMutex; // Protects the clock and the completion variable
+        float mCompletion;
 };
 
 #endif // PARALLELTASK_HPP
