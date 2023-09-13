@@ -32,3 +32,29 @@ void PauseState::draw(sf::RenderWindow &window)
     window.draw(mInstructionText);
 
 }
+bool PauseState::update(sf::Time)
+{
+    return false;
+}
+
+bool PauseState::handleEvent(const sf::Event &event, sf::RenderWindow &window)
+{
+    // std::cout << "PauseState::handleEvent00" << std::endl;
+    if (event.type == sf::Event::Closed)
+    {
+        requestStateClear(); // Clear the stack
+        window.close();      // Close the window
+    }
+
+    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::BackSpace)
+    {
+        requestStackPop(); // Pop the pause state
+    }
+
+    return false; // Consume the event, don't pass it to lower states
+}
+
+std::string PauseState::getStateID() const
+{
+    return "PauseState"; 
+}
