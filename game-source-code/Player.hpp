@@ -20,6 +20,8 @@ class Player
         void setPlayerState(PLAYERSTATE state);
 
         sf::FloatRect getBoundingBox() const;
+        sf::Vector2f getPosition() const;
+        std::string getCollisionType() const;
         bool isStatic() const;
         void shoot();
         void move(sf::Vector2f movement);
