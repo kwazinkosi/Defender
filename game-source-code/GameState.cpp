@@ -20,7 +20,45 @@ GameState::GameState(StateStack &stack, Context &context) : State(stack, context
 // This function handles the player input, it is called from the handleEvent() function in the GameState class.
 void GameState::handlePlayerInput(sf::Keyboard::Key key, bool isPressed)
 {
-    
+    if (key == sf::Keyboard::Escape && !isPressed)
+    {
+        gameOver();
+    }
+    else if (key == sf::Keyboard::BackSpace && !isPressed)
+    {
+        pauseGame();
+    }
+    else
+    {
+        // Handle movement keys (Up, Down, Left, Right)
+        if (key == sf::Keyboard::Left)
+        {
+            mPlayer->setPlayerState(PLAYERSTATE::MOVINGLEFT);
+            mPlayer->switchPlayerAnimation(PLAYERSTATE::MOVINGLEFT);
+            
+        }
+        else if (key == sf::Keyboard::Right)
+        {
+            mPlayer->setPlayerState(PLAYERSTATE::MOVINGRIGHT);
+            mPlayer->switchPlayerAnimation(PLAYERSTATE::MOVINGRIGHT);
+        }
+        else if (key == sf::Keyboard::Up)
+        {
+            mPlayer->setPlayerState(PLAYERSTATE::MOVINGUP);
+        }
+        else if (key == sf::Keyboard::Down)
+        {
+            mPlayer->setPlayerState(PLAYERSTATE::MOVINGDOWN);
+        }
+        else if (key == sf::Keyboard::Space)
+        {
+            mPlayer->setPlayerState(PLAYERSTATE::SHOOTING);
+        }
+        else
+        {
+            mPlayer->setPlayerState(PLAYERSTATE::IDLE);
+        }
+    }
 }
 
 void GameState::pauseGame()
