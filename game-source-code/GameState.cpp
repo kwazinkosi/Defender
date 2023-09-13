@@ -1,7 +1,9 @@
 #include "GameState.hpp"
 
-GameState::GameState(StateStack &stack, Context &context) : State(stack, context){std::cout << "1. GameState::GameState()\n";
+GameState::GameState(StateStack &stack, Context &context) : State(stack, context), mPlayer(nullptr), mIsPaused(false)
+{std::cout << "1. GameState::GameState()\n";
      try {
+        mPlayer = std::make_unique<Player>(context);
         std::cout << "2. GameState::GameState() - Player created\n";
         
         mBackgroundSprite.setTexture(mContext->mBackgrounds->getResourceById(Backgrounds::MainMenuScreen));
@@ -22,19 +24,29 @@ void GameState::handlePlayerInput(sf::Keyboard::Key key, bool isPressed)
 }
 
 void GameState::pauseGame()
-{
+{ 
+    requestStackPush(States::PauseState);
+    std::cout << "GameState::pauseGame()\n";
 }
 
 void GameState::gameOver()
 {
+    requestStackPush(States::GameOverState);
 }
 
 void GameState::draw(sf::RenderWindow &window)
 {
+    window.draw(mBackgroundSprite);
+    
+    window.draw(mText);
+    mPlayer->drawPlayer(window);
 }
 
 bool GameState::update(sf::Time dt)
 {
+    // Update the player
+    mPlayer->update(dt);
+    return true;
 }
 
 bool GameState::handleEvent(const sf::Event &event, sf::RenderWindow &window)
@@ -44,6 +56,18 @@ bool GameState::handleEvent(const sf::Event &event, sf::RenderWindow &window)
         requestStateClear(); // Clear the stack
         window.close();      // Close the window
     }
+    if (event.type == sf::Event::KeyPressed)
+    {
+        handlePlayerInput(event.key.code, true);
+    }
+    else if (event.type == sf::Event::KeyReleased)
+    {
+        //handlePlayerInput(event.key.code, false);
+        //mPlayer->move(sf::Vector2f(0.f, 0.f)); // Stop the player from moving
+         mPlayer->setPlayerState(PLAYERSTATE::IDLE);
+    }
+
+    return true; // Consume the event, don't pass it to lower states
 }
 
 std::string GameState::getStateID() const
