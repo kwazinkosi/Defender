@@ -34,13 +34,13 @@ void GameState::handlePlayerInput(sf::Keyboard::Key key, bool isPressed)
         if (key == sf::Keyboard::Left)
         {
             mPlayer->setPlayerState(PLAYERSTATE::MOVINGLEFT);
-            mPlayer->switchPlayerAnimation(PLAYERSTATE::MOVINGLEFT);
+            //mPlayer->switchPlayerAnimation(PLAYERSTATE::MOVINGLEFT);
             
         }
         else if (key == sf::Keyboard::Right)
         {
             mPlayer->setPlayerState(PLAYERSTATE::MOVINGRIGHT);
-            mPlayer->switchPlayerAnimation(PLAYERSTATE::MOVINGRIGHT);
+            //mPlayer->switchPlayerAnimation(PLAYERSTATE::MOVINGRIGHT);
         }
         else if (key == sf::Keyboard::Up)
         {
