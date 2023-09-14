@@ -123,3 +123,24 @@ TEST_CASE("Player moves left")
     CHECK_FALSE(player.getPosition().x == 100.f);
     CHECK(player.getPosition().x < 100.f);
 }
+TEST_CASE("Player moves right")
+{
+
+    sf::Time deltaTime = sf::seconds(1.f); // 1 second
+    player.setPosition(100.f, 100.f);
+    player.setPlayerState(PLAYERSTATE::MOVINGRIGHT);
+    player.update(deltaTime);
+    CHECK(player.getPosition().y == 100.f);
+    CHECK_FALSE(player.getPosition().x == 100.f);
+    CHECK(player.getPosition().x > 100.f);
+}
+
+TEST_CASE("Player does not go beyond the left screen bound")
+{
+
+    sf::Time deltaTime = sf::seconds(1.f);
+    player.setPosition(0.f, 0.f);
+    player.setPlayerState(PLAYERSTATE::MOVINGLEFT);
+    player.update(deltaTime);
+    CHECK(player.getPosition() == sf::Vector2f(0.f, 0.f));
+}
