@@ -144,3 +144,24 @@ TEST_CASE("Player does not go beyond the left screen bound")
     player.update(deltaTime);
     CHECK(player.getPosition() == sf::Vector2f(0.f, 0.f));
 }
+EST_CASE("Player does not go beyond the up screen bound")
+{
+
+    sf::Time deltaTime = sf::seconds(1.f);
+    player.setPosition(0.f, 0.f);
+    player.setPlayerState(PLAYERSTATE::MOVINGUP);
+    player.update(deltaTime);
+    CHECK(player.getPosition() == sf::Vector2f(0.f, 0.f));
+}
+
+TEST_CASE("Player does not go beyond the right screen bound")
+{
+
+    sf::Time deltaTime = sf::seconds(1.f);
+    player.setPosition(windowRight - playerWidth, 0.f);
+    player.setPlayerState(PLAYERSTATE::MOVINGRIGHT);
+    player.update(deltaTime);
+    CHECK(player.getPosition() == sf::Vector2f(windowRight - playerWidth, 0.f));
+    std::cout << context.mWindow.getSize().x << std::endl;
+    std::cout << player.getPosition().x << std::endl;
+}
