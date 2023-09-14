@@ -21,7 +21,6 @@ void LoadingState::setCompletion(float percent)
 {
     if (percent > 1.f) // 100%
         percent = 1.f;
-    // Update the progress bar and text
     mProgressBar.setSize(sf::Vector2f(mProgressBarBackground.getSize().x * percent, mProgressBar.getSize().y));
 }
 

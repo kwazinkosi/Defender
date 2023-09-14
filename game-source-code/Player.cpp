@@ -147,5 +147,4 @@ std::string Player::getCollisionType() const
 
 void Player::shoot()
 {
-
 }
