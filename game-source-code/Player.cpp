@@ -7,7 +7,6 @@ Player::Player(Context &context) :
     mPlayer.setSize(sf::Vector2f(50.f,50.f));
     mPlayer.setFillColor(sf::Color::Green);
     mPlayer.setPosition(100.f, 100.f);
-    //mPlayer.setOrigin(mPlayer.getRadius(), mPlayer.getRadius());//sets the origin of the circle to the center
 }
 
 Player::~Player()
