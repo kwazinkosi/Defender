@@ -103,12 +103,8 @@ void Player::ScreenCollision()
     auto windowUp = 0.f;
     auto windowRight = mContext->mWindow.getSize().x;
     auto windowDown = mContext->mWindow.getSize().y;
-
     if(mPlayer.getPosition().x  < 0.f) //left
     {
-       //auto posX = mPlayer.getPosition().x;
-       // auto posY = mPlayer.getPosition().y;
-
         mPlayer.setPosition(0.f, mPlayer.getPosition().y);
     }
 
