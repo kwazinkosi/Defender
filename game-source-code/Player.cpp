@@ -44,11 +44,31 @@ void Player::update(sf::Time deltaTime)
     }
     
     mPlayer.move( 2.f*movement * deltaTime.asSeconds());
+    ScreenCollision();
+    //mAnimator->update(deltaTime);
 }
 
 void Player::drawPlayer(sf::RenderWindow &window)
 {
     window.draw(mPlayer);
+}
+
+
+void Player::onCollision(Collidable* other)
+{
+    if (other->getCollisionType() == "Enemy")
+    {
+        setPlayerState(PLAYERSTATE::DEAD);
+    }
+    else if(other->getCollisionType() == "EnemyBullet")
+    {
+        setPlayerState(PLAYERSTATE::DEAD);
+    }
+    else if(other->getCollisionType() == "PowerUp"){
+        //do something
+    }
+    // TODO: Handle collision with other collidable objects
+
 }
 
 bool Player::isStatic() const
@@ -71,9 +91,38 @@ void Player::move(sf::Vector2f movement)
     mPlayer.move(movement*mPlayerSpeed);
 }
 
+void Player::switchPlayerAnimation(PLAYERSTATE state)
+{
+  //  mAnimator->playAnimation("MovingRight");
+}
+
 void Player::ScreenCollision()
 {
+    auto windowLeft = 0.f;
+    auto windowUp = 0.f;
+    auto windowRight = mContext->mWindow.getSize().x;
+    auto windowDown = mContext->mWindow.getSize().y;
 
+    if(mPlayer.getPosition().x  < 0.f) //left
+    {
+       //auto posX = mPlayer.getPosition().x;
+       // auto posY = mPlayer.getPosition().y;
+
+        mPlayer.setPosition(0.f, mPlayer.getPosition().y);
+    }
+
+    if(mPlayer.getPosition().y < 0.f) //up
+    {
+        mPlayer.setPosition(mPlayer.getPosition().x, 0.f);
+    }
+    if(mPlayer.getPosition().x + mPlayer.getGlobalBounds().width > windowRight) //right
+    {
+        mPlayer.setPosition(windowRight - mPlayer.getGlobalBounds().width, mPlayer.getPosition().y);
+    }
+    if(mPlayer.getPosition().y + mPlayer.getGlobalBounds().height > windowDown) //down
+    {
+        mPlayer.setPosition(mPlayer.getPosition().x, windowDown - mPlayer.getGlobalBounds().height);
+    }
 }
 
 void Player::setPlayerState(PLAYERSTATE state)
