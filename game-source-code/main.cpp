@@ -8,7 +8,7 @@ int main()
     try
     {
         Game game;
-        game.run();
+        game.runGame();
     }
     catch (std::exception &e)
     {
