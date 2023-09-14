@@ -87,3 +87,39 @@ TEST_CASE("Player initialization and getters")
     CHECK(player.getCollisionResponse() == "Player");
     CHECK(player.isStatic() == false);
 }
+TEST_CASE("Player moves up")
+{
+
+    sf::Time deltaTime = sf::seconds(1.f); // 1 second
+    player.setPosition(100.f, 100.f);
+
+    player.setPlayerState(PLAYERSTATE::MOVINGUP);
+    player.update(deltaTime);
+    CHECK_FALSE(player.getPosition().y == 100.f);
+    CHECK(player.getPosition().x == 100.f);
+    CHECK(player.getPosition().y < 100.f);
+}
+
+TEST_CASE("Player moves down")
+{
+
+    sf::Time deltaTime = sf::seconds(1.f); // 1 second
+    player.setPosition(100.f, 100.f);
+    player.setPlayerState(PLAYERSTATE::MOVINGDOWN);
+    player.update(deltaTime); //move up by 100 pixels, playerspeed=100.f
+    CHECK_FALSE(player.getPosition().y == 100.f);
+    CHECK(player.getPosition().x == 100.f);
+    CHECK(player.getPosition().y > 100.f);
+}
+
+TEST_CASE("Player moves left")
+{
+
+    sf::Time deltaTime = sf::seconds(1.f); // 1 second
+    player.setPosition(100.f, 100.f);
+    player.setPlayerState(PLAYERSTATE::MOVINGLEFT);
+    player.update(deltaTime);
+    CHECK(player.getPosition().y == 100.f);
+    CHECK_FALSE(player.getPosition().x == 100.f);
+    CHECK(player.getPosition().x < 100.f);
+}
