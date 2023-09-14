@@ -45,8 +45,7 @@ TEST_CASE("ResourceManager - getResourceById") {
     // Test getting an existing texture
     CHECK_NOTHROW(textureManager.getResourceById(Textures::Player));
     
-    // Test getting a non-existing texture
-    //CHECK_THROWS_AS(textureManager.getResourceById(Textures::NonExistent), std::runtime_error);
+
 }
 //Testing StateStack functionality
 
@@ -80,8 +79,7 @@ TEST_CASE("StateStack - Clear States") {
 TEST_CASE("Player initialization and getters")
 {
 
-    // CHECK(player.mPlayer.getRadius().== 30.f); // Radius * 2
-    // CHECK(player.getBoundingBox().height == 30.f);
+    
     CHECK(player.getPosition() == sf::Vector2f(100.f, 100.f));
     CHECK(player.getCollisionType() == "Player");
     CHECK(player.getCollisionResponse() == "Player");
@@ -164,4 +162,14 @@ TEST_CASE("Player does not go beyond the right screen bound")
     CHECK(player.getPosition() == sf::Vector2f(windowRight - playerWidth, 0.f));
     std::cout << context.mWindow.getSize().x << std::endl;
     std::cout << player.getPosition().x << std::endl;
+}
+TEST_CASE("Player does not go beyond the bottom screen bound")
+{
+
+    sf::Time deltaTime = sf::seconds(1.f);
+    player.setPosition(windowRight - playerWidth, windowDown - playerWidth);
+    player.setPlayerState(PLAYERSTATE::MOVINGDOWN);
+    player.update(deltaTime);
+    CHECK(player.getPosition() == sf::Vector2f(windowRight - playerWidth, windowDown - playerWidth));
+    
 }
