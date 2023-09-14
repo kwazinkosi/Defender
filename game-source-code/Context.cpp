@@ -14,5 +14,4 @@ Context::Context() : mWindow(sf::VideoMode(800, 600), "Defender Shooter", sf::St
 
 Context::~Context()
 {
-    // dtor
 }
