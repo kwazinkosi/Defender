@@ -22,12 +22,12 @@ void Game::registerStates()
 {
     
     mStateStack.registerState<LoadingState>(States::LoadingState, mContext);
-    //mStateStack.registerState<SplashState>(States::SplashState, mContext);
-    //mStateStack.registerState<MainMenuState>(States::MainMenuState, mContext);
-    //mStateStack.registerState<GameState>(States::GameState, mContext);
-    //mStateStack.registerState<PauseState>(States::PauseState, mContext);
+    mStateStack.registerState<SplashState>(States::SplashState, mContext);
+    mStateStack.registerState<MainMenuState>(States::MainMenuState, mContext);
+    mStateStack.registerState<GameState>(States::GameState, mContext);
+    mStateStack.registerState<PauseState>(States::PauseState, mContext);
 
-    std::cout<<"Done registering"<<std::endl;
+    //std::cout<<"Done registering"<<std::endl;
 
     mStateStack.pushState(States::LoadingState);
 }

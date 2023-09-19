@@ -65,6 +65,21 @@ void StateStack::handleEvent(const sf::Event &event, sf::RenderWindow &window)
     // This means that the state's handleEvent() function has returned true, so the event is handled.
     applyPendingChanges();
 }
+
+void StateStack::handleRealtimeInput(sf::RenderWindow & window)
+{
+    for (auto itr = mStack.rbegin(); itr != mStack.rend(); ++itr)
+    {
+        //if state == GameState
+        if ((*itr)->getStateID() == getStateName(States::GameState))
+        {
+            //std::cout << "StateStack::handleRealtimeInput()::GameState" << std::endl;   
+            (*itr)->handleRealtimeInput(window);
+        }
+    }
+    // This means that the state's handleEvent() function has returned true, so the event is handled.
+    applyPendingChanges();
+}
 /**
  * @brief Pushes a new state to the stack.
  *
@@ -73,7 +88,7 @@ void StateStack::handleEvent(const sf::Event &event, sf::RenderWindow &window)
 void StateStack:: pushState(States stateID)
 {
     PendingChange change;
-    change.action = Action::Push;
+    change.action = StackAction::Push;
     change.stateID = stateID;
     mPendingList.push_back(change);
 }
@@ -85,12 +100,8 @@ void StateStack:: pushState(States stateID)
  */
 void StateStack::popState()
 {
-    if (mStack.empty())
-    {
-        throw StateStackException{};
-    }
     PendingChange change;
-    change.action = Action::Pop;
+    change.action = StackAction::Pop;
     mPendingList.push_back(change);
 }
 /**
@@ -101,7 +112,7 @@ void StateStack::popState()
 void StateStack::clearStates()
 {
     PendingChange change;
-    change.action = Action::Clear;
+    change.action = StackAction::Clear;
     mPendingList.push_back(change);
 }
 
@@ -128,14 +139,8 @@ bool StateStack::isEmpty() const
  */
 State::Ptr StateStack::createState(States stateID)
 {
-    
-    std::cout<<"creating splashstate"<<std::endl;
-    
     auto found = mFactories.find(stateID);
-    if (found == mFactories.end())
-    {
-        throw StateStackException{};
-    }
+    assert(found != mFactories.end());
     return found->second(); // Calls the lambda function stored in the map that corresponds
                             // to the stateID and creates a new state.
 }
@@ -152,13 +157,13 @@ void StateStack::applyPendingChanges()
     {
         switch (change.action)
         {
-        case Action::Push:
+        case StackAction::Push:
             mStack.push_back(createState(change.stateID)); // Creates a new state and adds it to the stack.
             break;
-        case Action::Pop:
+        case StackAction::Pop:
             mStack.pop_back(); // Removes the top state from the stack.
             break;
-        case Action::Clear:
+        case StackAction::Clear:
             mStack.clear(); // Removes all the states from the stack.
             break;
         }

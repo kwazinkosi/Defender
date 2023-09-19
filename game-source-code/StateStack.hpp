@@ -9,14 +9,11 @@
 #include "Context.hpp"
 
 
-enum class Action
+enum class StackAction
 {
     Push,
     Pop,
     Clear,
-};
-class StateStackException
-{
 };
 
 class StateStack
@@ -28,6 +25,7 @@ public:
     void update(sf::Time dt);
     void draw(sf::RenderWindow &window);
     void handleEvent(const sf::Event &event, sf::RenderWindow &window);
+    void handleRealtimeInput(sf::RenderWindow &window);
     void pushState(States stateID);
     void popState();
     void clearStates();
@@ -37,18 +35,16 @@ public:
 
 private:
     struct PendingChange
-    {
-        Action action;
-        States stateID;
-    };
+        {
+            StackAction action;
+            States stateID;
+        };
+        State::Ptr createState(States stateID);
+        void applyPendingChanges();
 
-private:
-    State::Ptr createState(States stateID);
-    void applyPendingChanges();
-
-    std::vector<State::Ptr> mStack;                           // The stack of states, containing pointers to the states' objects.
-    std::vector<PendingChange> mPendingList;                  // The list of pending changes to the stack.
-    std::map<States, std::function<State::Ptr()>> mFactories; // The map of lambda functions that create new states.
+        std::vector<State::Ptr> mStack;                           // The stack of states, containing pointers to the states' objects.
+        std::vector<PendingChange> mPendingList;                  // The list of pending changes to the stack.
+        std::map<States, std::function<State::Ptr()>> mFactories; // The map of lambda functions that create new states.
 };
 /**
  * @brief Registers a new state to the state stack.
@@ -67,7 +63,7 @@ void StateStack::registerState(States stateID, Context &context)
     mFactories[stateID] = [this, &context]() // The lambda function that creates a new state and returns a pointer to it.
     {
         auto ptr = std::make_unique<T>(*this, context); // Create a new state and store a pointer to a T(e.g., MenuState) object in ptr.
-        return ptr;
+        return ptr; 
     };
 }
 

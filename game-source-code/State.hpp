@@ -7,6 +7,7 @@
 #include <string>
 #include "Context.hpp"
 
+class StateStack;
 class State
 {
     public:
