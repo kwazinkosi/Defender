@@ -133,6 +133,11 @@ void MainMenuState::setupMenuOptions()
     help = mTextFormater.formatText("Help", sf::Vector2f(400.f, 350.f), sf::Color::White, sf::Text::Style::Regular, 20);
     exit = mTextFormater.formatText("Exit", sf::Vector2f(400.f, 400.f), sf::Color::White, sf::Text::Style::Regular, 20);
 
+    // Set the origin of the text to the center of the text
+    play.setOrigin(play.getLocalBounds().width / 2.f, play.getLocalBounds().height / 2.f);
+    options.setOrigin(options.getLocalBounds().width / 2.f, options.getLocalBounds().height / 2.f);
+    help.setOrigin(help.getLocalBounds().width / 2.f, help.getLocalBounds().height / 2.f);
+    exit.setOrigin(exit.getLocalBounds().width / 2.f, exit.getLocalBounds().height / 2.f);
     // Add the menu options to the vector of menu options
     mMenuOptions.push_back(play);
     mMenuOptions.push_back(options);

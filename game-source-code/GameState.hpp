@@ -1,6 +1,7 @@
 #ifndef GAMESTATE_HPP
 #define GAMESTATE_HPP
 
+#include "World.hpp"
 #include "State.hpp"
 #include "Player.hpp"
 #include "Context.hpp"   
@@ -19,10 +20,13 @@ class GameState : public State
         virtual std::string getStateID() const;
         
     private:
-        void handlePlayerInput(sf::Keyboard::Key key, bool isPressed);
+    
         void pauseGame();
-        std::unique_ptr<Player> mPlayer; //unique_ptr because we don't want to share ownership of the player object with any other class.
         void gameOver();
+        std::unique_ptr<World> mWorld; // world
+        sf::RenderWindow mWindow; // window
+        sf::View mWorldView; // world view
+        sf::Clock clock; // clock
         sf::Sprite mBackgroundSprite;
         sf::Text mText; 
         bool mIsPaused;
