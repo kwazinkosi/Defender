@@ -13,5 +13,6 @@ class ExitState : public State
         virtual void draw(sf::RenderWindow &target);
         virtual bool update(sf::Time dt);
         virtual bool handleEvent(const sf::Event &event);
+        virtual void handleRealtimeInput(sf::RenderWindow &window) ;
 };
 #endif // EXITSTATE_HPP

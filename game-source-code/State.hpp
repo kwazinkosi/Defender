@@ -20,6 +20,7 @@ class State
         virtual void draw(sf::RenderWindow &window) = 0;
         virtual bool update(sf::Time dt) = 0;
         virtual bool handleEvent(const sf::Event &event, sf::RenderWindow &window) = 0;
+        virtual void handleRealtimeInput(sf::RenderWindow &window) = 0;
         virtual std::string getStateID() const = 0;
     
      protected: 

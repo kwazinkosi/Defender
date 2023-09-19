@@ -99,6 +99,9 @@ bool MainMenuState::handleEvent(const sf::Event &event, sf::RenderWindow &window
     updateOptionText();
     return true;
 }
+void MainMenuState::handleRealtimeInput(sf::RenderWindow &window)
+{
+}
 void MainMenuState::updateOptionText()
 {
     if (mMenuOptions.empty())

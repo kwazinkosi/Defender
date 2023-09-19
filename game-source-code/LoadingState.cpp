@@ -76,6 +76,10 @@ bool LoadingState::handleEvent(const sf::Event &event, sf::RenderWindow &window)
     return true;
 }
 
+void LoadingState::handleRealtimeInput(sf::RenderWindow &window)
+{
+}
+
 std::string LoadingState::getStateID() const
 {
     return "LoadingState";

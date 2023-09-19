@@ -108,6 +108,10 @@ bool GameState::handleEvent(const sf::Event &event, sf::RenderWindow &window)
     return true; // Consume the event, don't pass it to lower states
 }
 
+void GameState::handleRealtimeInput(sf::RenderWindow &window)
+{
+}
+
 std::string GameState::getStateID() const
 {
     return "GameState";

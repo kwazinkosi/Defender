@@ -54,6 +54,10 @@ bool PauseState::handleEvent(const sf::Event &event, sf::RenderWindow &window)
     return false; // Consume the event, don't pass it to lower states
 }
 
+void PauseState::handleRealtimeInput(sf::RenderWindow &window)
+{
+}
+
 std::string PauseState::getStateID() const
 {
     return "PauseState"; 

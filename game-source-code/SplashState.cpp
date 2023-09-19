@@ -80,6 +80,10 @@ bool SplashState::handleEvent(const sf::Event &event, sf::RenderWindow &window)
     return true;
 }
 
+void SplashState::handleRealtimeInput(sf::RenderWindow &window)
+{
+}
+
 std::string SplashState::getStateID() const
 {
     return "SplashState";
