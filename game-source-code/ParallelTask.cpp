@@ -1,9 +1,14 @@
 #include "ParallelTask.hpp"
 
 // In the initialization list, we start the thread and set the completion to 0.
-ParallelTask::ParallelTask(Context &context) : mThread(&ParallelTask::runTask, this), mFinished(false) , mCompletion(0.f), mContext(&context)
+ParallelTask::ParallelTask(Context &context) 
+: mThread(&ParallelTask::runTask, this)
+, mContext(&context)
+, mFinished(false)
+, mCompletion(0.f)
 {
 }
+
 /**
  * @brief This function starts the thread.
  * 
@@ -23,11 +28,13 @@ bool ParallelTask::isFinished()
     sf::Lock lock(mMutex);
     return mFinished;
 }
+
 float ParallelTask::getCompletion()
 {
     sf::Lock lock(mMutex);
     return mCompletion;
 }
+
 /**
  * @brief This function is the one that is run in the thread.
  * @details It is a dummy function that stalls for 10 seconds.
@@ -48,12 +55,12 @@ void ParallelTask::runTask()
             loaded =true;
         }
         
-        if ((mElapsedTime.getElapsedTime().asSeconds() >= 5.f) && (loaded)) // if 5 seconds have passed and resources are loaded
+        if ((mElapsedTime.getElapsedTime().asSeconds() >= 4.f) && (loaded)) // if 5 seconds have passed and resources are loaded
         {
             ended = true;
         }
         // mCompletion is between 0 and 1
-        mCompletion = mElapsedTime.getElapsedTime().asSeconds() / 5.f;
+        mCompletion = mElapsedTime.getElapsedTime().asSeconds() / 4.f;
     }
     // Task ended, mark it as successful (mFinished is used in the update() function of the LoadingState class).
     {
@@ -61,29 +68,30 @@ void ParallelTask::runTask()
         mFinished = true;
     }
 }
+
 void ParallelTask::loadResources()
 {
     loadTextures();
     loadFonts();
     std::cout << "ParallelTask::loadResources() - Resource loading complete\n";
 }
+
 void ParallelTask::loadTextures()
 {
     mContext->mBackgrounds->load(Backgrounds::MainMenuScreen, "resources/textures/background-1.jpg");
-    mContext->mTextures->load(Textures::Player, "resources/textures/spaceship.png");
-    mContext->mTextures->load(Textures::Keypad, "resources/textures/keypad.png");
-
+    
+    mContext->mBackgrounds->load(Backgrounds::Mountains, "resources/textures/mountains-10.png");
+    mContext->mTextures->load(Textures::Player, "resources/textures/spaceship-2.png");
     mContext->mTextures->load(Textures::Laser, "resources/textures/laser.png");
     mContext->mTextures->load(Textures::Pod, "resources/textures/pod.png");
-    mContext->mTextures->load(Textures::Lander, "resources/textures/lander.png");
-    mContext->mTextures->load(Textures::Mountains, "resources/textures/mountains.png");
+    mContext->mTextures->load(Textures::Lander, "resources/textures/lander-1.png");
     mContext->mTextures->load(Textures::Bomber, "resources/textures/bomber-1.png");
     mContext->mTextures->load(Textures::Swarmer, "resources/textures/swammer.png");
-    //mContext->mTextures->load(Textures::Humanoid, "game-source-code/resources/textures/humanoid.png");  
+    mContext->mTextures->load(Textures::Humanoid, "resources/textures/humanoid.png");  
     mContext->mTextures->load(Textures::Defender, "resources/textures/defender.png");
-    //size_t size = mContext->mTextures->resourseSize();
-
-    std::cout << "Size of the resource map is " << mContext->mTextures->resourseSize() << std::endl;
+    mContext->mTextures->load(Textures::PowerUp, "resources/textures/fuel.png");
+    mContext->mBackgrounds->load(Backgrounds::miniMapBorder, "resources/textures/miniMapBorder.png");
+    mContext->mBackgrounds->load(Backgrounds::miniMapScope, "resources/textures/worldViewScope.png");
 }
 
 void ParallelTask::loadFonts()
