@@ -21,5 +21,19 @@ class Context
         std::unique_ptr<TexturesHolder> mTextures; // Unique pointer to the Textures resource manager.
         std::unique_ptr<FontsHolder> mFonts;
         sf::RenderWindow mWindow;
+
+        sf::View mWorldView;
+        sf::View mMiniMapView;
+        sf::View mHudView; // View for the HUD(Heads Up Display)
+        //std::vector<
+        
+        sf::RectangleShape mMapRect; // Rectangle for the minimap
+        sf::RectangleShape mHudRect; // Rectangle for the HUD
+        sf::RectangleShape mWorldRect; // Rectangle for the world
+
+        float mLeftBound;
+        float mRightBound;
+        float mTopBound;
+        float mBottomBound;
 };
 #endif // Context_HPP
