@@ -3,27 +3,57 @@
 
 enum class PLAYERSTATE
 {
-    IDLE = 1, MOVINGRIGHT, MOVINGLEFT, MOVINGUP, MOVINGDOWN, SHOOTING, DEAD,
+    IDLE = 1,
+    MOVINGRIGHT,
+    MOVINGLEFT,
+    MOVINGUP,
+    MOVINGDOWN,
+    SHOOTING,
+    DEAD,
+};
+
+enum class ENTITYTYPE
+{
+    PLAYER,
+    ENEMY,
+    PROJECTILE,
+    MINEBOMB,
+    POWERUP,
+    COLLIDABLE, 
+    ASTEROID,
+    HUMANOID,       
 };
 
 enum class ENEMYSTATE
 {
-    IDLE = 1, MOVINGRIGHT, MOVINGLEFT, MOVINGUP, MOVINGDOWN, SHOOTING, DEAD,
+    IDLE = 1,
+    MOVINGRIGHT,
+    MOVINGLEFT,
+    MOVINGUP,
+    MOVINGDOWN,
+    SHOOTING,
+    DEAD,
 };  
 
 enum class ENEMYTYPE
 {
-    LANDER = 1,BOMBER, POD, SWARMER,BAITER,MUTANT,HUMAN,
+    LANDER = 1,
+    BOMBER,
+    POD,
+    SWARMER,
+    BAITER,
+    MUTANT,
+    HUMAN,
 };
 
 
 enum class Textures
 {
-    Player, Keypad, Lander, Pod, Swarmer, Humanoid, Bomber, Missile, Laser, Explosion, Mine, Mountains, Defender, texturesCount 
+    Player, Lander, Pod, Swarmer, Humanoid, Bomber, Missile, Laser, Explosion, Mine,  Defender, PowerUp, texturesCount 
 };
 enum class Backgrounds
 {
-    SplashScreen,  MainMenuScreen, GameScreen, GameOverScreen, HelpScreen, OptionsScreen, ExitScreen, PauseScreen, backgroundsCount
+    SplashScreen,  MainMenuScreen, GameScreen, GameOverScreen, HelpScreen, OptionsScreen, ExitScreen, PauseScreen,Mountains, miniMapScope, miniMapBorder, backgroundsCount
 };
 enum class Fonts
 {
