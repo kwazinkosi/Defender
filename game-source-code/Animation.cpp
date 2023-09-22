@@ -63,18 +63,28 @@ void Animation::update(sf::Time deltaTime)
 
 void Animation::draw(sf::RenderTarget &target)
 {
+    target.draw(this->mSprite);
 }
 
 void Animation::setAnimation(sf::Vector2i frameStart, sf::Vector2i frameSize, std::size_t numFrames, sf::Time duration, bool repeat)
 {
+    this->mFrameStart = frameStart;
+    this->mFrameSize = frameSize;
+    this->mNumFrames = numFrames;
+    this->mCurrentFrame = 0;
+    this->mDuration = duration;
+    this->mElapsedTime = sf::Time::Zero;
+    this->mRepeat = repeat;
 }
 
 void Animation::setFrameSize(sf::Vector2i frameSize)
 {
+    this->mFrameSize = frameSize;
 }
 
 void Animation::setRepeat(bool repeat)
 {
+    this->mRepeat = repeat;
 }
 
 bool Animation::isFinished() const
