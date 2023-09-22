@@ -50,7 +50,7 @@ class CommandQueue
         ~CommandQueue();
         CommandQueue();
         void push(Command command);
-
+        Command pop();
     private:
         std::queue<Command> mCommandQueue; // command queue, holds commands
 };
