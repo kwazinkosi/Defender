@@ -89,36 +89,53 @@ void Animation::setRepeat(bool repeat)
 
 bool Animation::isFinished() const
 {
+    if(mCurrentFrame >= mNumFrames)
+    {
+        return true;
+    }
     return false;
 }
 
 void Animation::setDuration(sf::Time duration)
 {
+    this->mDuration = duration;
 }
 
 void Animation::setNumFrames(std::size_t numFrames)
 {
+    this->mNumFrames = numFrames;
 }
 
-sf::Sprite &Animation::getSprite()
+sf::Sprite& Animation::getSprite()
 {
-    // TODO: insert return statement here
+    return mSprite;
 }
 
 void Animation::setPosition(sf::Vector2f position)
 {
+    this->mSprite.setPosition(position);
 }
 
 sf::Vector2f Animation::getPosition() const
 {
-    return sf::Vector2f();
+    return this->mSprite.getPosition();
 }
 
 sf::IntRect Animation::getTextureRect()
 {
-    return sf::IntRect();
+    for (auto i = 0; i < mNumFrames; i++)
+    {
+        if (mCurrentFrame == i)
+        {
+            mSprite.setTextureRect(sf::IntRect(mFrameStart.x + (mFrameSize.x * i), mFrameStart.y, mFrameSize.x, mFrameSize.y));
+        }
+    }
+
+    auto rect = sf::IntRect(mSprite.getGlobalBounds());
+    return rect;
 }
 
 void Animation::move(float x, float y)
 {
+    this->mSprite.move(x, y);
 }
