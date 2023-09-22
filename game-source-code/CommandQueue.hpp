@@ -48,8 +48,10 @@ class CommandQueue
     public:
         CommandQueue();
         ~CommandQueue();
-        
+        CommandQueue();
+        void push(Command command);
+
     private:
-        
+        std::queue<Command> mCommandQueue; // command queue, holds commands
 };
 #endif // COMMANDQUEUE_HPP
