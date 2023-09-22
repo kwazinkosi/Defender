@@ -27,3 +27,19 @@ Command CommandQueue::pop()
     mCommandQueue.pop(); // remove the command from the queue at the front, FIFO
     return command;
 }
+
+bool CommandQueue::isEmpty()
+{
+    if (mCommandQueue.empty())
+    {
+        //std::cout << "CommandQueue::isEmpty() -- queue is empty" << std::endl;
+        return true;
+    }
+    //std::cout << "CommandQueue::isEmpty() -- queue is not empty" << std::endl;
+    return false; 
+}
+
+int CommandQueue::getQueueSize() const
+{
+    return mCommandQueue.size();
+}

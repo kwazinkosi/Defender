@@ -51,6 +51,8 @@ class CommandQueue
         CommandQueue();
         void push(Command command);
         Command pop();
+        bool isEmpty();
+        int getQueueSize() const;
     private:
         std::queue<Command> mCommandQueue; // command queue, holds commands
 };
