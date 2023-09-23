@@ -43,7 +43,22 @@ class Entity
         virtual void OnDestroy();
         // Change the animation of the entity to the specified animation
         void changeAnimation(sf::Vector2f position, sf::Vector2i frameStart, sf::Vector2i frameSize, std::size_t numFrames, sf::Time duration, bool repeat);
-    
+        
+
+        // Getters and setters
+        bool isDestroyed() const;
+        void setHealth(int health);
+        int getHealth() const;
+        void setSpeed(float speed);
+        float getSpeed() const;
+        int getCollisionMask() const;
+        void setCollisionType(CollisionType collisionType);
+        void setPosition(sf::Vector2f position);
+        sf::FloatRect getBounds() const;
+        sf::Sprite& getSprite();
+        sf::Vector2f getPosition() const;
+        void setMovementSpeed(float movementSpeed);
+        
     protected:
         // Objects
         CollisionType mCollisionType;
