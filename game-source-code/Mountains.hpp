@@ -13,7 +13,7 @@ class Mountains
 {
     public:
         Mountains(Context &context, bool isLeft, float scrollSpeed, float posY);
-
+        ~Mountains();
         void update(sf::Time deltaTime);
         void draw(sf::RenderTarget& window);
         void initMountains();
