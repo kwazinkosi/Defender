@@ -40,11 +40,6 @@ void Entity::setHealth(int health)
     mHealth = health;
 }
 
-void Entity::setSpeed(float speed)
-{
-    mMovementSpeed = speed;
-}
-
 void Entity::setCollisionType(CollisionType collisionType)
 {
     mCollisionType = collisionType;

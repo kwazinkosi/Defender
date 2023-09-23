@@ -10,6 +10,8 @@
 #include "Animation.hpp"
 #include "Utills.hpp"
 
+
+// Bitwise enum for colliidable objects
 enum class CollisionType
 {
     None = 0,
@@ -47,7 +49,6 @@ class Entity
 
         // Getters and setters
         bool isDestroyed() const;
-        void setSpeed(float speed);
         void setHealth(int health);
         void setCollisionType(CollisionType collisionType);
         void setPosition(sf::Vector2f position);
