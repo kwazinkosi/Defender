@@ -9,6 +9,12 @@ class GameOverState : public State
 {
     public:
         GameOverState(StateStack& stack, Context &context);
+        virtual void draw(sf::RenderWindow &window);
+        virtual bool update(sf::Time dt);
+        virtual bool handleEvent(const sf::Event &event, sf::RenderWindow &window);
+        virtual void handleRealtimeInput(sf::RenderWindow &window);
+        virtual std::string getStateID() const;
+        void onActivate();
 
     private:
         Context* mContext;
