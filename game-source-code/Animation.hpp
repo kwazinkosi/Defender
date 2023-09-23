@@ -10,7 +10,7 @@
 class Animation
 {
     public:
-        Animation();
+        Animation(sf::Texture* texture, sf::Vector2f position, sf::Vector2i frameStart, sf::Vector2i frameSize, std::size_t numFrames, sf::Time duration, bool repeat);
         ~Animation();
         void update(sf::Time deltaTime);
         void draw(sf::RenderTarget& target);

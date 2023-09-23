@@ -8,10 +8,14 @@
 class GameOverState : public State
 {
     public:
-        GameOverState();
+        GameOverState(StateStack& stack, Context &context);
 
     private:
-        
+        Context* mContext;
+        sf::RectangleShape backgroundShape;
+        sf::Text mGameOverText;
+        sf::Text mInstructionText;
+        TextFormater mTextFormater;
 
 };
 #endif

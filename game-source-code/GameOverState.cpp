@@ -1,5 +1,5 @@
 #include "GameOverState.hpp"
 
-GameOverState::GameOverState()
+GameOverState::GameOverState(StateStack& stack, Context &context)
 {
 }
