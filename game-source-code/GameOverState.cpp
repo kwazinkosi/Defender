@@ -26,6 +26,10 @@ GameOverState::GameOverState(StateStack& stack, Context &context):
     
 }
 
+GameOverState::~GameOverState()
+{
+}
+
 void GameOverState::draw(sf::RenderWindow &window)
 {
      window.setView(window.getDefaultView());
@@ -45,6 +49,18 @@ bool GameOverState::update(sf::Time dt)
 
 bool GameOverState::handleEvent(const sf::Event &event, sf::RenderWindow &window)
 {
+    if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::BackSpace)
+    {
+        requestStackPop();
+        requestStackPush(States::MainMenuState);
+    }
+     if (event.type == sf::Event::Closed || (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter))
+    {
+        requestStateClear(); // Clear the stack
+        window.close();      // Close the window
+    }
+
+
     return false;
 }
 
@@ -54,9 +70,12 @@ void GameOverState::handleRealtimeInput(sf::RenderWindow &window)
 
 std::string GameOverState::getStateID() const
 {
-    return std::string();
+    return "GameOverState";
 }
 
-void GameOverState::onActivate()
+void GameOverState::onActivate() // Called when the state is activated
 {
+    sf::Color backgroundColor(70, 30, 100, 100);
+    backgroundShape.setFillColor(backgroundColor);
+    backgroundShape.setSize(sf::Vector2f(mContext->mWindow.getSize()));
 }
