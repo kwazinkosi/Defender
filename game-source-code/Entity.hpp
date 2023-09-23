@@ -47,17 +47,17 @@ class Entity
 
         // Getters and setters
         bool isDestroyed() const;
-        void setHealth(int health);
-        int getHealth() const;
         void setSpeed(float speed);
-        float getSpeed() const;
-        int getCollisionMask() const;
+        void setHealth(int health);
         void setCollisionType(CollisionType collisionType);
         void setPosition(sf::Vector2f position);
+        void setMovementSpeed(float movementSpeed);
+        int getHealth() const;
+        float getSpeed() const;
+        int getCollisionMask() const;
         sf::FloatRect getBounds() const;
         sf::Sprite& getSprite();
         sf::Vector2f getPosition() const;
-        void setMovementSpeed(float movementSpeed);
         
     protected:
         // Objects
