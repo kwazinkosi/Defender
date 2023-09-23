@@ -10,7 +10,18 @@
 #include "Animation.hpp"
 #include "Utills.hpp"
 
-
+enum class CollisionType
+{
+    None = 0,
+    Player = 1 << 0,
+    Enemy = 1 << 1,
+    Projectile = 1 << 2,
+    MineBomb = 1 << 3,
+    PowerUp = 1 << 4,
+    Collidable = 1 << 5,
+    Asteroid = 1 << 6,
+    Humanoid = 1 << 7,
+};
 // This is the base class for all entities (player, enemy, etc.) in the game, it contains all the common variables and functions that all entities will use
 class Entity
 {
@@ -32,6 +43,17 @@ class Entity
         virtual void OnDestroy();
         // Change the animation of the entity to the specified animation
         void changeAnimation(sf::Vector2f position, sf::Vector2i frameStart, sf::Vector2i frameSize, std::size_t numFrames, sf::Time duration, bool repeat);
+    
+    protected:
+        // Objects
+        CollisionType mCollisionType;
+        std::unique_ptr<Animation> mAnimation;
+        sf::Texture texture;
+        sf::Sprite sprite;
+        sf::Vector2f mPosition;
+        ENTITYTYPE mEntityType;
+        float mMovementSpeed;
+        bool mDestroyed;
     private:
         // Variables
         int mHealth;
