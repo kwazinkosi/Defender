@@ -36,3 +36,27 @@ void Mountains::initMountains()
     mMountains.push_back(mountainSprite2);
     std::cout << "Mountain bounds: " << mMountainBounds.left << " | " << mMountainBounds.top << " | " << mMountainBounds.width << " | " << mMountainBounds.height << std::endl;
 }
+
+void Mountains::update(sf::Time deltaTime)
+{
+    if (mMountains.empty())
+        throw std::runtime_error("Mountains vector is empty!");
+    // Check if view is set
+    if (mWorldView == nullptr)
+        throw std::runtime_error("View is not set!");
+
+    viewLeft = mWorldView->getCenter().x - mWorldView->getSize().x / 2.f;  // get left side of view == 0.f
+    viewRight = mWorldView->getCenter().x + mWorldView->getSize().x / 2.f; // get right side of view == 800.f
+    std::cout << "Mountains::update() -- View position: " << mWorldView->getCenter().x << " | View left: " << viewLeft << " | View right: " << viewRight << std::endl;
+    if (viewLeft < mMountainBounds.left)
+    {
+        // Wrap view around to the right of the mountain
+        mWorldView->setCenter(mMountainBounds.left + mWorldView->getSize().x / 2.f, mWorldView->getCenter().y);
+    }
+    else if (viewRight > mMountainBounds.left + mMountainBounds.width)
+    {
+        // Wrap view around to the left of the mountain
+        mWorldView->setCenter(mMountainBounds.left + mMountainBounds.width - mWorldView->getSize().x / 2.f, mWorldView->getCenter().y);
+    }
+}
+
