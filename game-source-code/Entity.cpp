@@ -18,11 +18,12 @@ Entity::~Entity()
 
 void Entity::move(float x, float y)
 {
-
+   sprite.move(x, y);
 }
 
 void Entity::OnDestroy()
 {
+    mDestroyed = true;
 }
 
 void Entity::changeAnimation(sf::Vector2f position, sf::Vector2i frameStart, sf::Vector2i frameSize, std::size_t numFrames, sf::Time duration, bool repeat)
@@ -61,23 +62,29 @@ void Entity::setMovementSpeed(float movementSpeed)
 
 int Entity::getHealth() const
 {
+    return mHealth;
 }
 
 float Entity::getSpeed() const
 {
+    return mMovementSpeed;
 }
 
 int Entity::getCollisionMask() const
 {
+    return static_cast<int>(mCollisionType);
 }
 sf::FloatRect Entity::getBounds() const
 {
+    return sprite.getGlobalBounds();
 }
 
 sf::Sprite &Entity::getSprite()
 {
+    return sprite;
 }
 
 sf::Vector2f Entity::getPosition() const
 {
+    return mPosition;
 }
