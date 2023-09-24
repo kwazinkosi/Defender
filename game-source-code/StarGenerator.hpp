@@ -38,9 +38,24 @@ class StarGenerator
 {
     public:
         explicit StarGenerator(Context &context);
+        void update(sf::Time deltaTime);
+        void draw(sf::RenderTarget &target);
+        Star generateStar(StarSpectralType spectralType);
 
 
     private:
+        void generateStars(int staNum);
+        void moveStars(sf::Time deltaTime);
+        sf::Color generateStarColor(StarSpectralType spectralType);
+        sf::CircleShape generateStarSize(float mass);
+        sf::Vector2f generateStarPosition();
+        sf::Vector2f generateStarVelocity();
+        sf::RenderTarget &mTarget; // target to draw stars to
+        sf::View *mWorldView; // world view
+        std::vector<Star> mStars; // vector of stars
+        sf::Time mStarTimer; 
+        Star mStar; // star
+        int mStarCount; // number of stars
 
 
 };
