@@ -39,6 +39,9 @@ void Mountains::initMountains()
 
 void Mountains::update(sf::Time deltaTime)
 {
+    /*
+    scrollMountains(deltaTime);
+
     if (mMountains.empty())
         throw std::runtime_error("Mountains vector is empty!");
     // Check if view is set
@@ -58,6 +61,7 @@ void Mountains::update(sf::Time deltaTime)
         // Wrap view around to the left of the mountain
         mWorldView->setCenter(mMountainBounds.left + mMountainBounds.width - mWorldView->getSize().x / 2.f, mWorldView->getCenter().y);
     }
+    */
 }
 
 void Mountains::draw(sf::RenderTarget &window)
