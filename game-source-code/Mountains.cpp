@@ -102,3 +102,8 @@ void Mountains::scrollMountains(sf::Time deltaTime)
         std::cerr << e.what() << std::endl;
     }
 }
+
+sf::FloatRect Mountains::getMountainBounds() const
+{
+    return mMountainBounds;
+}
