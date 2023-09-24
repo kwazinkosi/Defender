@@ -77,3 +77,28 @@ void Mountains::draw(sf::RenderTarget &window)
         std::cerr << e.what() << std::endl;
     }
 }
+
+void Mountains::scrollMountains(sf::Time deltaTime)
+{
+    if (mMountains.empty())
+        throw std::runtime_error("Mountains vector is empty!");
+    // Scroll the mountains
+    try
+    {
+        for (auto &mountain : mMountains)
+        {
+            // Move the mountain
+            mountain.move(-mScrollSpeed * deltaTime.asSeconds(), 0.f);
+            // Check if mountain is off screen
+            if (mountain.getPosition().x + mMountainBounds.width < 0.f)
+            {
+                // Move mountain to the right of the other mountain
+                mountain.setPosition(mMountainBounds.width, mountain.getPosition().y);
+            }
+        }
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << e.what() << std::endl;
+    }
+}

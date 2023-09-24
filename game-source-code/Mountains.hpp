@@ -20,6 +20,7 @@ class Mountains
         sf::FloatRect getMountainBounds() const;
 
     private:
+        void scrollMountains(sf::Time deltaTime);
         sf::View *mWorldView; 
         sf::Sprite mMountainSprite;
         sf::Texture mMountainTexture;
