@@ -13,6 +13,27 @@
 #include <random>
 #include "Context.hpp"
 
+enum class StarSpectralType
+{
+    O,
+    B,
+    A,
+    F,
+    G,
+    K,
+    M,
+    StarSpectralTypeCount
+};
+struct Star
+{
+    sf::Vector2f position;
+    sf::Vector2f velocity;
+    sf::CircleShape size;
+    sf::Color color;
+    float mass;
+    sf::Time lifetime;
+};
+
 class StarGenerator
 {
     public:
