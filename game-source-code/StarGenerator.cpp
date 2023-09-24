@@ -30,7 +30,51 @@ void StarGenerator::generateStars(int staNum)
 
 void StarGenerator::moveStars(sf::Time deltaTime)
 {
+    auto removeStarIndex = std::vector<int>();
+    // Move stars
+    if (mStars.empty())
+    {
+        throw std::runtime_error("No stars to move!");
+        return;
+    }
+
+    for (auto i = 0u; i < mStars.size(); ++i)
+    {
+        // Get star position
+        sf::Vector2f position = mStars[i].position;
+        // Get star velocity
+        sf::Vector2f velocity = mStars[i].velocity;
+        // Move star
+        position += velocity * deltaTime.asSeconds();
+        // Set star position
+        mStars[i].position = position;
+        // Update star lifetime
+        mStars[i].lifetime -= deltaTime;
+        // Remove star if lifetime is 0
+        if ((mStars[i].lifetime <= sf::Time::Zero) || (mStars[i].position.x < 0 || mStars[i].position.y < -800.f) ||
+            (mStars[i].position.x > 2336.f || mStars[i].position.y > mTarget.getSize().y - 30.f))
+        {
+            // std::cout << "StarGenerator::moveStars() - Removing star at " << mStars[i].position.x << " | " << mStars[i].position.y << " with velocity " << mStars[i].velocity.x << " | " << mStars[i].velocity.y << " and lifetime " << mStars[i].lifetime.asSeconds() << std::endl;
+            removeStarIndex.push_back(i);
+        }
+    }
+    // Remove stars
+    for (auto i = 0u; i < removeStarIndex.size() && !removeStarIndex.empty(); ++i)
+    {
+        mStars.erase(mStars.begin() + removeStarIndex[i]);
+    }
+    // shrink stars vector
+    mStars.shrink_to_fit(); // shrink vector to fit number of stars
+    removeStarIndex.clear();
+
+    // Generate stars if there are less than 10 stars
+    if (int(mStars.size()) < mStarCount - 1)
+    {
+        auto staNum = mStarCount - mStars.size();
+        generateStars(staNum);
+    }
 }
+
 
 sf::Color StarGenerator::generateStarColor(StarSpectralType spectralType)
 {
@@ -124,7 +168,23 @@ sf::Vector2f StarGenerator::generateStarVelocity()
 
 void StarGenerator::draw(sf::RenderTarget &target)
 {
+    if (mStars.empty())
+    {
+        throw std::runtime_error("No stars to draw!");
+    }
+    // Draw stars
+
+    for (auto &star : mStars)
+    {
+        // Set star color
+        star.size.setFillColor(star.color);
+        // Set star position
+        star.size.setPosition(star.position);
+        // Draw star
+        target.draw(star.size);
+    }
 }
+
 
 Star StarGenerator::generateStar(StarSpectralType spectralType)
 {
