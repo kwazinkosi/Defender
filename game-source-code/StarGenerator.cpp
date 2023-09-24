@@ -17,6 +17,15 @@ void StarGenerator::update(sf::Time deltaTime)
 
 void StarGenerator::generateStars(int staNum)
 {
+    for (auto i = 0; i < staNum; ++i)
+    {
+        // Generate random spectral type
+        StarSpectralType spectralType = static_cast<StarSpectralType>(rand() % static_cast<int>(StarSpectralType::StarSpectralTypeCount));
+        // Generate star of random spectral type
+        Star star = generateStar(spectralType);
+        // Add star to vector
+        mStars.push_back(star);
+    }
 }
 
 void StarGenerator::moveStars(sf::Time deltaTime)
@@ -30,12 +39,21 @@ sf::Color StarGenerator::generateStarColor(StarSpectralType spectralType)
 
 sf::CircleShape StarGenerator::generateStarSize(float mass)
 {
-    return sf::CircleShape();
+    // Generate random size
+    sf::CircleShape cSize;
+    cSize.setRadius(mass);
+    return cSize;
 }
 
 sf::Vector2f StarGenerator::generateStarPosition()
 {
-    return sf::Vector2f();
+    auto groundHieght = 10.f;
+    auto mountainHieght = 128.f;
+    auto skyHieght = mWorldView->getSize().y - groundHieght - mountainHieght; // == skyPos
+    sf::Vector2f position;
+    position.x = rand() %800;
+    position.y = rand() % int(skyHieght); // y position is between 0 and 1/3 of the screen
+    return position;
 }
 
 sf::Vector2f StarGenerator::generateStarVelocity()
