@@ -60,3 +60,20 @@ void Mountains::update(sf::Time deltaTime)
     }
 }
 
+void Mountains::draw(sf::RenderTarget &window)
+{
+    if (mMountains.empty())
+        throw std::runtime_error("Mountains vector is empty!");
+    // Draw the mountains
+    try
+    {
+        for (auto &mountain : mMountains)
+        {
+            window.draw(mountain);
+        }
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << e.what() << std::endl;
+    }
+}
