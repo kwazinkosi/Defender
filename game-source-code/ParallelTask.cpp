@@ -83,6 +83,7 @@ void ParallelTask::loadTextures()
     mContext->mBackgrounds->load(Backgrounds::Mountains, "resources/textures/mountains-10.png");
     mContext->mTextures->load(Textures::Player, "resources/textures/spaceship-2.png");
     mContext->mTextures->load(Textures::Laser, "resources/textures/laser.png");
+    mContext->mTextures->load(Textures::LanderMissile, "resources/textures/02.png");
     mContext->mTextures->load(Textures::Pod, "resources/textures/pod.png");
     mContext->mTextures->load(Textures::Lander, "resources/textures/lander-1.png");
     mContext->mTextures->load(Textures::Bomber, "resources/textures/bomber-1.png");

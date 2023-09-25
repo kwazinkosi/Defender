@@ -49,7 +49,7 @@ enum class ENEMYTYPE
 
 enum class Textures
 {
-    Player, Lander, Pod, Swarmer, Humanoid, Bomber, Missile, Laser, Explosion, Mine,  Defender, PowerUp, texturesCount 
+    Player, Lander, Pod, Swarmer, Humanoid, Bomber, LanderMissile, Laser, Explosion, Mine,  Defender, PowerUp, Asteroid, texturesCount 
 };
 enum class Backgrounds
 {
