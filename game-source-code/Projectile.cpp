@@ -85,20 +85,35 @@ bool Projectile::isStatic() const
     return false;
 }
 
+ENTITYTYPE Projectile::getEntityType() const
+{
+    return ENTITYTYPE::PROJECTILE;
+}
+
 void Projectile::onCollision()
 {
 
 }
 
-
-void Projectile::onDestroy()
-{
-}
-
-
 bool Projectile::collissionCheck(Entity* other)
 {
     return getBounds().intersects(other->getBounds()); // Check if the projectile collides with the other entity.
+}
+
+
+void Projectile::onDestroy()
+{
+    mDestroyed = true;
+}
+
+void Projectile::setMovementSpeed(float movementSpeed)
+{
+    mMovementSpeed = movementSpeed;
+}
+
+void Projectile::setProjectileType(ProjectileType projectileType)
+{
+    mProjectileType = projectileType;
 }
 
 bool Projectile::isDestroyed() const
@@ -118,10 +133,24 @@ sf::FloatRect Projectile::getBounds() const
 
 ProjectileType Projectile::getProjectileType() const
 {
-    return ProjectileType();
+    return mProjectileType;
 }
 
 bool Projectile::isGuided() const
 {
+    if (mProjectileType == ProjectileType::Missile)
+    {
+        return true;
+    }
     return false;
+}
+
+void Projectile::updateCurrent(sf::Time deltaTime)
+{
+    update(deltaTime);
+}
+
+void Projectile::drawCurrent(sf::RenderTarget& target)
+{
+    draw(target);
 }
