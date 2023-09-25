@@ -67,6 +67,7 @@ void Projectile::aim(sf::Vector2f targetPosition)
     mProjectileDirection = direction;
 }
 
+
 void Projectile::update(sf::Time deltaTime)
 {
     // Move the projectile.
@@ -89,7 +90,38 @@ void Projectile::onCollision()
 
 }
 
+
+void Projectile::onDestroy()
+{
+}
+
+
 bool Projectile::collissionCheck(Entity* other)
 {
     return getBounds().intersects(other->getBounds()); // Check if the projectile collides with the other entity.
+}
+
+bool Projectile::isDestroyed() const
+{
+    return mDestroyed;
+}
+
+sf::Sprite &Projectile::getSprite()
+{
+    return sprite;
+}
+
+sf::FloatRect Projectile::getBounds() const
+{
+    return sprite.getGlobalBounds();
+}
+
+ProjectileType Projectile::getProjectileType() const
+{
+    return ProjectileType();
+}
+
+bool Projectile::isGuided() const
+{
+    return false;
 }
