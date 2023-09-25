@@ -52,7 +52,6 @@ class Projectile: public Entity
         // Variables
         ProjectileType mProjectileType;
         sf::Vector2f mProjectileDirection; // The direction the projectile is moving in.
-        //sf::Sprite sprite; // The sprite of the projectile.
         
 };
 

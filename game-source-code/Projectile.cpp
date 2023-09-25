@@ -19,5 +19,35 @@ Projectile::~Projectile()
 
 void Projectile::initProjectile()
 {
+    if (mProjectileType == ProjectileType::PlayerBullet)
+    {
+        if (!texture.loadFromFile("resources/textures/01.png"))
+        {
+            throw "ERROR::PROJECTILE::INITTEXTURE::Could not load texture file.";
+        }
+        // initialize the collidables vector
+        mCollisionType = CollisionType::Projectile;
+    }
+    else if (mProjectileType == ProjectileType::EnemyBullet)
+    {
+        if (!texture.loadFromFile("resources/textures/02.png"))
+        {
+            throw "ERROR::PROJECTILE::INITTEXTURE::Could not load texture file.";
+        }
+        // initialize the collidables vector
+        mCollisionType = CollisionType::Projectile;
+    }
+    else if (mProjectileType == ProjectileType::Missile)
+    {
+        if (!texture.loadFromFile("resources/textures/02.png"))
+        {
+            throw "ERROR::PROJECTILE::INITTEXTURE::Could not load texture file.";
+        }
+        // initialize the collidables vector
+        mCollisionType = CollisionType::Projectile;
+    }
     
+    sprite.setTexture(texture);
+    sprite.setScale(0.3f, 0.2f);
+    //std::cout << "Projectile::initProjectile() -- Projectile initialized." << std::endl;
 }
