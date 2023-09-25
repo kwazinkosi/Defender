@@ -23,7 +23,8 @@ class PowerUp: public Entity
         bool isStatic() const;
         ENTITYTYPE getEntityType() const; 
         bool collissionCheck(Entity* other);
-        void onCollision();id onDestroy();
+        void onCollision();
+        void onDestroy();
         bool isDestroyed() const;
 
     private:
