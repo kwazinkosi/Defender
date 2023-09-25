@@ -43,22 +43,29 @@ void PowerUp::update(sf::Time deltaTime)
 
 }
 
-void PowerUp::draw(sf::RenderTarget &target)
+void PowerUp::draw(sf::RenderTarget& target)
 {
+    if(!isDestroyed())
+        target.draw(sprite);
 }
+
 
 bool PowerUp::isStatic() const
 {
-    return false;
+    return true;
 }
 
 ENTITYTYPE PowerUp::getEntityType() const
 {
-    return ENTITYTYPE();
+    return mEntityType;
 }
 
-bool PowerUp::collissionCheck(Entity *other)
+bool PowerUp::collissionCheck(Entity* other)
 {
+    if(other->getEntityType() == ENTITYTYPE::PLAYER)
+    {
+        return getBounds().intersects(other->getBounds());
+    }
     return false;
 }
 
@@ -68,14 +75,18 @@ void PowerUp::onCollision()
 
 void PowerUp::onDestroy()
 {
+    mDestroyed = true;
 }
 
 bool PowerUp::isDestroyed() const
 {
-    return false;
+    return mDestroyed;
 }
 
 sf::Vector2f PowerUp::spawnPosition()
 {
-    return sf::Vector2f();
+    sf::Vector2f position;
+    position.x = rand() % int(mContext->mRightBound - 34.f);
+    position.y = mContext->mBottomBound - 34.f;
+    return position;
 }
