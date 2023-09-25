@@ -66,3 +66,15 @@ void Projectile::aim(sf::Vector2f targetPosition)
     }
     mProjectileDirection = direction;
 }
+
+void Projectile::update(sf::Time deltaTime)
+{
+    // Move the projectile.
+    sprite.move(mProjectileDirection * mMovementSpeed * deltaTime.asSeconds()); // Move the projectile to
+}
+
+void Projectile::draw(sf::RenderTarget& target)
+{
+    target.draw(sprite);
+    //std::cout << "Projectile::draw() -- Projectile drawn." << std::endl;
+}
