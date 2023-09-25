@@ -51,3 +51,18 @@ void Projectile::initProjectile()
     sprite.setScale(0.3f, 0.2f);
     //std::cout << "Projectile::initProjectile() -- Projectile initialized." << std::endl;
 }
+
+void Projectile::aim(sf::Vector2f targetPosition)
+{
+    sf::Vector2f direction;
+    direction.x = targetPosition.x - sprite.getPosition().x;
+    direction.y = targetPosition.y - sprite.getPosition().y;
+
+    float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+    if (length > 0)
+    {
+        direction.x /= length;
+        direction.y /= length;
+    }
+    mProjectileDirection = direction;
+}
