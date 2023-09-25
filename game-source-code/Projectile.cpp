@@ -78,3 +78,18 @@ void Projectile::draw(sf::RenderTarget& target)
     target.draw(sprite);
     //std::cout << "Projectile::draw() -- Projectile drawn." << std::endl;
 }
+
+bool Projectile::isStatic() const
+{
+    return false;
+}
+
+void Projectile::onCollision()
+{
+
+}
+
+bool Projectile::collissionCheck(Entity* other)
+{
+    return getBounds().intersects(other->getBounds()); // Check if the projectile collides with the other entity.
+}
