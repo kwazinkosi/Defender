@@ -333,6 +333,33 @@ void Player::handleRealtimeInput(CommandQueue &commands)
     mCommandQueue = &commands; // set command queue pointer to commands passed in by reference
 }
 
+void Player::onCollision()
+{
+    // handle collision with the screen
+    screenCollision();
+
+    // player collides with other entity
+    for (auto &collidable : collidables)
+    {
+        if (collissionCheck(collidable.get()))
+        {
+           // std::cout << "Player::onCollision() -- Player collided with other entity." << std::endl;
+            if ((collidable->getEntityType() == ENTITYTYPE::ENEMY) || (collidable->getEntityType() == ENTITYTYPE::ASTEROID) 
+            || (collidable->getEntityType() == ENTITYTYPE::MINEBOMB) || (collidable->getEntityType() == ENTITYTYPE::PROJECTILE))
+            {
+                // player collided with enemy, asteroid, minebomb or projectile so destroy player
+                OnDestroy(); // destroy player
+            }
+            else if (collidable->getEntityType() == ENTITYTYPE::POWERUP)
+            {
+                // player collided with powerup
+                setHealth(100); // set player health to 100
+                setFuel(100.f); // set player fuel to 100
+            }
+        }
+    }
+}
+
 void Player::screenCollision()
 {
     if (mAnimation->getPosition().x < mLeftBound)
@@ -364,6 +391,26 @@ void Player::initPlayer()
     this->sprite.setTexture(this->texture);
     mMovementSpeed = 100.f;
     mCollisionType = CollisionType::Player;
+}
+
+bool Player::collissionCheck(Entity *other)
+{
+    return getBounds().intersects(other->getBounds()); // Check if the player collides with the other entity.
+}
+
+sf::FloatRect Player::getBounds() const
+{
+    return mAnimation->getSprite().getGlobalBounds();
+}
+
+void Player::move(float x, float y)
+{
+    mAnimation->move(x, y);
+}
+
+void Player::OnDestroy()
+{
+    mDestroyed = true;
 }
 
 void Player::flipShip()
