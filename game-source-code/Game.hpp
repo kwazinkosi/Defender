@@ -8,6 +8,7 @@
 #include "LoadingState.hpp"
 #include "SplashState.hpp"
 #include "MainMenuState.hpp"
+#include "GameOverState.hpp"
 #include "GameState.hpp"
 #include "PauseState.hpp"
 #include "Context.hpp"

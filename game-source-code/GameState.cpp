@@ -17,8 +17,6 @@ GameState::GameState(StateStack &stack, Context &context) : State(stack, context
     std::cout <<"GameState::GameState() -- Done constructing gamestate" <<std::endl;
 }
 
-
-
 void GameState::pauseGame()
 { 
     requestStackPush(States::PauseState);

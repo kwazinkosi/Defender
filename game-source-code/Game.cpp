@@ -24,11 +24,13 @@ void Game::registerStates()
     mStateStack.registerState<LoadingState>(States::LoadingState, mContext);
     mStateStack.registerState<SplashState>(States::SplashState, mContext);
     mStateStack.registerState<MainMenuState>(States::MainMenuState, mContext);
+    //mStateStack.registerState<HelpState>(States::HelpState, mContext);
     mStateStack.registerState<GameState>(States::GameState, mContext);
+    mStateStack.registerState<GameOverState>(States::GameOverState, mContext);
     mStateStack.registerState<PauseState>(States::PauseState, mContext);
 
     //std::cout<<"Done registering"<<std::endl;
-
+    //mStateStack.registerState<OptionsState>(States::OptionsState, mContext);
     mStateStack.pushState(States::LoadingState);
 }
 /**
@@ -85,6 +87,7 @@ void Game::processEvents()
     {
        mStateStack.handleEvent(event, mContext.mWindow);
     }
+    mStateStack.handleRealtimeInput(mContext.mWindow);
 }
 
 /**
