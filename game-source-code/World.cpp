@@ -82,11 +82,69 @@ void World::handleRealtimeInput(CommandQueue &commands)
     // Handle player realtime input
     mSpaceship->handleRealtimeInput(commands);
 }
+std::pair<bool, int> World::update(sf::Time deltaTime)
+{
+    // mWorldView->move(-100.f * deltaTime.asSeconds(), 0.f);
+    // Update star generator
+     //std::cout << "World::update() - Updating star generator" << std::endl;
+    mStarGenerator->update(deltaTime);
+    // std::cout << "World::update() - Updating mountains" << std::endl;
+    mMountains->update(deltaTime);
+    // Update player
+    // std::cout << "World::update() - Updating player" << std::endl;
+    mSpaceship->update(deltaTime);
+    // update powerUps
+    updatePowerUps(deltaTime);
+    // update Enemies
+    // std::cout << "World::update() - Updating enemies" << std::endl;
+    updateEnemies(deltaTime);
+    onCollission();
+    updateCollisions();
+    // Check if game is over
+    auto gameOverResult = gameOver();
+    // std::cout << "World::update() - Game over result: " << gameOverResult.first << std::endl;
+    return gameOverResult;
+}
+void World::updateEnemies(sf::Time deltaTime)
+{
+    //std::cout << "World::updateEnemies() - Updating enemies | player position: " << mSpaceship->getPlayerPosition().x << ", " << mSpaceship->getPlayerPosition().y << std::endl;
+    // std::cout << "World::updateEnemies() - mLanders.size() = " << mLanders.size() << std::endl;
+    for (auto &lander : mLanders)
+    {
+        // update lander
+    }
+}
+
+void World::updatePowerUps(sf::Time deltaTime)
+{
+    sf::Clock clock;
+    auto spawnTime =sf::Time::Zero;
+    static auto prevTime = spawnTime;
+
+    for (auto &powerUp : mPowerUps)
+    {
+        powerUp->update(deltaTime);
+    }
+
+    spawnTime += clock.restart();
+    //std::cout << "World::updatePowerUps() - spawnTime: " << spawnTime.asSeconds() << std::endl;
+    //std::cout << "World::updatePowerUps() - prevTime: " << prevTime.asSeconds() << std::endl;
+
+    if(mPowerUps.empty())
+    {
+        prevTime +=clock.restart();
+
+        if(prevTime >= sf::seconds(3.f))
+        {
+            initpowerUps();
+            prevTime = sf::Time::Zero;
+            spawnTime = sf::Time::Zero;
+        }
+    } 
+}
 
 void World::render()
 {
-    //std::cout << "World::render() - Rendering world" << std::endl;
-    // Set world view
     //mWorldView->setViewport(mContext->mWorldView.getViewport());
     mWindow->setView(*mWorldView);
     // Draw on world view
@@ -115,4 +173,35 @@ void World::drawView(sf::View &view)
     mMountains->draw(*mWindow);
     //Draw enemies
     mSpaceship->draw(*mWindow);
+}
+
+void World::drawEnemies(sf::RenderTarget &target)
+{
+    for (auto &lander : mLanders)
+    {
+    }
+}
+
+void World::drawPowerUps(sf::RenderTarget &target)
+{
+    for (auto &powerUp : mPowerUps)
+    {
+        powerUp->draw(target);
+    }
+}
+
+
+void World::onCollission()
+{
+
+}
+
+void World::updateCollisions()
+{
+
+}
+
+std::pair<bool, int> World::gameOver() const
+{
+    
 }
