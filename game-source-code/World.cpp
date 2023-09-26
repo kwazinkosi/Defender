@@ -43,13 +43,23 @@ World::World(Context &context)
 
 void World::loadTextures()
 {
+    mMountainSprite.setTexture(mContext->mBackgrounds->getResourceById(Backgrounds::Mountains));
+    std::cout << "World::loadTextures - Loaded Resources/textures/mountains.png" << std::endl;
+    // Set texture to repeat
+    mMountainTexture.setRepeated(true);
 }
 
 void World::initEnemies()
 {
-}
 
+}
 void World::initpowerUps()
 {
+    std::cout << "World::initpowerUps() - Creating powerUp" << std::endl;
+    auto position = sf::Vector2f(float(rand() % int(mContext->mRightBound -50)), mContext->mBottomBound- 50);
+
+    auto powerUp = std::make_unique<PowerUp>(*mContext, position);
+    mPowerUps.push_back(std::move(powerUp));
+    //addEntity(std::move(powerUp));
 }
 
