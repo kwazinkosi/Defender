@@ -51,7 +51,15 @@ void World::loadTextures()
 
 void World::initEnemies()
 {
+    // 3 landers for now
+    for (int i = 0; i < 3; i++)
+    {
+        std::cout << "World::initEnemies() - Creating lander" << std::endl;
+        auto lander = std::make_unique<Lander>(*mContext); 
+        mLanders.push_back(std::move(lander));
+    }
 
+    // Add landers to the player's collidable list
 }
 void World::initpowerUps()
 {
@@ -60,6 +68,17 @@ void World::initpowerUps()
 
     auto powerUp = std::make_unique<PowerUp>(*mContext, position);
     mPowerUps.push_back(std::move(powerUp));
-    //addEntity(std::move(powerUp));
 }
 
+
+void World::handleInput(CommandQueue &commands, sf::Event &event)
+{
+    // Handle player input
+    mSpaceship->handleInput(commands, event);
+}
+
+void World::handleRealtimeInput(CommandQueue &commands)
+{
+    // Handle player realtime input
+    mSpaceship->handleRealtimeInput(commands);
+}

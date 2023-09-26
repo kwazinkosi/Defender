@@ -13,6 +13,7 @@
 #include "StarGenerator.hpp"
 #include "Player.hpp"
 #include "Mountains.hpp"
+#include "Lander.hpp"
 #include "CommandQueue.hpp"
 #include "Context.hpp"
 #include "Entity.hpp"
@@ -40,10 +41,11 @@ class World
         std::unique_ptr<Player> mSpaceship;
         std::unique_ptr<Mountains> mMountains;
         
+        std::vector <std::unique_ptr<Lander>> mLanders; // This is the vector that will hold all the landers that the player shoots out.
         std::vector<std::unique_ptr<Entity>> mEntities; // This is the vector that will hold all the entities that the player can collide with, unique_ptr because we want to transfer ownership of the entity objects to the world.
         //std::vector<std::unique_ptr<Humanoid>> mHumanoids; // This is the vector that will hold all the humanoids that the player can collide with, unique_ptr because we want to transfer ownership of the humanoid objects to the world.
         std::vector<std::unique_ptr<PowerUp>> mPowerUps; // This is the vector that will hold all the powerUps that the player can collide with, unique_ptr because we want to transfer ownership of the powerUp objects to the world.
-    
+
         Context *mContext;
         sf::RenderWindow *mWindow;
         sf::View *mWorldView;
