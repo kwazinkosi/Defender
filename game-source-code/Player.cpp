@@ -39,41 +39,50 @@ Player::Player(Context &context, sf::Vector2f position)
 Player::~Player()
 {
 }
+void Player::updateBullets(sf::Time deltaTime)
+{
+    for (size_t i = 0; i < mProjectiles.size(); i++)
+    {
+        mProjectiles[i]->update(deltaTime);
+        if (mProjectiles[i]->isDestroyed())
+        {
+            mProjectiles.erase(mProjectiles.begin() + i);
+        }
+    }
+
+    // remove projectiles that are out of bounds
+    for (std::size_t i = 0; i < mProjectiles.size(); i++)
+    {
+        mProjectiles[i]->update(deltaTime);
+        if ((mProjectiles[i]->getSprite().getPosition().x < 0) || (mProjectiles[i]->getSprite().getPosition().x > 800) || (mProjectiles[i]->getSprite().getPosition().y < 0) || (mProjectiles[i]->getSprite().getPosition().y > 600))
+        {
+            mProjectiles.erase(mProjectiles.begin() + i);
+        }
+    }
+}
 
 void Player::update(sf::Time deltaTime)
-{   
-    
-    sf::Vector2f movement(0.f, 0.f);
+{
 
-    switch (mPlayerState)
+    if (!isDestroyed())
     {
-        case PLAYERSTATE::IDLE:
-            break;
-        case PLAYERSTATE::MOVINGRIGHT:
-            movement.x += mPlayerSpeed;
-            break;
-        case PLAYERSTATE::MOVINGLEFT:
-            movement.x -= mPlayerSpeed;
-            break;
-        case PLAYERSTATE::MOVINGUP:
-            movement.y -= mPlayerSpeed;
-            break;
-        case PLAYERSTATE::MOVINGDOWN:
-            movement.y += mPlayerSpeed;
-            break;
-        case PLAYERSTATE::SHOOTING:
-            //shoot();
-            break;
-        case PLAYERSTATE::DEAD:
-            //to do
-            break;
-        default:
-            break;
+        mAnimation->update(deltaTime);
+        updateInput(deltaTime);
+        updateBullets(deltaTime);
+        onCollision(); // check for collision with other entities
     }
-    
-    mPlayer.move( 2.f*movement * deltaTime.asSeconds());
-    ScreenCollision();
-    //mAnimator->update(deltaTime);
+
+    if (mCurrFuel <= 0.f)
+    {
+        mCurrFuel = 0.f;
+        crashShip(deltaTime);
+        isDestroyed();
+    }
+
+    if(isDestroyed())
+    {
+        //std::cout << "Player::update() -- Player destroyed." << std::endl;
+    }
 }
 
 void Player::drawPlayer(sf::RenderWindow &window)
@@ -511,3 +520,18 @@ std::vector<std::unique_ptr<Projectile>> &Player::getBullets()
 {
     return mProjectiles;
 }
+
+void Player::crashShip(sf::Time deltaTime)
+{
+    if (mCurrFuel <= 0.f)
+    {
+        mCurrFuel = 0.f;
+        mAnimation->move(0.f, 100.f * deltaTime.asSeconds());
+        if(mAnimation->getSprite().getPosition().y >= mContext->mBottomBound - mAnimation->getSprite().getGlobalBounds().height)
+        {
+            mAnimation->setPosition(sf::Vector2f(mAnimation->getPosition().x, mContext->mBottomBound - mAnimation->getSprite().getGlobalBounds().height));
+            OnDestroy();
+        }
+    }
+}
+
