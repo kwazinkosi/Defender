@@ -20,7 +20,7 @@ class Lander : public Entity
         void update(sf::Time deltaTime);
         void draw(sf::RenderTarget& target);
         void update(sf::Time deltaTime, sf::Vector2f targetPosition);
-
+        std::vector<std::unique_ptr<Projectile>>& getMissiles();
 };
 #endif
 
