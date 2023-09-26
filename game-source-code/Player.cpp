@@ -257,6 +257,81 @@ void Player::shoot(sf::Time deltaTime)
     mProjectiles.push_back(std::make_unique<Projectile>(bulletPos, (isLeft ? sf::Vector2f(-1.f, 0) : sf::Vector2f(1.f, 0)), 300.f, ProjectileType::PlayerBullet));
 }
 
+void Player::draw(sf::RenderTarget &target)
+{
+    target.draw(mAnimation->getSprite());
+    for (auto &bullet : mProjectiles)
+    {
+        target.draw(bullet->getSprite());
+    }
+}
+
+void Player::handleInput(CommandQueue &commands, sf::Event &event)
+{
+    // Handle player input
+
+    if (event.type == sf::Event::KeyReleased)
+    {
+        // flip spaceship
+        if (event.key.code == sf::Keyboard::F)
+        {
+            Command command(Action::FlipShip, Category::Player);
+            commands.push(command);
+        }
+    }
+
+    if(event.type == sf::Event::KeyPressed)
+    {
+        // if all 8 directions are pressed , decrease mCurrentfuel
+        if ((event.key.code == sf::Keyboard::Left || event.key.code == sf::Keyboard::Right) || 
+        (event.key.code == sf::Keyboard::Up || event.key.code == sf::Keyboard::Down) || 
+        (event.key.code == sf::Keyboard::A || event.key.code == sf::Keyboard::D) ||
+        (event.key.code == sf::Keyboard::W || event.key.code == sf::Keyboard::S))
+        {
+            mCurrFuel -= mFuelBurnRate;
+            setFuelBar();
+        }
+    }
+    mCommandQueue = &commands; // set command queue pointer to commands passed in by reference
+}
+
+void Player::handleRealtimeInput(CommandQueue &commands)
+{
+    // Handle realtime input
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+    {
+        // Move left
+        Command command(Action::MoveLeft, Category::Player);
+        commands.push(command);
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+    {
+        // Move right
+        Command command(Action::MoveRight, Category::Player);
+        commands.push(command);
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+    {
+        // Move up
+        Command command(Action::MoveUp, Category::Player);
+        commands.push(command);
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+    {
+        // Move down
+        Command command(Action::MoveDown, Category::Player);
+        commands.push(command);
+    }
+    // handle shooting
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+    {
+        // Shoot
+        Command command(Action::Shoot, Category::Player);
+        commands.push(command);
+    }
+
+    mCommandQueue = &commands; // set command queue pointer to commands passed in by reference
+}
 
 void Player::screenCollision()
 {

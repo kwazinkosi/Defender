@@ -53,7 +53,7 @@ class Player: public Collidable
         void moveUp(sf::Time deltaTime);
         void moveDown( sf::Time deltaTime);
         void shoot(sf::Time deltaTime);
-        void screenWrap();
+        //void screenWrap();
         void screenCollision();
         void initPlayer();
         void flipShip();
