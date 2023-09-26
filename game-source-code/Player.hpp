@@ -40,8 +40,6 @@ class Player: public Collidable
         void setAnimation(Command command, bool &isHorizontalAccelerating);
         void setFuelBar();
         void setFuel(float fuel);
-        void setLives(int lives);
-        int getLives() const;
         float getFuel();
         void drawHUD(sf::RenderTarget &target);
         sf::Vector2f getPlayerPosition() const;

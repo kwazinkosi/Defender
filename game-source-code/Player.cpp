@@ -453,6 +453,11 @@ void Player::setFuel(float fuel)
     mCurrFuel = fuel;
 }
 
+float Player::getFuel()
+{
+    return mCurrFuel;
+}
+
 ENTITYTYPE Player::getEntityType() const
 {
     return mEntityType;
@@ -488,4 +493,21 @@ void Player::flipShip()
     {
         changeAnimation(position, sf::Vector2i(0, 0), sf::Vector2i(22, 6), 4, sf::seconds(0.2f), true);
     }
+}
+
+void Player::drawHUD(sf::RenderTarget &target)
+{
+    target.draw(mFuelBarBackground);
+    target.draw(mFuelBar);
+    target.draw(mFuelBarText);
+}
+
+sf::Vector2f Player::getPlayerPosition() const
+{
+    return mAnimation->getPosition();
+}
+
+std::vector<std::unique_ptr<Projectile>> &Player::getBullets()
+{
+    return mProjectiles;
 }
