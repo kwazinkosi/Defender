@@ -8,7 +8,6 @@
 #include <memory>
 #include <iostream>
 #include <cmath>
-//#include "Context.hpp"
 #include "Entity.hpp"
 
 enum class ProjectileType
@@ -44,6 +43,8 @@ class Projectile: public Entity
         sf::FloatRect getBounds() const;
         ProjectileType getProjectileType() const;
         bool isGuided() const; // Returns true if the projectile is guided.
+
+
     private:
         void updateCurrent(sf::Time deltaTime); // Updates the projectile's state.-+
         //void update(sf::Time deltaTimem, CommandQueue &commandQueue);

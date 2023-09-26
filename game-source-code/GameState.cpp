@@ -27,17 +27,29 @@ void GameState::pauseGame()
 
 void GameState::gameOver()
 {
-    requestStackPush(States::GameOverState);
+    requestStackPop(); // Pop the game state
+    std::cout << "GameState::gameOver()"<<std::endl;
+    requestStackPush(States::GameOverState); // Push the game over state
 }
 
 void GameState::draw(sf::RenderWindow &window)
 {
-   
+   mWorld->render();
 }
 
 bool GameState::update(sf::Time dt)
 {
+    //std::cout << "GameState::update() -- Updating game state" << std::endl;
+   // Update the player
+    auto gameResult = mWorld->update(dt);
+    std::cout << "GameState::update() -- Game result: " << gameResult.first << std::endl;
+    if (gameResult.first == true)
+    {
+        gameOver();
+
+    }
     
+    return true;
 }
 
 bool GameState::handleEvent(const sf::Event &event, sf::RenderWindow &window)
