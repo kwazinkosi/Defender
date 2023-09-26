@@ -1,12 +1,39 @@
 #include "player.hpp"
 
-Player::Player(Context &context) : 
-    mContext(&context),
-    mPlayerState(PLAYERSTATE::IDLE)
+Player::Player(Context &context, sf::Vector2f position)
+: Entity(100, 200.f, position, ENTITYTYPE::PLAYER)
+, mPlayerState(PLAYERSTATE::IDLE)
+, mContext(&context)
+, mCommandQueue(nullptr)
+, mLeftBound(context.mWorldView.getCenter().x - context.mWorldView.getSize().x / 2.f)
+, mRightBound(context.mWorldView.getCenter().x + context.mWorldView.getSize().x / 2.f)
+, mTopBound(context.mWorldView.getCenter().y - context.mWorldView.getSize().y / 2.f)
+, mBottomBound(context.mWorldView.getCenter().y + context.mWorldView.getSize().y / 2.f)
+, mLives(3)
+, isLeft(true)
+, isSetDefault(false)
+, isSetAccelerate(false)
+, mCurrFuel(float(getHealth()))
+, mMaxFuel(100.f)
+, mFuelBurnRate(0.1f)
+, mFuelTimer(sf::Time::Zero)
 {
-    mPlayer.setSize(sf::Vector2f(50.f,50.f));
-    mPlayer.setFillColor(sf::Color::Green);
-    mPlayer.setPosition(100.f, 100.f);
+    this->initPlayer();
+    mAnimation = std::make_unique<Animation>(&texture, position, sf::Vector2i(0, 6), sf::Vector2i(22, 6), 1, sf::seconds(0.2f), true);
+    mFuelBarText = sf::Text("Fuel: ", context.mFonts->getResourceById(Fonts::GamePlayed), 16);
+    mFuelBarText.setPosition(sf::Vector2f((mContext->mHudView.getCenter().x - mContext->mHudView.getSize().x / 2.f) + 5.f, mContext->mHudView.getCenter().y - mContext->mHudView.getSize().y / 2.f + 11.f));
+    mFuelBarText.setFillColor(sf::Color::Yellow);
+    
+    mFuelBarBackground.setFillColor(sf::Color::White);
+    mFuelBarBackground.setSize(sf::Vector2f(mContext->mHudView.getSize().x -55.f, 16.f));
+    mFuelBarBackground.setPosition(sf::Vector2f((mContext->mHudView.getCenter().x - mContext->mHudView.getSize().x / 2.f )+55.f, mContext->mHudView.getCenter().y - mContext->mHudView.getSize().y / 2.f + 10.f));
+    
+
+    mFuelBar.setFillColor(sf::Color::Green);
+    mFuelBar.setSize(sf::Vector2f(mContext->mHudView.getSize().x -55.f, 12.f));
+    mFuelBar.setPosition(sf::Vector2f((mContext->mHudView.getCenter().x - mContext->mHudView.getSize().x / 2.f)+55.f, mContext->mHudView.getCenter().y - mContext->mHudView.getSize().y / 2.f + 12.f));
+    std::cout << "Player::Player() -- Player created." << std::endl;
+    std::cout<< "Bar size: " << mFuelBar.getSize().x << std::endl;
 }
 
 Player::~Player()
