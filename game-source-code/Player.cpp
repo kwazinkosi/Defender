@@ -175,3 +175,67 @@ std::string Player::getCollisionType() const
 void Player::shoot()
 {
 }
+
+void Player::updateInput(sf::Time deltaTime)
+{
+}
+
+void Player::moveLeft(sf::Time deltaTime)
+{
+    mAnimation->move(-mMovementSpeed * deltaTime.asSeconds(), 0.f);
+}
+void Player::moveRight(sf::Time deltaTime)
+{
+    
+    mAnimation->move(mMovementSpeed * deltaTime.asSeconds(), 0.f);
+}
+void Player::moveDown(sf::Time deltaTime)
+{
+    mAnimation->move(0.f, mMovementSpeed * deltaTime.asSeconds());
+}
+void Player::moveUp(sf::Time deltaTime)
+{
+    mAnimation->move(0.f, -mMovementSpeed * deltaTime.asSeconds());
+}
+
+void Player::shoot(sf::Time deltaTime)
+{
+    auto bulletPos = mAnimation->getPosition();
+    bulletPos.x += 30.f;
+    bulletPos.y += 70.f;
+    mProjectiles.push_back(std::make_unique<Projectile>(bulletPos, (isLeft ? sf::Vector2f(-1.f, 0) : sf::Vector2f(1.f, 0)), 300.f, ProjectileType::PlayerBullet));
+}
+
+
+void Player::screenCollision()
+{
+    if (mAnimation->getPosition().x < mLeftBound)
+    {
+        mAnimation->setPosition(sf::Vector2f(mLeftBound, mAnimation->getPosition().y));
+    }
+    else if (mAnimation->getPosition().x > mRightBound - mAnimation->getSprite().getGlobalBounds().width)
+    {
+         mAnimation->setPosition(sf::Vector2f(mRightBound- mAnimation->getSprite().getGlobalBounds().width, mAnimation->getPosition().y));
+    }
+    
+    if (mAnimation->getPosition().y < mTopBound)
+    {
+         mAnimation->setPosition(sf::Vector2f(mAnimation->getPosition().x, mTopBound));
+    }
+    else if (mAnimation->getPosition().y > mBottomBound - mAnimation->getSprite().getGlobalBounds().height)
+    {
+        mAnimation->setPosition(sf::Vector2f(mAnimation->getPosition().x, mBottomBound - mAnimation->getSprite().getGlobalBounds().height));
+    }
+}
+
+void Player::initPlayer()
+{
+    texture = mContext->mTextures->getResourceById(Textures::Player);
+    sprite.setTexture(texture);
+    this->sprite.setTextureRect(sf::IntRect(0, 6, 22, 6)); // to fix
+    this->sprite.setScale(2.f, 2.f);
+    this->sprite.setPosition(400.f, 300.f);
+    this->sprite.setTexture(this->texture);
+    mMovementSpeed = 100.f;
+    mCollisionType = CollisionType::Player;
+}
