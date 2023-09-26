@@ -306,5 +306,17 @@ void World::updateCollisions()
 
 std::pair<bool, int> World::gameOver() const
 {
-
+    if (mSpaceship->isDestroyed())
+    {
+        // Game over
+        std::cout << "Game over!!! You died." << std::endl;
+        return std::make_pair(true, 1);
+    }
+    else if(mLanders.empty())
+    {
+        // Game over
+        std::cout << "Game over!!! You won." << std::endl;
+        return std::make_pair(true, 2);
+    }
+    return std::make_pair(false, -1);
 }
