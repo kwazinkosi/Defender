@@ -82,3 +82,37 @@ void World::handleRealtimeInput(CommandQueue &commands)
     // Handle player realtime input
     mSpaceship->handleRealtimeInput(commands);
 }
+
+void World::render()
+{
+    //std::cout << "World::render() - Rendering world" << std::endl;
+    // Set world view
+    //mWorldView->setViewport(mContext->mWorldView.getViewport());
+    mWindow->setView(*mWorldView);
+    // Draw on world view
+    drawView(*mWorldView);
+    mWindow->draw(mContext->mWorldRect);
+    // Set minimap view
+    mWindow->setView(*mMiniMapView);
+    // Draw on minimap view
+    mWindow->draw(mContext->mMapRect);
+    //
+    // Set hud view
+    mWindow->setView(mContext->mHudView);
+    // Draw on hud view
+    mWindow->draw(mContext->mHudRect);
+    mSpaceship->drawHUD(*mWindow);
+
+}
+
+void World::drawView(sf::View &view)
+{
+    // Draw background
+    mWindow->draw(mBackground);
+    // Draw stars
+    mStarGenerator->draw(*mWindow);
+    // Draw mountains
+    mMountains->draw(*mWindow);
+    //Draw enemies
+    mSpaceship->draw(*mWindow);
+}

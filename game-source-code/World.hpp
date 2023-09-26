@@ -36,6 +36,10 @@ class World
         void loadTextures();
         void initEnemies();
         void initpowerUps();
+
+        void drawView(sf::View &view);
+        void drawEnemies(sf::RenderTarget &target);
+        void drawPowerUps(sf::RenderTarget &target);
         std::shared_ptr<CommandQueue> mCommandQueue;
         std::unique_ptr<StarGenerator> mStarGenerator;
         std::unique_ptr<Player> mSpaceship;
@@ -43,7 +47,6 @@ class World
         
         std::vector <std::unique_ptr<Lander>> mLanders; // This is the vector that will hold all the landers that the player shoots out.
         std::vector<std::unique_ptr<Entity>> mEntities; // This is the vector that will hold all the entities that the player can collide with, unique_ptr because we want to transfer ownership of the entity objects to the world.
-        //std::vector<std::unique_ptr<Humanoid>> mHumanoids; // This is the vector that will hold all the humanoids that the player can collide with, unique_ptr because we want to transfer ownership of the humanoid objects to the world.
         std::vector<std::unique_ptr<PowerUp>> mPowerUps; // This is the vector that will hold all the powerUps that the player can collide with, unique_ptr because we want to transfer ownership of the powerUp objects to the world.
 
         Context *mContext;
@@ -57,7 +60,6 @@ class World
         sf::Text mText;
         sf::RectangleShape mBackground;
         sf::Clock mWorldClock;
-        //sf::RectangleShape separatorLine;
         float mScrollSpeed;
 
 };
