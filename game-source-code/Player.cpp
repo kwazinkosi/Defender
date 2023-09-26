@@ -178,6 +178,57 @@ void Player::shoot()
 
 void Player::updateInput(sf::Time deltaTime)
 {
+    static int shootTimer = 0;
+    bool isHorizontalAccelerating = false;
+    while (!mCommandQueue->isEmpty())
+    {
+        Command command = mCommandQueue->pop();
+
+        setAnimation(command, isHorizontalAccelerating);
+
+        if (command.category == Category::Player)
+        {
+            if (command.action == Action::MoveLeft)
+            {
+                
+                moveLeft(deltaTime);
+            }
+            else if (command.action == Action::MoveRight)
+            {
+                moveRight(deltaTime);
+            }
+            else if (command.action == Action::MoveUp)
+            {
+                moveUp(deltaTime);
+            }
+            else if (command.action == Action::MoveDown)
+            {
+                moveDown(deltaTime);
+            }
+            else if (command.action == Action::Shoot)
+            {
+                //  Shoot
+                shootTimer++;
+                if (shootTimer >= 5)
+                {
+                    shoot();
+                    shootTimer = 0;
+                }
+            }
+            else if (command.action == Action::FlipShip)
+            {
+                flipShip();
+            }
+            else
+            {
+                std::cout << "Player::update() -- Command action is not valid" << std::endl;
+            }
+        }
+        else
+        {
+            std::cout << "Player::update() -- Command category is not player" << std::endl;
+        }
+    }
 }
 
 void Player::moveLeft(sf::Time deltaTime)
@@ -238,4 +289,19 @@ void Player::initPlayer()
     this->sprite.setTexture(this->texture);
     mMovementSpeed = 100.f;
     mCollisionType = CollisionType::Player;
+}
+
+void Player::flipShip()
+{
+    isLeft = !isLeft;
+    auto position = mAnimation->getPosition();
+ 
+    if (isLeft)
+    {
+        changeAnimation(position, sf::Vector2i(0, 6), sf::Vector2i(22, 6), 4, sf::seconds(0.2f), true);
+    }
+    else
+    {
+        changeAnimation(position, sf::Vector2i(0, 0), sf::Vector2i(22, 6), 4, sf::seconds(0.2f), true);
+    }
 }
