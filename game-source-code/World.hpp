@@ -31,10 +31,27 @@ class World
 
 
     private:
+        void loadTextures();
+        void initEnemies();
+        void initpowerUps();
         std::shared_ptr<CommandQueue> mCommandQueue;
         std::unique_ptr<StarGenerator> mStarGenerator;
         std::unique_ptr<Player> mSpaceship;
         std::unique_ptr<Mountains> mMountains;
+        
+        Context *mContext;
+        sf::RenderWindow *mWindow;
+        sf::View *mWorldView;
+        sf::View *mMiniMapView;
+        sf::FloatRect mWorldBounds;
+        sf::Vector2f mPlayerSpawnPosition;
+        sf::Texture mMountainTexture;
+        sf::Sprite mMountainSprite;
+        sf::Text mText;
+        sf::RectangleShape mBackground;
+        sf::Clock mWorldClock;
+        //sf::RectangleShape separatorLine;
+        float mScrollSpeed;
 
 };
 #endif // WORLD_HPP
