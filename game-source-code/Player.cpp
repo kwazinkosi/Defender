@@ -413,6 +413,68 @@ void Player::OnDestroy()
     mDestroyed = true;
 }
 
+void Player::setAnimation(Command command, bool &isHorizontalAccelerating)
+{
+    if (command.action == Action::MoveLeft || command.action == Action::MoveRight)
+    {
+        isHorizontalAccelerating = true;
+    }
+
+    // Change animation based on acceleration and direction
+    auto position = mAnimation->getPosition();
+    if (!isHorizontalAccelerating && !isSetDefault)
+    {
+        // Spaceship is not accelerating horizontally
+        changeAnimation(position, sf::Vector2i(0, isLeft ? 6 : 0), sf::Vector2i(22, 6), 2, sf::seconds(0.2f), true);
+        isSetDefault = true;
+        isSetAccelerate = false;
+    }
+    else if (isHorizontalAccelerating && !isSetAccelerate)
+    {
+        // Spaceship is accelerating horizontally
+        changeAnimation(position, sf::Vector2i(0, isLeft ? 6 : 0), sf::Vector2i(22, 6), 4, sf::seconds(0.2f), true);
+        isSetAccelerate = true;
+        isSetDefault = false;
+    }
+}
+
+void Player::setFuelBar()
+{
+    if (mCurrFuel <= 0.f)
+    {
+        mCurrFuel = 0.f;
+    }
+    
+    mFuelBar.setSize(sf::Vector2f(mFuelBarBackground.getSize().x - 1.45*(mMaxFuel - mCurrFuel), mFuelBar.getSize().y));
+}
+
+void Player::setFuel(float fuel)
+{
+    mCurrFuel = fuel;
+}
+
+ENTITYTYPE Player::getEntityType() const
+{
+    return mEntityType;
+}
+
+void Player::shoot()
+{
+    auto bulletPos = mAnimation->getPosition();
+    if (isLeft)
+    {
+        bulletPos.x += 10.f;
+    }
+    else
+    {
+        bulletPos.x += 88.f;
+    }
+    bulletPos.y += 18.f;
+   
+    mProjectiles.push_back(std::make_unique<Projectile>(bulletPos, (isLeft ? sf::Vector2f(-1.f, 0) : sf::Vector2f(1.f, 0)), 300.f, ProjectileType::PlayerBullet));
+    
+}
+
 void Player::flipShip()
 {
     isLeft = !isLeft;
