@@ -39,41 +39,50 @@ Player::Player(Context &context, sf::Vector2f position)
 Player::~Player()
 {
 }
+void Player::updateBullets(sf::Time deltaTime)
+{
+    for (size_t i = 0; i < mProjectiles.size(); i++)
+    {
+        mProjectiles[i]->update(deltaTime);
+        if (mProjectiles[i]->isDestroyed())
+        {
+            mProjectiles.erase(mProjectiles.begin() + i);
+        }
+    }
+
+    // remove projectiles that are out of bounds
+    for (std::size_t i = 0; i < mProjectiles.size(); i++)
+    {
+        mProjectiles[i]->update(deltaTime);
+        if ((mProjectiles[i]->getSprite().getPosition().x < 0) || (mProjectiles[i]->getSprite().getPosition().x > 800) || (mProjectiles[i]->getSprite().getPosition().y < 0) || (mProjectiles[i]->getSprite().getPosition().y > 600))
+        {
+            mProjectiles.erase(mProjectiles.begin() + i);
+        }
+    }
+}
 
 void Player::update(sf::Time deltaTime)
-{   
-    
-    sf::Vector2f movement(0.f, 0.f);
+{
 
-    switch (mPlayerState)
+    if (!isDestroyed())
     {
-        case PLAYERSTATE::IDLE:
-            break;
-        case PLAYERSTATE::MOVINGRIGHT:
-            movement.x += mPlayerSpeed;
-            break;
-        case PLAYERSTATE::MOVINGLEFT:
-            movement.x -= mPlayerSpeed;
-            break;
-        case PLAYERSTATE::MOVINGUP:
-            movement.y -= mPlayerSpeed;
-            break;
-        case PLAYERSTATE::MOVINGDOWN:
-            movement.y += mPlayerSpeed;
-            break;
-        case PLAYERSTATE::SHOOTING:
-            //shoot();
-            break;
-        case PLAYERSTATE::DEAD:
-            //to do
-            break;
-        default:
-            break;
+        mAnimation->update(deltaTime);
+        updateInput(deltaTime);
+        updateBullets(deltaTime);
+        onCollision(); // check for collision with other entities
     }
-    
-    mPlayer.move( 2.f*movement * deltaTime.asSeconds());
-    ScreenCollision();
-    //mAnimator->update(deltaTime);
+
+    if (mCurrFuel <= 0.f)
+    {
+        mCurrFuel = 0.f;
+        crashShip(deltaTime);
+        isDestroyed();
+    }
+
+    if(isDestroyed())
+    {
+        //std::cout << "Player::update() -- Player destroyed." << std::endl;
+    }
 }
 
 void Player::drawPlayer(sf::RenderWindow &window)
@@ -257,6 +266,108 @@ void Player::shoot(sf::Time deltaTime)
     mProjectiles.push_back(std::make_unique<Projectile>(bulletPos, (isLeft ? sf::Vector2f(-1.f, 0) : sf::Vector2f(1.f, 0)), 300.f, ProjectileType::PlayerBullet));
 }
 
+void Player::draw(sf::RenderTarget &target)
+{
+    target.draw(mAnimation->getSprite());
+    for (auto &bullet : mProjectiles)
+    {
+        target.draw(bullet->getSprite());
+    }
+}
+
+void Player::handleInput(CommandQueue &commands, sf::Event &event)
+{
+    // Handle player input
+
+    if (event.type == sf::Event::KeyReleased)
+    {
+        // flip spaceship
+        if (event.key.code == sf::Keyboard::F)
+        {
+            Command command(Action::FlipShip, Category::Player);
+            commands.push(command);
+        }
+    }
+
+    if(event.type == sf::Event::KeyPressed)
+    {
+        // if all 8 directions are pressed , decrease mCurrentfuel
+        if ((event.key.code == sf::Keyboard::Left || event.key.code == sf::Keyboard::Right) || 
+        (event.key.code == sf::Keyboard::Up || event.key.code == sf::Keyboard::Down) || 
+        (event.key.code == sf::Keyboard::A || event.key.code == sf::Keyboard::D) ||
+        (event.key.code == sf::Keyboard::W || event.key.code == sf::Keyboard::S))
+        {
+            mCurrFuel -= mFuelBurnRate;
+            setFuelBar();
+        }
+    }
+    mCommandQueue = &commands; // set command queue pointer to commands passed in by reference
+}
+
+void Player::handleRealtimeInput(CommandQueue &commands)
+{
+    // Handle realtime input
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+    {
+        // Move left
+        Command command(Action::MoveLeft, Category::Player);
+        commands.push(command);
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+    {
+        // Move right
+        Command command(Action::MoveRight, Category::Player);
+        commands.push(command);
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+    {
+        // Move up
+        Command command(Action::MoveUp, Category::Player);
+        commands.push(command);
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+    {
+        // Move down
+        Command command(Action::MoveDown, Category::Player);
+        commands.push(command);
+    }
+    // handle shooting
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+    {
+        // Shoot
+        Command command(Action::Shoot, Category::Player);
+        commands.push(command);
+    }
+
+    mCommandQueue = &commands; // set command queue pointer to commands passed in by reference
+}
+
+void Player::onCollision()
+{
+    // handle collision with the screen
+    screenCollision();
+
+    // player collides with other entity
+    for (auto &collidable : collidables)
+    {
+        if (collissionCheck(collidable.get()))
+        {
+           // std::cout << "Player::onCollision() -- Player collided with other entity." << std::endl;
+            if ((collidable->getEntityType() == ENTITYTYPE::ENEMY) || (collidable->getEntityType() == ENTITYTYPE::ASTEROID) 
+            || (collidable->getEntityType() == ENTITYTYPE::MINEBOMB) || (collidable->getEntityType() == ENTITYTYPE::PROJECTILE))
+            {
+                // player collided with enemy, asteroid, minebomb or projectile so destroy player
+                OnDestroy(); // destroy player
+            }
+            else if (collidable->getEntityType() == ENTITYTYPE::POWERUP)
+            {
+                // player collided with powerup
+                setHealth(100); // set player health to 100
+                setFuel(100.f); // set player fuel to 100
+            }
+        }
+    }
+}
 
 void Player::screenCollision()
 {
@@ -291,6 +402,93 @@ void Player::initPlayer()
     mCollisionType = CollisionType::Player;
 }
 
+bool Player::collissionCheck(Entity *other)
+{
+    return getBounds().intersects(other->getBounds()); // Check if the player collides with the other entity.
+}
+
+sf::FloatRect Player::getBounds() const
+{
+    return mAnimation->getSprite().getGlobalBounds();
+}
+
+void Player::move(float x, float y)
+{
+    mAnimation->move(x, y);
+}
+
+void Player::OnDestroy()
+{
+    mDestroyed = true;
+}
+
+void Player::setAnimation(Command command, bool &isHorizontalAccelerating)
+{
+    if (command.action == Action::MoveLeft || command.action == Action::MoveRight)
+    {
+        isHorizontalAccelerating = true;
+    }
+
+    // Change animation based on acceleration and direction
+    auto position = mAnimation->getPosition();
+    if (!isHorizontalAccelerating && !isSetDefault)
+    {
+        // Spaceship is not accelerating horizontally
+        changeAnimation(position, sf::Vector2i(0, isLeft ? 6 : 0), sf::Vector2i(22, 6), 2, sf::seconds(0.2f), true);
+        isSetDefault = true;
+        isSetAccelerate = false;
+    }
+    else if (isHorizontalAccelerating && !isSetAccelerate)
+    {
+        // Spaceship is accelerating horizontally
+        changeAnimation(position, sf::Vector2i(0, isLeft ? 6 : 0), sf::Vector2i(22, 6), 4, sf::seconds(0.2f), true);
+        isSetAccelerate = true;
+        isSetDefault = false;
+    }
+}
+
+void Player::setFuelBar()
+{
+    if (mCurrFuel <= 0.f)
+    {
+        mCurrFuel = 0.f;
+    }
+    
+    mFuelBar.setSize(sf::Vector2f(mFuelBarBackground.getSize().x - 1.45*(mMaxFuel - mCurrFuel), mFuelBar.getSize().y));
+}
+
+void Player::setFuel(float fuel)
+{
+    mCurrFuel = fuel;
+}
+
+float Player::getFuel()
+{
+    return mCurrFuel;
+}
+
+ENTITYTYPE Player::getEntityType() const
+{
+    return mEntityType;
+}
+
+void Player::shoot()
+{
+    auto bulletPos = mAnimation->getPosition();
+    if (isLeft)
+    {
+        bulletPos.x += 10.f;
+    }
+    else
+    {
+        bulletPos.x += 88.f;
+    }
+    bulletPos.y += 18.f;
+   
+    mProjectiles.push_back(std::make_unique<Projectile>(bulletPos, (isLeft ? sf::Vector2f(-1.f, 0) : sf::Vector2f(1.f, 0)), 300.f, ProjectileType::PlayerBullet));
+    
+}
+
 void Player::flipShip()
 {
     isLeft = !isLeft;
@@ -305,3 +503,35 @@ void Player::flipShip()
         changeAnimation(position, sf::Vector2i(0, 0), sf::Vector2i(22, 6), 4, sf::seconds(0.2f), true);
     }
 }
+
+void Player::drawHUD(sf::RenderTarget &target)
+{
+    target.draw(mFuelBarBackground);
+    target.draw(mFuelBar);
+    target.draw(mFuelBarText);
+}
+
+sf::Vector2f Player::getPlayerPosition() const
+{
+    return mAnimation->getPosition();
+}
+
+std::vector<std::unique_ptr<Projectile>> &Player::getBullets()
+{
+    return mProjectiles;
+}
+
+void Player::crashShip(sf::Time deltaTime)
+{
+    if (mCurrFuel <= 0.f)
+    {
+        mCurrFuel = 0.f;
+        mAnimation->move(0.f, 100.f * deltaTime.asSeconds());
+        if(mAnimation->getSprite().getPosition().y >= mContext->mBottomBound - mAnimation->getSprite().getGlobalBounds().height)
+        {
+            mAnimation->setPosition(sf::Vector2f(mAnimation->getPosition().x, mContext->mBottomBound - mAnimation->getSprite().getGlobalBounds().height));
+            OnDestroy();
+        }
+    }
+}
+

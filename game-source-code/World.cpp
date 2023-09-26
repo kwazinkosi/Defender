@@ -203,5 +203,5 @@ void World::updateCollisions()
 
 std::pair<bool, int> World::gameOver() const
 {
-    
+
 }

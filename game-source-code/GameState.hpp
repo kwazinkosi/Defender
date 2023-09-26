@@ -6,6 +6,7 @@
 #include "Player.hpp"
 #include "Context.hpp"   
 #include "PauseState.hpp"
+#include "GameOverState.hpp"
 #include "MainMenuState.hpp"
 
 //this is the game state class. It is the state where the game is played, only player 1 is active in this state.
