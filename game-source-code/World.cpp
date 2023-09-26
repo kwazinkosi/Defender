@@ -194,7 +194,6 @@ void World::drawPowerUps(sf::RenderTarget &target)
 
 void World::onCollission()
 {
-    
         // Check if player collides with lander
     for (auto &lander : mLanders)
     {
@@ -202,15 +201,6 @@ void World::onCollission()
         if (mSpaceship->getBounds().intersects(lander->getBounds()))
         {
             std::cout << "World::onCollission() - Player collided with lander" << std::endl;
-            /*auto lives =mSpaceship->getLives();
-            if(lives > 0)
-            {
-                mSpaceship->setLives(lives - 1);
-            }
-            else
-            {
-                mSpaceship->OnDestroy(); // Destroy player
-            }*/
             mSpaceship->OnDestroy(); // Destroy player
             return;
         }
@@ -222,20 +212,50 @@ void World::onCollission()
             {
                 std::cout << "World::onCollission() - Player collided with lander missile" << std::endl;
                 lander->getMissiles()[i]->OnDestroy(); // Destroy missile
-                /*auto lives =mSpaceship->getLives();
-                if(lives > 0)
-                {
-                    mSpaceship->setLives(lives - 1);
-                }
-                else
-                {
-                    mSpaceship->OnDestroy(); // Destroy player
-                }*/
                 mSpaceship->OnDestroy(); // Destroy player
                 return;
             }
         }
     }
+
+    // Check if player collides with powerup
+    for (auto &powerUp : mPowerUps)
+    {
+        if (mSpaceship->getBounds().intersects(powerUp->getBounds()))
+        {
+            std::cout << "World::onCollission() - Player collided with powerUp" << std::endl;
+            powerUp->OnDestroy(); // Destroy powerUp
+            mSpaceship->setFuel(100.f);
+        }
+    }
+    // Check if Lander collides with player bullet and destroy both, player bullet and lander bullet
+    for (size_t i = 0; i < mSpaceship->getBullets().size(); i++)
+    {
+        for (auto &lander : mLanders)
+        {
+            if (mSpaceship->getBullets()[i]->getBounds().intersects(lander->getBounds()))
+            {
+                std::cout << "World::onCollission() - Player bullet collided with lander" << std::endl;
+                mSpaceship->getBullets()[i]->OnDestroy(); // Destroy bullet
+                lander->OnDestroy(); // Destroy lander
+            }
+
+            // Check if player bullet collides with lander missile
+            for (size_t j = 0; j < lander->getMissiles().size(); j++)
+            {
+                if (mSpaceship->getBullets()[i]->getBounds().intersects(lander->getMissiles()[j]->getBounds()))
+                {
+                    std::cout << "World::onCollission() - Player bullet collided with lander missile" << std::endl;
+                    mSpaceship->getBullets()[i]->OnDestroy(); // Destroy bullet
+                    lander->getMissiles()[j]->OnDestroy(); // Destroy missile
+                }
+            }
+        }
+    }
+    
+    // Check if player collides with enemy
+    // Check if player collides with asteroid
+    // Check if player collides with asteroid fragment
 }
 
 void World::updateCollisions()
