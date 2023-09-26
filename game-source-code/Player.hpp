@@ -17,7 +17,7 @@
 
 
 
-class Player: public Collidable
+class Player: public Entity
 {
     public:
         Player(Context &context, sf::Vector2f position);

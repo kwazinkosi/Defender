@@ -48,7 +48,10 @@ void World::loadTextures()
     // Set texture to repeat
     mMountainTexture.setRepeated(true);
 }
-
+void World::addEntity(std::unique_ptr<Entity> entity)
+{
+    mEntities.push_back(std::move(entity));
+}
 void World::initEnemies()
 {
     // 3 landers for now
@@ -162,6 +165,8 @@ void World::render()
     mSpaceship->drawHUD(*mWindow);
 
 }
+
+
 
 void World::drawView(sf::View &view)
 {
