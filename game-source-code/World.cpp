@@ -260,7 +260,48 @@ void World::onCollission()
 
 void World::updateCollisions()
 {
+    // Remove all destroyed landers
+    for (size_t i = 0; i < mLanders.size(); i++)
+    {
+        // Remove all destroyed lander missiles
+        for (size_t j = 0; j < mLanders[i]->getMissiles().size(); j++)
+        {
+            if (mLanders[i]->getMissiles()[j]->isDestroyed())
+            {
+                mLanders[i]->getMissiles().erase(mLanders[i]->getMissiles().begin() + j);
+                std::cout << "World::updateCollisions() - Lander missile destroyed" << std::endl;
+            }
+        }
 
+        if (mLanders[i]->isDestroyed())
+        {
+            mLanders.erase(mLanders.begin() + i);
+            std::cout << "World::updateCollisions() - Lander destroyed" << std::endl;
+        }
+        //  remove player
+    }
+
+    // Remove all destroyed player bullets
+    for (size_t i = 0; i < mSpaceship->getBullets().size(); i++)
+    {
+        if (mSpaceship->getBullets()[i]->isDestroyed())
+        {
+            mSpaceship->getBullets().erase(mSpaceship->getBullets().begin() + i);
+            std::cout << "World::updateCollisions() - Player bullet destroyed" << std::endl;
+        }
+
+    } 
+    
+    // Remove all collected powerUps
+    for (size_t i = 0; i < mPowerUps.size(); i++)
+    {
+        if (mPowerUps[i]->isDestroyed())
+        {
+            mPowerUps.erase(mPowerUps.begin() + i);
+            std::cout << "World::updateCollisions() - PowerUp destroyed" << std::endl;
+        }
+    }
+    // Remove all destroyed asteroids  
 }
 
 std::pair<bool, int> World::gameOver() const
