@@ -54,11 +54,30 @@ bool GameState::update(sf::Time dt)
 
 bool GameState::handleEvent(const sf::Event &event, sf::RenderWindow &window)
 {
+    auto ev = event;
+    auto commands = mWorld->getCommandQueue(); // get command queue from world
     
+    if (event.type == sf::Event::Closed )
+    {
+        requestStateClear(); // Clear the stack
+        window.close();      // Close the window
+    }
+    
+    if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::P )
+    {
+        pauseGame();
+        std::cout << "GameState::handleEvent() -- Paused game" << std::endl;
+    }
+    
+
+    mWorld->handleInput(*commands, ev);
+    return true; // Consume the event, don't pass it to lower states
 }
 
 void GameState::handleRealtimeInput(sf::RenderWindow &window)
 {
+    auto commands = mWorld->getCommandQueue(); // get command queue from world
+    mWorld->handleRealtimeInput(*commands);
 }
 
 std::string GameState::getStateID() const
