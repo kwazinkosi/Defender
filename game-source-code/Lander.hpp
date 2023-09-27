@@ -21,6 +21,29 @@ class Lander : public Entity
         void draw(sf::RenderTarget& target);
         void update(sf::Time deltaTime, sf::Vector2f targetPosition);
         std::vector<std::unique_ptr<Projectile>>& getMissiles();
+ 
+    private:
+        void moveDown(sf::Time deltaTime);
+        void moveUp(sf::Time deltaTime);
+        void moveLeft(sf::Time deltaTime);
+        void moveRight(sf::Time deltaTime);
+        void updateMissiles(sf::Time deltaTime);
+        Context *mContext;
+        ENEMYSTATE enemyState; // Represents the state of the Lander (e.g., IDLE, MOVING, DEAD)
+        sf::Sprite mLanderSprite;
+        sf::Clock mLanderClock;
+        sf::Clock mMissileTimer;
+        sf::Time spawnTime;
+        sf::Time fireTimer;
+        sf::Texture texture; 
+        float speed;
+        bool canShoot;
+        bool isActive;
+        bool isDown;
+        sf::Vector2f mTargetPosition;
+        std::vector<std::unique_ptr<Projectile>> mMissiles;
+        
+        sf::Clock shootClock; // Clock for tracking shooting cooldown
 };
 #endif
 
