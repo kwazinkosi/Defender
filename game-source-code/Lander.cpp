@@ -151,6 +151,86 @@ void Lander::moveDown(sf::Time deltaTime)
     }
 }
 
+void Lander::move(float x, float y)
+{
+    mLanderSprite.move(x, y);
+}
+
+sf::FloatRect Lander::getBounds() const
+{
+    return mLanderSprite.getGlobalBounds();
+}
+
+void Lander::update(sf::Time deltaTime)
+{
+
+}
+
+void Lander::fireMissile()
+ {
+    sf::Vector2f playerPosition = mTargetPosition;
+    sf::Vector2f landerPosition = mLanderSprite.getPosition();
+    float distance = std::sqrt(pow(playerPosition.x - landerPosition.x, 2) + pow(playerPosition.y - landerPosition.y, 2));
+
+    if (distance <= 200.f) {
+        sf::Vector2f missilePosition = landerPosition;
+        sf::Vector2f missileDirection = playerPosition - landerPosition;
+        float missileSpeed = 250.f;
+
+        // Normalize the missile direction vector
+        static float length = std::sqrt(missileDirection.x * missileDirection.x + missileDirection.y * missileDirection.y);
+        missileDirection.x /= length;
+        missileDirection.y /= length;
+
+        mMissiles.push_back(std::make_unique<Projectile>(missilePosition, missileDirection, missileSpeed, ProjectileType::Missile));
+    }
+}
+
+void Lander::updateMissiles(sf::Time deltaTime)
+{
+    for (int i = 0; i < int(mMissiles.size()); i++)
+    {
+        mMissiles[i]->update(deltaTime);
+         sf::Vector2f missilePosition = mMissiles[i]->getSprite().getPosition();
+        
+        
+        // Check if the missile is out of bounds and remove it if necessary
+        if (missilePosition.x < mContext->mLeftBound || missilePosition.x > mContext->mRightBound ||
+            missilePosition.y < mContext->mTopBound || missilePosition.y > mContext->mBottomBound)
+        {
+            mMissiles.erase(mMissiles.begin() + i);
+        }
+        
+    }
+}
+
+void Lander::onCollision()
+{
+    // isActive = false;
+}
+
+bool Lander::isStatic() const
+{
+    return false;
+}
+
+bool Lander::collissionCheck(Entity *other)
+{
+    return getBounds().intersects(other->getBounds());
+}
+
+ENTITYTYPE Lander::getEntityType() const
+{
+    return mEntityType;
+}
+
+void Lander::OnDestroy()
+{
+    isActive = false;
+    mDestroyed = true;
+}
+
+
 void Lander::moveUp(sf::Time deltaTime)
 {
     auto randDirX = rand() % 2;
