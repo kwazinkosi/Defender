@@ -19,7 +19,20 @@ class Lander : public Entity
         virtual ~Lander();
         void update(sf::Time deltaTime);
         void draw(sf::RenderTarget& target);
+        void onCollision();
+        bool isStatic() const;
+        bool collissionCheck(Entity* other);
+        void move(float x, float y);
+        sf::FloatRect getBounds() const;
+        void OnDestroy();
+        ENTITYTYPE getEntityType() const;
+
         void update(sf::Time deltaTime, sf::Vector2f targetPosition);
+        void initLander();
+        ENEMYSTATE getState() const;
+        void setState(ENEMYSTATE state);
+        void spawnPosition();
+        void fireMissile();
         bool isAlive() const;
         std::vector<std::unique_ptr<Projectile>>& getMissiles();
 

@@ -14,11 +14,88 @@ Lander::Lander(Context &context)
     spawnTime = mLanderClock.getElapsedTime();
     fireTimer = mMissileTimer.getElapsedTime();
 }
-
-
-
 Lander::~Lander()
 {
+}
+
+void Lander::update(sf::Time deltaTime, sf::Vector2f playerPosition)
+{
+    // Check if it's time to change direction
+    if (mLanderClock.getElapsedTime() - spawnTime >= sf::seconds(7.f))
+    {
+        // Waited for 7 seconds, change direction randomly
+        int randomDirection = rand() % 4; // 0: Up, 1: Down, 2: Left, 3: Right
+        switch (randomDirection)
+        {
+        case 0:
+            setState(ENEMYSTATE::MOVINGUP);
+            break;
+        case 1:
+            setState(ENEMYSTATE::MOVINGDOWN);
+            break;
+        case 2:
+            setState(ENEMYSTATE::MOVINGLEFT);
+            break;
+        case 3:
+            setState(ENEMYSTATE::MOVINGRIGHT);
+            break;
+        default:
+            break;
+        }
+        // Reset spawn time
+        spawnTime = mLanderClock.getElapsedTime();
+    }
+    mTargetPosition = playerPosition;
+    sf::Vector2f landerPosition = mLanderSprite.getPosition();
+    float distance = std::sqrt(pow(mTargetPosition.x - landerPosition.x, 2) + pow(mTargetPosition.y - landerPosition.y, 2));
+    //std::cout<<"distance: " << distance << std::endl;
+    updateMissiles(deltaTime);
+    if (distance <= 200.f && mMissileTimer.getElapsedTime().asSeconds() >= 5.0f)
+    {
+        fireMissile();
+        mMissileTimer.restart(); 
+    }
+    // Handle movement based on the current state
+    if (enemyState == ENEMYSTATE::MOVINGDOWN)
+    {
+        moveDown(deltaTime);
+    }
+    else if (enemyState == ENEMYSTATE::MOVINGUP)
+    {
+        moveUp(deltaTime);
+    }
+    else if (enemyState == ENEMYSTATE::MOVINGLEFT)
+    {
+        moveLeft(deltaTime);
+    }
+    else if (enemyState == ENEMYSTATE::MOVINGRIGHT)
+    {
+        moveRight(deltaTime);
+    }
+    // Check if the Lander is going out of the screen boundaries
+    const sf::Vector2f position = mLanderSprite.getPosition();
+    if (position.x < mContext->mLeftBound)
+    {
+        // check if the lander is going out of the left bound
+        mLanderSprite.setPosition(mContext->mLeftBound, position.y);
+        setState(ENEMYSTATE::MOVINGRIGHT);
+    }
+    else if (position.x  > mContext->mRightBound - mLanderSprite.getGlobalBounds().width)
+    {
+        mLanderSprite.setPosition(mContext->mRightBound - mLanderSprite.getGlobalBounds().width, position.y);
+        setState(ENEMYSTATE::MOVINGLEFT);
+    }
+    if (position.y < mContext->mTopBound)
+    {
+        // check if the lander is going out of the top bound
+        mLanderSprite.setPosition(position.x, mContext->mTopBound);
+        setState(ENEMYSTATE::MOVINGDOWN);
+    }
+    else if (position.y > mContext->mBottomBound - mLanderSprite.getGlobalBounds().height)
+    {
+        mLanderSprite.setPosition(position.x, mContext->mBottomBound - mLanderSprite.getGlobalBounds().height);
+        setState(ENEMYSTATE::MOVINGUP);
+    }
 }
 
 void Lander::moveDown(sf::Time deltaTime)
