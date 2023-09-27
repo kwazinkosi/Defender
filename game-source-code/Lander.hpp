@@ -20,19 +20,6 @@ class Lander : public Entity
         void update(sf::Time deltaTime);
         void draw(sf::RenderTarget& target);
         void update(sf::Time deltaTime, sf::Vector2f targetPosition);
-        void onCollision();
-        bool isStatic() const;
-        bool collissionCheck(Entity* other);
-        void move(float x, float y);
-        sf::FloatRect getBounds() const;
-        void OnDestroy();
-        ENTITYTYPE getEntityType() const;
-        void initLander();
-        ENEMYSTATE getState() const;
-        void setState(ENEMYSTATE state);
-        void spawnPosition();
-        void fireMissile();
-        // Function to check if the Lander is alive
         bool isAlive() const;
         std::vector<std::unique_ptr<Projectile>>& getMissiles();
 
