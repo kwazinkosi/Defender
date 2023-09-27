@@ -98,6 +98,43 @@ void Lander::update(sf::Time deltaTime, sf::Vector2f playerPosition)
     }
 }
 
+void Lander::initLander()
+{
+    texture = mContext->mTextures->getResourceById(Textures::Lander);
+    std::cout << "size: " << texture.getSize().x/5 << " " << texture.getSize().y << std::endl;
+    mLanderSprite.setTextureRect(sf::IntRect(0, 0, 26, 24));
+    mLanderSprite.setTexture(texture);
+    speed = 100.0f;
+    spawnPosition();
+}
+
+ENEMYSTATE Lander::getState() const
+{
+    return enemyState;
+}
+
+void Lander::setState(ENEMYSTATE state)
+{
+    enemyState = state;
+}
+
+void Lander::spawnPosition()
+{
+    auto randX = rand() % int (mContext->mRightBound - mLanderSprite.getGlobalBounds().width);
+    auto randY = rand() % int (mContext->mTopBound/4);
+    mLanderSprite.setPosition(static_cast<float>(randX), static_cast<float>(randY));
+}
+
+bool Lander::isAlive() const
+{
+    return isActive;
+}
+
+std::vector<std::unique_ptr<Projectile>>& Lander::getMissiles()
+{
+    return mMissiles;
+}
+
 void Lander::moveDown(sf::Time deltaTime)
 {
     auto randDirX = rand() % 2;
