@@ -28,6 +28,7 @@ void Entity::OnDestroy()
 
 void Entity::changeAnimation(sf::Vector2f position, sf::Vector2i frameStart, sf::Vector2i frameSize, std::size_t numFrames, sf::Time duration, bool repeat)
 {
+    mAnimation = std::make_unique<Animation>(&texture, position, frameStart, frameSize, numFrames, duration, repeat);
 }
 
 bool Entity::isDestroyed() const

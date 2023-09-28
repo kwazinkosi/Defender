@@ -40,7 +40,7 @@ bool GameState::update(sf::Time dt)
     //std::cout << "GameState::update() -- Updating game state" << std::endl;
    // Update the player
     auto gameResult = mWorld->update(dt);
-    std::cout << "GameState::update() -- Game result: " << gameResult.first << std::endl;
+    //std::cout << "GameState::update() -- Game result: " << gameResult.first << std::endl;
     if (gameResult.first == true)
     {
         gameOver();

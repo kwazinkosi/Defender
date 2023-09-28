@@ -173,6 +173,10 @@ void World::drawView(sf::View &view)
     // Draw mountains
     mMountains->draw(*mWindow);
     //Draw enemies
+    drawEnemies(*mWindow);
+    // Draw powerUps
+    drawPowerUps(*mWindow);
+    // Draw player
     mSpaceship->draw(*mWindow);
 }
 

@@ -110,7 +110,6 @@ void Player::updateInput(sf::Time deltaTime)
         {
             if (command.action == Action::MoveLeft)
             {
-                
                 moveLeft(deltaTime);
             }
             else if (command.action == Action::MoveRight)
@@ -128,15 +127,19 @@ void Player::updateInput(sf::Time deltaTime)
             else if (command.action == Action::Shoot)
             {
                 //  Shoot
+                
                 shootTimer++;
                 if (shootTimer >= 5)
-                {
+                {   
+
                     shoot();
                     shootTimer = 0;
                 }
             }
+            
             else if (command.action == Action::FlipShip)
             {
+                std::cout << "Player::update() -- Flipping spaceship" << std::endl;
                 flipShip();
             }
             else
@@ -189,12 +192,13 @@ void Player::draw(sf::RenderTarget &target)
 void Player::handleInput(CommandQueue &commands, sf::Event &event)
 {
     // Handle player input
-
+    std::cout << "Player::handleInput() -- Handling player input" << std::endl;
     if (event.type == sf::Event::KeyReleased)
     {
         // flip spaceship
         if (event.key.code == sf::Keyboard::F)
         {
+            std::cout << "Player::handleInput() -- Flipping spaceship" << std::endl;
             Command command(Action::FlipShip, Category::Player);
             commands.push(command);
         }
@@ -404,13 +408,14 @@ void Player::flipShip()
 {
     isLeft = !isLeft;
     auto position = mAnimation->getPosition();
- 
     if (isLeft)
     {
+        std::cout << "Player::flipShip() -- Flipping spaceship left" << std::endl;
         changeAnimation(position, sf::Vector2i(0, 6), sf::Vector2i(22, 6), 4, sf::seconds(0.2f), true);
     }
     else
     {
+        std::cout << "Player::flipShip() -- Flipping spaceship right" << std::endl;
         changeAnimation(position, sf::Vector2i(0, 0), sf::Vector2i(22, 6), 4, sf::seconds(0.2f), true);
     }
 }
