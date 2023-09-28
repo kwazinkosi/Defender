@@ -47,8 +47,6 @@ class CommandQueue
 {
     public:
         CommandQueue();
-        ~CommandQueue();
-        CommandQueue();
         void push(Command command);
         Command pop();
         bool isEmpty();

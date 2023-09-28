@@ -48,10 +48,6 @@ void World::loadTextures()
     // Set texture to repeat
     mMountainTexture.setRepeated(true);
 }
-void World::addEntity(std::unique_ptr<Entity> entity)
-{
-    mEntities.push_back(std::move(entity));
-}
 void World::initEnemies()
 {
     // 3 landers for now
@@ -324,4 +320,15 @@ std::pair<bool, int> World::gameOver() const
         return std::make_pair(true, 2);
     }
     return std::make_pair(false, -1);
+}
+
+std::shared_ptr<CommandQueue> World::getCommandQueue()
+{
+    return mCommandQueue;
+}
+
+void World::addEntity(std::unique_ptr<Entity> entity)
+{
+    std::cout << "World::addEntity() - Adding entity" << std::endl;
+    //mEntities.push_back(std::move(entity));
 }

@@ -90,4 +90,3 @@ sf::Vector2f PowerUp::spawnPosition()
     position.y = mContext->mBottomBound - 34.f;
     return position;
 }
-d
