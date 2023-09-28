@@ -91,8 +91,6 @@ void ParallelTask::loadTextures()
     mContext->mTextures->load(Textures::Humanoid, "resources/textures/humanoid.png");  
     mContext->mTextures->load(Textures::Defender, "resources/textures/defender.png");
     mContext->mTextures->load(Textures::PowerUp, "resources/textures/fuel.png");
-    mContext->mBackgrounds->load(Backgrounds::miniMapBorder, "resources/textures/miniMapBorder.png");
-    mContext->mBackgrounds->load(Backgrounds::miniMapScope, "resources/textures/worldViewScope.png");
 }
 
 void ParallelTask::loadFonts()

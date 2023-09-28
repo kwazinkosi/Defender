@@ -27,15 +27,15 @@ void LoadingState::setCompletion(float percent)
 void LoadingState::executeLoadingTask(sf::RenderWindow &window)
 {
     mBackground.setSize(sf::Vector2f(window.getSize().x, window.getSize().y));
-    mBackground.setFillColor(sf::Color(50, 50, 50, 100));
+    mBackground.setFillColor(sf::Color(50, 30, 100, 100));
     // Set the properties of the text
     
     mLoadingText.setFont(mLoadingFont);
     mLoadingString = "Loading";
     mLoadingText.setString(mLoadingString);
-   // centerOrigin(mLoadingText);
+    centerOrigin(mLoadingText);
     mLoadingText.setPosition(window.getSize().x / 2u, window.getSize().y / 2u + 50);
-
+   
     mProgressBarBackground.setFillColor(sf::Color::White);
     mProgressBarBackground.setSize(sf::Vector2f(window.getSize().x - 20, 10));
 
@@ -62,6 +62,25 @@ bool LoadingState::update(sf::Time dt)
         setCompletion(mLoadingTask.getCompletion());
     }
 
+    if (mElapsedTime >= sf::seconds(0.3f))
+    {
+        mElapsedTime = sf::Time::Zero;
+        if (mLoadingString.size() >= 15) //15 because "Loading . . . . ." is 15 characters long
+        {
+            mLoadingString = "Loading";
+        }
+        else
+        {
+            mLoadingString += "  .";
+        }
+        mLoadingText.setString(mLoadingString);
+        
+    }
+    else
+    {
+        mElapsedTime += dt;
+    }
+    
     return true;
 }
 
@@ -88,6 +107,7 @@ std::string LoadingState::getStateID() const
 void LoadingState::draw(sf::RenderWindow &window)
 {
     window.setView(window.getDefaultView());
+    window.draw(mBackground);
     window.draw(mLoadingText);
     window.draw(mProgressBarBackground);
     window.draw(mProgressBar);

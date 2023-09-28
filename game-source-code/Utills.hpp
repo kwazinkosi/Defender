@@ -53,7 +53,7 @@ enum class Textures
 };
 enum class Backgrounds
 {
-    SplashScreen,  MainMenuScreen, GameScreen, GameOverScreen, HelpScreen, OptionsScreen, ExitScreen, PauseScreen,Mountains, miniMapScope, miniMapBorder, backgroundsCount
+    SplashScreen,  MainMenuScreen, GameScreen, GameOverScreen, HelpScreen, OptionsScreen, ExitScreen, PauseScreen,Mountains, backgroundsCount
 };
 enum class Fonts
 {
