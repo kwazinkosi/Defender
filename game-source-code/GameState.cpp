@@ -61,7 +61,7 @@ bool GameState::handleEvent(const sf::Event &event, sf::RenderWindow &window)
         window.close();      // Close the window
     }
     
-    if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::P )
+    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::P)
     {
         pauseGame();
         std::cout << "GameState::handleEvent() -- Paused game" << std::endl;

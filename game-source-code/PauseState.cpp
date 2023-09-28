@@ -7,7 +7,8 @@ PauseState::PauseState(StateStack &stack, Context &context) : State(stack, conte
 
 void PauseState::draw(sf::RenderWindow &window)
 {
-     sf::Vector2u windowSize = window.getSize();
+    window.setView(window.getDefaultView()); // Reset the view to the default view (full window
+    sf::Vector2u windowSize = window.getSize();
 
     // Draw the background first
     sf::RectangleShape backgroundShape;
@@ -34,7 +35,7 @@ void PauseState::draw(sf::RenderWindow &window)
 }
 bool PauseState::update(sf::Time)
 {
-    return false;
+    return false; // Don't update the lower states
 }
 
 bool PauseState::handleEvent(const sf::Event &event, sf::RenderWindow &window)
@@ -46,7 +47,7 @@ bool PauseState::handleEvent(const sf::Event &event, sf::RenderWindow &window)
         window.close();      // Close the window
     }
 
-    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::BackSpace)
+    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::P)
     {
         requestStackPop(); // Pop the pause state
     }
