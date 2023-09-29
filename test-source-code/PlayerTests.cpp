@@ -141,4 +141,83 @@ TEST_CASE("Check if player can move up")
 
     CHECK(animation->getSprite().getPosition() == sf::Vector2f(100.f, 150.f));
 }
+TEST_CASE("Check if player can move down")
+{
+    TexturesHolder textures;
+    textures.load(Textures::Player, "resources/textures/spaceship-1.png"); // re
+   
+    sf::Texture texture;    
+    texture = textures.getResourceById(Textures::Player);
+    sf::Vector2f position(100.0f, 200.0f);
+    
+    std::unique_ptr<Animation> animation;
+    animation = std::make_unique<Animation>(&texture, position, sf::Vector2i(0, 6), sf::Vector2i(22, 6), 1, sf::seconds(0.2f), true);
+    animation->getSprite().move(0.f, 50.f);
+
+    CHECK(animation->getSprite().getPosition() == sf::Vector2f(100.f, 250.f));
+}
+
+TEST_CASE("Lander can move up")
+{
+    TexturesHolder textures;
+    textures.load(Textures::Lander, "resources/textures/lander-1.png"); // re
+   
+    sf::Texture texture;    
+    texture = textures.getResourceById(Textures::Lander);
+    sf::Vector2f position(100.0f, 200.0f);
+    
+    std::unique_ptr<Animation> animation;
+    animation = std::make_unique<Animation>(&texture, position, sf::Vector2i(0, 6), sf::Vector2i(22, 6), 1, sf::seconds(0.2f), true);
+    animation->getSprite().move(0.f, -50.f);
+
+    CHECK(animation->getSprite().getPosition() == sf::Vector2f(100.f, 150.f));
+}
+
+TEST_CASE("Lander can move down")
+{
+    TexturesHolder textures;
+    textures.load(Textures::Lander, "resources/textures/lander-1.png"); // re
+   
+    sf::Texture texture;    
+    texture = textures.getResourceById(Textures::Lander);
+    sf::Vector2f position(100.0f, 200.0f);
+    
+    std::unique_ptr<Animation> animation;
+    animation = std::make_unique<Animation>(&texture, position, sf::Vector2i(0, 6), sf::Vector2i(22, 6), 1, sf::seconds(0.2f), true);
+    animation->getSprite().move(0.f, 50.f);
+
+    CHECK(animation->getSprite().getPosition() == sf::Vector2f(100.f, 250.f));
+}
+
+TEST_CASE("Lander can move left")
+{
+    TexturesHolder textures;
+    textures.load(Textures::Lander, "resources/textures/lander-1.png"); // re
+   
+    sf::Texture texture;    
+    texture = textures.getResourceById(Textures::Lander);
+    sf::Vector2f position(100.0f, 200.0f);
+    
+    std::unique_ptr<Animation> animation;
+    animation = std::make_unique<Animation>(&texture, position, sf::Vector2i(0, 6), sf::Vector2i(22, 6), 1, sf::seconds(0.2f), true);
+    animation->getSprite().move(-50.f, 0.f);
+
+    CHECK(animation->getSprite().getPosition() == sf::Vector2f(50.f, 200.f));
+}
+
+TEST_CASE("Lander can move right")
+{
+    TexturesHolder textures;
+    textures.load(Textures::Lander, "resources/textures/lander-1.png"); // re
+   
+    sf::Texture texture;    
+    texture = textures.getResourceById(Textures::Lander);
+    sf::Vector2f position(100.0f, 200.0f);
+    
+    std::unique_ptr<Animation> animation;
+    animation = std::make_unique<Animation>(&texture, position, sf::Vector2i(0, 6), sf::Vector2i(22, 6), 1, sf::seconds(0.2f), true);
+    animation->getSprite().move(50.f, 0.f);
+
+    CHECK(animation->getSprite().getPosition() == sf::Vector2f(150.f, 200.f));
+}
 
