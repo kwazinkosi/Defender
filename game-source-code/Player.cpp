@@ -311,7 +311,7 @@ void Player::initPlayer()
     sprite.setTexture(texture);
     this->sprite.setTextureRect(sf::IntRect(0, 6, 22, 6)); // to fix
     this->sprite.setScale(2.f, 2.f);
-    this->sprite.setPosition(400.f, 300.f);
+    this->sprite.setPosition(200.f, 500.f);
     this->sprite.setTexture(this->texture);
     mMovementSpeed = 100.f;
     mCollisionType = CollisionType::Player;
