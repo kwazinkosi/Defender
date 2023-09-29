@@ -220,4 +220,53 @@ TEST_CASE("Lander can move right")
 
     CHECK(animation->getSprite().getPosition() == sf::Vector2f(150.f, 200.f));
 }
+TEST_CASE("Check if player bullets move left")
+{
+    //Projectile(sf::Vector2f position, sf::Vector2f direction, float movementSpeed, ProjectileType type);
+    Projectile projectile(sf::Vector2f(100.f, 100.f), sf::Vector2f(1.f, 0.f), 100.f, ProjectileType::PlayerBullet);
+    projectile.setMovementSpeed(100.f);
+    projectile.move(-100.f, 0.f);
+    CHECK(projectile.getPosition() == sf::Vector2f(0.f, 100.f));
+}
+
+TEST_CASE("Check if player bullets move right")
+{
+    //Projectile(sf::Vector2f position, sf::Vector2f direction, float movementSpeed, ProjectileType type);
+    Projectile projectile(sf::Vector2f(100.f, 100.f), sf::Vector2f(1.f, 0.f), 100.f, ProjectileType::PlayerBullet);
+    projectile.setMovementSpeed(100.f);
+    projectile.move(100.f, 0.f);
+    CHECK(projectile.getPosition() == sf::Vector2f(200.f, 100.f));
+}
+
+TEST_CASE("Check if lander missile can move up")
+{
+    Projectile projectile(sf::Vector2f(100.f, 100.f), sf::Vector2f(1.f, 0.f), 100.f, ProjectileType::Missile);
+    projectile.setMovementSpeed(100.f);
+    projectile.move(0.f, -100.f);
+    CHECK(projectile.getPosition() == sf::Vector2f(100.f, 0.f));
+}
+
+TEST_CASE("Check if lander missile can move down")
+{
+    Projectile projectile(sf::Vector2f(100.f, 100.f), sf::Vector2f(1.f, 0.f), 100.f, ProjectileType::Missile);
+    projectile.setMovementSpeed(100.f);
+    projectile.move(0.f, 100.f);
+    CHECK(projectile.getPosition() == sf::Vector2f(100.f, 200.f));
+}
+
+TEST_CASE("Check if lander missile can move left")
+{
+    Projectile projectile(sf::Vector2f(100.f, 100.f), sf::Vector2f(1.f, 0.f), 100.f, ProjectileType::Missile);
+    projectile.setMovementSpeed(100.f);
+    projectile.move(-100.f, 0.f);
+    CHECK(projectile.getPosition() == sf::Vector2f(0.f, 100.f));
+}
+
+TEST_CASE("Check if lander missile can move right")
+{
+    Projectile projectile(sf::Vector2f(100.f, 100.f), sf::Vector2f(1.f, 0.f), 100.f, ProjectileType::Missile);
+    projectile.setMovementSpeed(100.f);
+    projectile.move(100.f, 0.f);
+    CHECK(projectile.getPosition() == sf::Vector2f(200.f, 100.f));
+}
 
