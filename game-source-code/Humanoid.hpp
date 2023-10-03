@@ -7,6 +7,7 @@
 #include <SFML/Audio.hpp>
 #include <memory>
 #include <iostream>
+#include "Animation.hpp"
 #include "Utills.hpp"
 #include "Context.hpp"
 #include "Entity.hpp"
@@ -34,10 +35,14 @@ class Humanoid: public Entity
         };
         // Functions
         void initHumanoid();
+        sf::Vector2f spawnPosition();
         // Objects
         Context* mContext;
         // Variables
+        sf::Clock mHumanoidClock;
+        sf::Time mHumanoidTime;
         sf::Vector2f mPosition;
+        State mCurrentAnimation;
         bool mIsKidnapped;
         bool mIsRescued;
         bool mIsReleased;
