@@ -86,10 +86,84 @@ void Humanoid::draw(sf::RenderTarget& target)
 
 void Humanoid::freeFall(sf::Time deltaTime)
 {
-    //std::cout << "Humanoid::freeFall() -- Free falling" << std::endl;
     mPosition.y += 4.9f*mGravity* deltaTime.asSeconds() * deltaTime.asSeconds();
     animation[static_cast<int>(mCurrentAnimation)].move(mPosition.x, mPosition.y);
     sprite.setPosition(mPosition);
-    // check if the humanoid has reached the ground
-    
+    // check if the humanoid has reached the ground   
+}
+
+void Humanoid::setKidnapped(bool kidnapped)
+{
+    //std::cout << "Humanoid::setKidnapped() -- Setting kidnapped to: " << (kidnapped ? "true" : "false") << std::endl;
+    mIsKidnapped = kidnapped;
+    if (mIsKidnapped)
+    {
+        mCurrentAnimation = State::KIDNAPPED;
+    }
+}
+
+void Humanoid::setRescued(bool rescued)
+{
+    mIsRescued = rescued;
+    if (mIsRescued)
+    {
+        mCurrentAnimation = State::RESCUED;
+    }
+}
+
+void Humanoid::setReleased(bool released)
+{
+    mIsReleased = released;
+    if (mIsReleased)
+    {
+        mCurrentAnimation = State::RELEASED;
+    }
+}
+
+void Humanoid::setShotDown(bool shot)
+{
+    isShot = shot;
+}
+
+bool Humanoid::isKidnapped() const
+{
+    return mIsKidnapped;
+}
+
+bool Humanoid::isRescued() const
+{
+    return mIsRescued;
+}
+
+bool Humanoid::isReleased() const
+{
+    return mIsReleased;
+}
+
+bool Humanoid::isShotDown() const
+{
+    return isShot;
+}
+
+sf::Vector2f Humanoid::getPosition() const
+{
+    return mPosition;
+}
+
+bool Humanoid::isAbductionSuccess() const
+{
+    return mIsAbductionSuccess;
+}
+
+void Humanoid::setHumanoidPosition(float x, float y)
+{
+    mPosition.x = x;
+    mPosition.y = y;
+    sprite.setPosition(mPosition);
+    animation[static_cast<int>(mCurrentAnimation)].move(mPosition.x, mPosition.y);
+}
+
+void Humanoid::setAbductionSuccess(bool success)
+{
+    mIsAbductionSuccess = success;
 }
