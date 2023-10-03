@@ -45,7 +45,6 @@ class Animation
         std::size_t mCurrentFrame;
         sf::Time mDuration;  // How long the animation lasts
         sf::Time mElapsedTime;
-        sf::Vector2f mPosition;
         bool mRepeat;
 
 };
