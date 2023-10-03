@@ -39,10 +39,57 @@ void Humanoid::initHumanoid()
     //sprite.setOrigin(getBounds().width / 2.f, getBounds().height / 2.f);
     mPosition = spawnPosition();
     setPosition(mPosition);
+    // Set animations
+    animation[static_cast<int>(State::IDLE)] = Animation(&texture, sf::Vector2i(0, 0), sf::Vector2i(15, 32), 1, sf::seconds(0.2f), true);
+    animation[static_cast<int>(State::MOVINGRIGHT)] = Animation(&texture, sf::Vector2i(0, 0), sf::Vector2i(15, 32), 4, sf::seconds(0.3f), true);
+    animation[static_cast<int>(State::MOVINGLEFT)] = Animation(&texture, sf::Vector2i(0, 0), sf::Vector2i(15, 32), 4, sf::seconds(0.3f), true);
+    animation[static_cast<int>(State::KIDNAPPED)] = Animation(&texture, sf::Vector2i(0, 32), sf::Vector2i(15, 32), 4, sf::seconds(0.3f), true); 
+    animation[static_cast<int>(State::RESCUED)] = Animation(&texture, sf::Vector2i(15, 32), sf::Vector2i(15, 32), 2, sf::seconds(0.3f), true);
+    animation[static_cast<int>(State::RELEASED)] = Animation(&texture, sf::Vector2i(0, 32), sf::Vector2i(15, 32), 4, sf::seconds(0.3f), true);
     // Set movement speed
     setMovementSpeed((rand() % 25)*2 + 20.f); 
+    std::cout << "Humanoid::initHumanoid() -- Humanoid initialized at position: " << getPosition().x << ", " << getPosition().y << std::endl;
+    // Flip the MovingRight animation when moving left
+    animation[static_cast<int>(State::MOVINGLEFT)].setScale(-0.7f, 1.f);
+    animation[static_cast<int>(State::MOVINGLEFT)].setPosition(getPosition());
+    animation[static_cast<int>(State::MOVINGRIGHT)].setScale(0.7f, 1.f);
+    animation[static_cast<int>(State::IDLE)].setScale(0.7f, 1.f);
+    animation[static_cast<int>(State::KIDNAPPED)].setScale(0.7f, 1.f);
+    animation[static_cast<int>(State::RESCUED)].setScale(0.7f, 1.f);
+    animation[static_cast<int>(State::RELEASED)].setScale(0.7f, 1.f);
+
 }
+
 sf::Vector2f Humanoid::spawnPosition()
 {
+    // Spawn at random position 
+    auto multiplier = rand() % 4 + 1.f; 
+    auto x = (rand() % 38)*5.f*multiplier + 20.f; // 38 * 5*4
+    auto y = mContext->mBottomBound - 32.f - 10.f;
+    auto position = sf::Vector2f(x, y);
+    std::cout << "Humanoid::spawnPosition() -- Bounding box: " << sprite.getGlobalBounds().width << ", " << sprite.getGlobalBounds().height << std::endl;
+    return position;
+}
 
+void Humanoid::update(sf::Time deltaTime)
+{
+    updatePosition(deltaTime);
+    animation[static_cast<int>(mCurrentAnimation)].move(mPosition.x, mPosition.y);
+    animation[static_cast<int>(mCurrentAnimation)].update(deltaTime);
+    setPosition(animation[static_cast<int>(mCurrentAnimation)].getPosition());
+}
+
+void Humanoid::draw(sf::RenderTarget& target)
+{
+    animation[static_cast<int>(mCurrentAnimation)].draw(target);
+}
+
+void Humanoid::freeFall(sf::Time deltaTime)
+{
+    //std::cout << "Humanoid::freeFall() -- Free falling" << std::endl;
+    mPosition.y += 4.9f*mGravity* deltaTime.asSeconds() * deltaTime.asSeconds();
+    animation[static_cast<int>(mCurrentAnimation)].move(mPosition.x, mPosition.y);
+    sprite.setPosition(mPosition);
+    // check if the humanoid has reached the ground
+    
 }
