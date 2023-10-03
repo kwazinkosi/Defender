@@ -84,6 +84,72 @@ void Humanoid::draw(sf::RenderTarget& target)
     animation[static_cast<int>(mCurrentAnimation)].draw(target);
 }
 
+void Humanoid::updatePosition(sf::Time deltaTime)
+{
+    mHumanoidTime += deltaTime;
+    auto distanceMoved = 0.f; // distance moved so far
+    
+    if (mHumanoidTime.asSeconds() >= mDirectionTime)
+    {
+        mHumanoidTime = sf::Time::Zero;
+        direction = rand() % 2; // 0 = left, 1 = right
+        distance = (rand() % 50)*4 + 50.f;
+    }
+    else 
+    {
+        if(!mIsKidnapped && !mIsRescued && !mIsReleased)
+        {
+            mCurrentAnimation = static_cast<State>(direction + 1);
+            if (mCurrentAnimation == State::MOVINGLEFT)
+            {
+                if (mPosition.x <= 0.f || distanceMoved >= distance)
+                {
+                    direction = 1; // change direction to right
+                    distance = (rand() % 50)*4 + 50.f;
+                    distanceMoved = 0.f;
+                }
+                else
+                {
+                    // Keep moving left
+                    mPosition.x -= mMovementSpeed * deltaTime.asSeconds();
+                    distanceMoved += mMovementSpeed * deltaTime.asSeconds();
+                }
+            }
+            else if (mCurrentAnimation == State::MOVINGRIGHT)
+            {
+                if (mPosition.x >= 768.f || distanceMoved >= distance)
+                {
+                    direction = 0; // change direction to left
+                    distance = rand() % 50 + 50;
+                    distanceMoved = 0.f;
+                }
+                else
+                {
+                    // Keep moving right
+                    mPosition.x += mMovementSpeed * deltaTime.asSeconds();
+                    distanceMoved += mMovementSpeed * deltaTime.asSeconds(); // distance moved so far
+                }
+            }
+        }
+        else if (mIsKidnapped)
+        {
+            mCurrentAnimation = State::KIDNAPPED;
+        }
+        else if (mIsRescued)
+        {
+            mCurrentAnimation = State::RESCUED;
+        }
+        else if (mIsReleased)
+        {
+            std::cout << "Humanoid::updatePosition() -- Released" << std::endl;
+            mCurrentAnimation = State::RELEASED;
+            freeFall(deltaTime);
+        }
+        animation[static_cast<int>(mCurrentAnimation)].move(mPosition.x, mPosition.y);
+        sprite.setPosition(mPosition);
+    }
+}
+
 void Humanoid::freeFall(sf::Time deltaTime)
 {
     mPosition.y += 4.9f*mGravity* deltaTime.asSeconds() * deltaTime.asSeconds();
@@ -166,4 +232,26 @@ void Humanoid::setHumanoidPosition(float x, float y)
 void Humanoid::setAbductionSuccess(bool success)
 {
     mIsAbductionSuccess = success;
+}
+
+void Humanoid::OnDestroyAll()
+{
+    std::cout << "Humanoid::OnDestroyAll() -- Destroying all humanoid references" << std::endl;
+    
+    mIsDead = true;
+}
+
+bool Humanoid::isDead() const
+{
+    return mIsDead;
+}
+
+void Humanoid::onCollision()
+{
+    std::cout << "Humanoid::onCollision() -- Humanoid collided." << std::endl;
+}
+
+ENTITYTYPE Humanoid::getEntityType() const
+{
+    return ENTITYTYPE::HUMANOID;
 }
