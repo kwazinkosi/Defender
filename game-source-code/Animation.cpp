@@ -47,11 +47,6 @@ void Animation::setPosition(sf::Vector2f position)
     this->mSprite.setPosition(position);
 }
 
-void Animation::setRepeat(bool repeat)
-{
-    this->mRepeat = repeat;
-}
-
 bool Animation::isFinished() const
 {
     if(mCurrentFrame >= mNumFrames)
@@ -66,14 +61,35 @@ sf::Sprite& Animation::getSprite()
     return mSprite;
 }
 
-void Animation::setPosition(sf::Vector2f position)
+sf::FloatRect Animation::getBounds() const
 {
-    this->mSprite.setPosition(position);
+    return mSprite.getGlobalBounds();
 }
 
 sf::Vector2f Animation::getPosition() const
 {
     return this->mSprite.getPosition();
+}
+
+void Animation::draw(sf::RenderTarget &target)
+{
+    target.draw(this->mSprite);
+}
+
+void Animation::move(float x, float y)
+{
+    this->mSprite.move(x, y);
+}
+
+void Animation::setAnimation(sf::Vector2i frameStart, sf::Vector2i frameSize, std::size_t numFrames, sf::Time duration, bool repeat)
+{
+    this->mFrameStart = frameStart;
+    this->mFrameSize = frameSize;
+    this->mNumFrames = numFrames;
+    this->mCurrentFrame = 0;
+    this->mDuration = duration;
+    this->mElapsedTime = sf::Time::Zero;
+    this->mRepeat = repeat;
 }
 
 void Animation::update(sf::Time deltaTime)
@@ -105,30 +121,37 @@ void Animation::setTextureRectToStart(sf::IntRect& textureRect)
     textureRect = sf::IntRect(mFrameStart.x, mFrameStart.y, mFrameSize.x, mFrameSize.y);
 }
 
-sf::FloatRect Animation::getBounds() const
+void Animation::updateFrameAndTextureRect(sf::IntRect& textureRect, const sf::Vector2i& textureBounds, const sf::Time& timePerFrame)
 {
-    return mSprite.getGlobalBounds();
+    textureRect.left += textureRect.width;
+    if (textureRect.left + textureRect.width > textureBounds.x)
+    {
+        textureRect.left = 0;
+        textureRect.top += textureRect.height;
+    }
+
+    mElapsedTime -= timePerFrame;
+
+    if (mRepeat)
+    {
+        mCurrentFrame = (mCurrentFrame + 1) % mNumFrames;
+        if (mCurrentFrame == 0)
+        {
+            setTextureRectToStart(textureRect);
+        }
+    }
+    else
+    {
+        mCurrentFrame++;
+    }
 }
 
-void Animation::draw(sf::RenderTarget &target)
+void Animation::updateCurrentFrame()
 {
-    target.draw(this->mSprite);
+    // Increment the current frame by 1
+    if (!mRepeat && mCurrentFrame >= mNumFrames)
+    {
+        mCurrentFrame = mNumFrames - 1;
+    }
 }
 
-void Animation::setAnimation(sf::Vector2i frameStart, sf::Vector2i frameSize, std::size_t numFrames, sf::Time duration, bool repeat)
-{
-    this->mFrameStart = frameStart;
-    this->mFrameSize = frameSize;
-    this->mNumFrames = numFrames;
-    this->mCurrentFrame = 0;
-    this->mDuration = duration;
-    this->mElapsedTime = sf::Time::Zero;
-    this->mRepeat = repeat;
-}
-
-
-
-void Animation::move(float x, float y)
-{
-    this->mSprite.move(x, y);
-}
