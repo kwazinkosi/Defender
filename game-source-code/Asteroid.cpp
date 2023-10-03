@@ -48,3 +48,68 @@ void Asteroid::update(sf::Time deltaTime)
         std::cout << "Asteroid::update() -- Asteroid destroyed." << std::endl;
     }
 }
+
+void Asteroid::draw(sf::RenderTarget &target)
+{
+    target.draw(sprite);
+}
+
+bool Asteroid::isStatic() const
+{
+    return false;
+}
+
+ENTITYTYPE Asteroid::getEntityType() const
+{
+    return ENTITYTYPE::ASTEROID;
+}
+
+bool Asteroid::collissionCheck(Entity *other)
+{
+    return getBounds().intersects(other->getBounds()); // Check if the Asteroid collides with the other entity.
+}
+
+void Asteroid::onCollision()
+{
+}
+
+void Asteroid::onDestroy()
+{
+    mDestroyed = true;
+}
+
+bool Asteroid::isDestroyed() const
+{
+    return mDestroyed;
+}
+
+AsteroidData Asteroid::getData()
+{
+    AsteroidData data;
+    data.position = spawnPosition();
+    data.velocity = generateAstroidVelocity();
+    data.spawnTime = sf::seconds(float(rand() % 3 + 2));
+    data.sprite = generateAstroidSize((rand() % 4 + 1) / 2.f);
+    return data;
+}
+
+void Asteroid::setData(AsteroidData data)
+{
+    mData = data;
+}
+
+sf::Vector2f Asteroid::spawnPosition()
+{
+    sf::Vector2f position;
+    position.x = (rand() % int(mContext->mWorldView.getSize().x/5.f))*5.f - 50.f;
+    position.y = ((mContext->mWorldView.getCenter().y - mContext->mWorldView.getSize().y / 2.f) - 100.f);
+    if (position.x < 50.f)
+    {
+        position.x = 50.f;
+    }
+    if (position.x > mContext->mWorldView.getSize().x - 50.f)
+    {
+        position.x = mContext->mWorldView.getSize().x - 50.f;
+    }
+    return position;
+}
