@@ -113,3 +113,58 @@ sf::Vector2f Asteroid::spawnPosition()
     }
     return position;
 }
+
+sf::Sprite Asteroid::generateAstroidSize(float scale)
+{
+    sf::Sprite sprite;
+    sprite.setScale(scale, scale);
+    return sprite;
+}
+
+sf::Vector2f Asteroid::generateAstroidVelocity()
+{
+    // Generate random velocity
+    int randNumx = rand() % 5;
+    int randNumy = rand() % 5;
+    sf::Vector2f velocity;
+    if (randNumx == 1)
+    {
+        velocity.y = float(rand() % 50 + 50) * 1.f;
+    }
+    else if (randNumy == 0)
+    {
+        velocity.y = float((rand() % 50)*2 + 50);
+    }
+    else
+    {
+        velocity.y = 50.f;
+    }
+
+    if (randNumx == 1)
+    {
+        velocity.x = float(rand() % 10 + 10) * -1.f;
+    }
+    else if (randNumx == 0)
+    {
+        velocity.x = float(rand() % 10 + 10);
+    }
+    else
+    {
+        velocity.x = 0;
+    }
+
+    return velocity;
+}
+
+void Asteroid::moveDown(sf::Time deltaTime)
+{
+    sf::Vector2f position = mData.position;
+    // Get star velocity
+    sf::Vector2f velocity = mData.velocity;
+    // Move star
+    position += velocity * deltaTime.asSeconds();
+    // Set star position
+    mData.position = position;
+    sprite.setPosition(mData.position); 
+
+}
