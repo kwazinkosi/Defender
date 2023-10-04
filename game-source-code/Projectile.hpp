@@ -29,9 +29,7 @@ class Projectile: public Entity
         void initProjectile();
         void update(sf::Time deltaTime);
         void draw(sf::RenderTarget& target); 
-        bool isStatic() const;
         ENTITYTYPE getEntityType() const; 
-        bool collissionCheck(Entity* other);
         void onCollision();
 
         void onDestroy();
@@ -44,16 +42,13 @@ class Projectile: public Entity
         ProjectileType getProjectileType() const;
         bool isGuided() const; // Returns true if the projectile is guided.
 
-
     private:
         void updateCurrent(sf::Time deltaTime); // Updates the projectile's state.-+
-        //void update(sf::Time deltaTimem, CommandQueue &commandQueue);
         void drawCurrent(sf::RenderTarget& target);
         // Objects
         // Variables
         ProjectileType mProjectileType;
-        sf::Vector2f mProjectileDirection; // The direction the projectile is moving in.
-        
+        sf::Vector2f mProjectileDirection; // The direction the projectile is moving in.    
 };
 
 #endif // PROJECTILE_HPP

@@ -17,6 +17,7 @@ class PowerUp: public Entity
     public:
         PowerUp(Context &context, sf::Vector2f position);
         ~PowerUp();
+        // Functions
         void initPowerUp();
         void update(sf::Time deltaTime);
         void draw(sf::RenderTarget& target); 

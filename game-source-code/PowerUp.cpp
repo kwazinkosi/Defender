@@ -23,7 +23,6 @@ void PowerUp::initPowerUp()
     sprite.setPosition(spawnPosition());
     mLifeTime = float(rand() % 10) + 10.f;
     sprite.setScale(0.5f, 0.5f);
-    setCollisionType(CollisionType::PowerUp);
 }
 
 void PowerUp::update(sf::Time deltaTime)
@@ -37,10 +36,6 @@ void PowerUp::update(sf::Time deltaTime)
     }
 
     onCollision();
-    if(isDestroyed())
-    {
-    }
-
 }
 
 void PowerUp::draw(sf::RenderTarget& target)

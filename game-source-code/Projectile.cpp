@@ -26,7 +26,6 @@ void Projectile::initProjectile()
             throw "ERROR::PROJECTILE::INITTEXTURE::Could not load texture file.";
         }
         // initialize the collidables vector
-        mCollisionType = CollisionType::Projectile;
     }
     else if (mProjectileType == ProjectileType::EnemyBullet)
     {
@@ -35,7 +34,6 @@ void Projectile::initProjectile()
             throw "ERROR::PROJECTILE::INITTEXTURE::Could not load texture file.";
         }
         // initialize the collidables vector
-        mCollisionType = CollisionType::Projectile;
     }
     else if (mProjectileType == ProjectileType::Missile)
     {
@@ -44,7 +42,6 @@ void Projectile::initProjectile()
             throw "ERROR::PROJECTILE::INITTEXTURE::Could not load texture file.";
         }
         // initialize the collidables vector
-        mCollisionType = CollisionType::Projectile;
     }
     
     sprite.setTexture(texture);
@@ -80,11 +77,6 @@ void Projectile::draw(sf::RenderTarget& target)
     //std::cout << "Projectile::draw() -- Projectile drawn." << std::endl;
 }
 
-bool Projectile::isStatic() const
-{
-    return false;
-}
-
 ENTITYTYPE Projectile::getEntityType() const
 {
     return ENTITYTYPE::PROJECTILE;
@@ -94,12 +86,6 @@ void Projectile::onCollision()
 {
 
 }
-
-bool Projectile::collissionCheck(Entity* other)
-{
-    return getBounds().intersects(other->getBounds()); // Check if the projectile collides with the other entity.
-}
-
 
 void Projectile::onDestroy()
 {
