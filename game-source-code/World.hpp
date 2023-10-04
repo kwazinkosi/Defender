@@ -43,7 +43,7 @@ class World
         void updateEnemies(sf::Time deltaTime);
         void updateAsteroids(sf::Time deltaTime);
         void updatePowerUps(sf::Time deltaTime);
-
+        sf::Vector2f SpawnPosition();
         void drawView(sf::View &view);
         void drawEnemies(sf::RenderTarget &target);
         void drawAsteroids(sf::RenderTarget &target);
