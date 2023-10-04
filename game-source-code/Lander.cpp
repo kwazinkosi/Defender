@@ -8,7 +8,17 @@ Lander::Lander(Context &context)
 , canShoot(true)
 , isActive(true)
 , isDown(true)
+, mKidnapping(false)
+, mIsSeeking(false)
+, mTargetPosition(0.f, 0.f)
+, mPosition(position)
+, mCurrentAnimation(LANDERSTATE::IDLE)
 {
+    randDirX = float(rand() % 2);
+    randSpeedX = rand() % int(speed) / 3;
+    randSpeedY = rand() % int(speed) / 2 + speed / 2;
+    directionTime = rand() % 1 + 2.f;
+    mTargetHumanoid =std::make_shared<Humanoid>(context);
     std::cout << "Lander::Lander() -- Lander created." << std::endl;
     initLander();
     spawnTime = mLanderClock.getElapsedTime();
@@ -16,6 +26,7 @@ Lander::Lander(Context &context)
 }
 Lander::~Lander()
 {
+    std::cout << "Lander::~Lander() -- Lander destroyed." << std::endl;
 }
 
 void Lander::update(sf::Time deltaTime, sf::Vector2f playerPosition)

@@ -6,8 +6,6 @@
 
 int main()
 {
-
-    
    srand(time(NULL)); // seed the random number generator
     try
     {
