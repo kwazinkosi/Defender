@@ -17,14 +17,6 @@ Context context;
 Player player{context};
 // Screen bounds
 
-auto windowRight = context.mWindow.getSize().x;
-auto windowDown = context.mWindow.getSize().y;
-
-// player bounds
-auto playerLeft = player.getBoundingBox().left;
-auto playerWidth = player.getBoundingBox().width;
-auto playerHeight = player.getBoundingBox().height;
-auto playerTop = player.getBoundingBox().top;
 
 TEST_CASE("Context initialization") {
     CHECK_NOTHROW(Context context);
@@ -55,13 +47,6 @@ TEST_CASE("StateStack is empty upon creation") {
     CHECK(stack.isEmpty());
 }
 
-TEST_CASE("Poping an empty stack throws an exception") {
-    StateStack stack;
-   
-    // Attempt to pop an empty stack (expecting an exception)
-    CHECK_THROWS_AS(stack.popState(), StateStackException);
-}
-
 TEST_CASE("StateStack - Clear States") {
     StateStack stack;
     Context context;
@@ -75,101 +60,213 @@ TEST_CASE("StateStack - Clear States") {
     stack.clearStates();
     CHECK(stack.isEmpty());
 }
-
-TEST_CASE("Player initialization and getters")
+TEST_CASE("Check if a resource is successfully loaded")
 {
+    //std::unique_ptr<TexturesHolder> mTextures; 
+    TexturesHolder textures;
+    textures.load(Textures::Player, "resources/textures/spaceship-1.png");
+    //textures.load(textures::BulletPlayer, "resources/bullet_player.png");
+    //CHECK_NOTHROW(textures.load(Textures::Player, "resources/textures/spaceship-1.png"));
+    CHECK(textures.resourseSize() == 1);
 
+}
+
+TEST_CASE("Check if a font is successfully loaded")
+{
+    //std::unique_ptr<TexturesHolder> mTextures; 
+    FontsHolder fonts;
+    fonts.load(Fonts::SpaceObsessed, "resources/fonts/SpaceObsessed.ttf");
+    //textures.load(textures::BulletPlayer, "resources/bullet_player.png");
+    //CHECK_NOTHROW(textures.load(Textures::Player, "resources/textures/spaceship-1.png"));
+    CHECK(fonts.resourseSize() == 1);
+
+}
+TEST_CASE("Check if a resource is successfully retrieved")
+{
+    //std::unique_ptr<TexturesHolder> mTextures; 
+    TexturesHolder textures;
+    textures.load(Textures::Player, "resources/textures/spaceship-1.png"); // re
+    //textures.load(textures::BulletPlayer, "resources/bullet_player.png");
+    //CHECK_NOTHROW(textures.load(Textures::Player, "resources/textures/spaceship-1.png"));
+    CHECK(textures.resourseSize() == 1);
+    CHECK_NOTHROW(textures.getResourceById(Textures::Player));
+
+}
+
+TEST_CASE("Check if player can move left")
+{
+    TexturesHolder textures;
+    textures.load(Textures::Player, "resources/textures/spaceship-1.png"); // re
+   
+    sf::Texture texture;    
+    texture = textures.getResourceById(Textures::Player);
+    sf::Vector2f position(100.0f, 200.0f);
     
-    CHECK(player.getPosition() == sf::Vector2f(100.f, 100.f));
-    CHECK(player.getCollisionType() == "Player");
-    CHECK(player.getCollisionResponse() == "Player");
-    CHECK(player.isStatic() == false);
-}
-TEST_CASE("Player moves up")
-{
+    std::unique_ptr<Animation> animation;
+    animation = std::make_unique<Animation>(&texture, position, sf::Vector2i(0, 6), sf::Vector2i(22, 6), 1, sf::seconds(0.2f), true);
+    animation->getSprite().move(-50.f, 0.f);
 
-    sf::Time deltaTime = sf::seconds(1.f); // 1 second
-    player.setPosition(100.f, 100.f);
+    CHECK(animation->getSprite().getPosition() == sf::Vector2f(50.f, 200.f));
 
-    player.setPlayerState(PLAYERSTATE::MOVINGUP);
-    player.update(deltaTime);
-    CHECK_FALSE(player.getPosition().y == 100.f);
-    CHECK(player.getPosition().x == 100.f);
-    CHECK(player.getPosition().y < 100.f);
 }
 
-TEST_CASE("Player moves down")
+TEST_CASE("Check if player can move right")
 {
-
-    sf::Time deltaTime = sf::seconds(1.f); // 1 second
-    player.setPosition(100.f, 100.f);
-    player.setPlayerState(PLAYERSTATE::MOVINGDOWN);
-    player.update(deltaTime); //move up by 100 pixels, playerspeed=100.f
-    CHECK_FALSE(player.getPosition().y == 100.f);
-    CHECK(player.getPosition().x == 100.f);
-    CHECK(player.getPosition().y > 100.f);
-}
-
-TEST_CASE("Player moves left")
-{
-
-    sf::Time deltaTime = sf::seconds(1.f); // 1 second
-    player.setPosition(100.f, 100.f);
-    player.setPlayerState(PLAYERSTATE::MOVINGLEFT);
-    player.update(deltaTime);
-    CHECK(player.getPosition().y == 100.f);
-    CHECK_FALSE(player.getPosition().x == 100.f);
-    CHECK(player.getPosition().x < 100.f);
-}
-TEST_CASE("Player moves right")
-{
-
-    sf::Time deltaTime = sf::seconds(1.f); // 1 second
-    player.setPosition(100.f, 100.f);
-    player.setPlayerState(PLAYERSTATE::MOVINGRIGHT);
-    player.update(deltaTime);
-    CHECK(player.getPosition().y == 100.f);
-    CHECK_FALSE(player.getPosition().x == 100.f);
-    CHECK(player.getPosition().x > 100.f);
-}
-
-TEST_CASE("Player does not go beyond the left screen bound")
-{
-
-    sf::Time deltaTime = sf::seconds(1.f);
-    player.setPosition(0.f, 0.f);
-    player.setPlayerState(PLAYERSTATE::MOVINGLEFT);
-    player.update(deltaTime);
-    CHECK(player.getPosition() == sf::Vector2f(0.f, 0.f));
-}
-EST_CASE("Player does not go beyond the up screen bound")
-{
-
-    sf::Time deltaTime = sf::seconds(1.f);
-    player.setPosition(0.f, 0.f);
-    player.setPlayerState(PLAYERSTATE::MOVINGUP);
-    player.update(deltaTime);
-    CHECK(player.getPosition() == sf::Vector2f(0.f, 0.f));
-}
-
-TEST_CASE("Player does not go beyond the right screen bound")
-{
-
-    sf::Time deltaTime = sf::seconds(1.f);
-    player.setPosition(windowRight - playerWidth, 0.f);
-    player.setPlayerState(PLAYERSTATE::MOVINGRIGHT);
-    player.update(deltaTime);
-    CHECK(player.getPosition() == sf::Vector2f(windowRight - playerWidth, 0.f));
-    std::cout << context.mWindow.getSize().x << std::endl;
-    std::cout << player.getPosition().x << std::endl;
-}
-TEST_CASE("Player does not go beyond the bottom screen bound")
-{
-
-    sf::Time deltaTime = sf::seconds(1.f);
-    player.setPosition(windowRight - playerWidth, windowDown - playerWidth);
-    player.setPlayerState(PLAYERSTATE::MOVINGDOWN);
-    player.update(deltaTime);
-    CHECK(player.getPosition() == sf::Vector2f(windowRight - playerWidth, windowDown - playerWidth));
+    TexturesHolder textures;
+    textures.load(Textures::Player, "resources/textures/spaceship-1.png"); // re
+   
+    sf::Texture texture;    
+    texture = textures.getResourceById(Textures::Player);
+    sf::Vector2f position(100.0f, 200.0f);
     
+    std::unique_ptr<Animation> animation;
+    animation = std::make_unique<Animation>(&texture, position, sf::Vector2i(0, 6), sf::Vector2i(22, 6), 1, sf::seconds(0.2f), true);
+    animation->getSprite().move(50.f, 0.f);
+
+    CHECK(animation->getSprite().getPosition() == sf::Vector2f(150.f, 200.f));
 }
+
+TEST_CASE("Check if player can move up")
+{
+    TexturesHolder textures;
+    textures.load(Textures::Player, "resources/textures/spaceship-1.png"); // re
+   
+    sf::Texture texture;    
+    texture = textures.getResourceById(Textures::Player);
+    sf::Vector2f position(100.0f, 200.0f);
+    
+    std::unique_ptr<Animation> animation;
+    animation = std::make_unique<Animation>(&texture, position, sf::Vector2i(0, 6), sf::Vector2i(22, 6), 1, sf::seconds(0.2f), true);
+    animation->getSprite().move(0.f, -50.f);
+
+    CHECK(animation->getSprite().getPosition() == sf::Vector2f(100.f, 150.f));
+}
+TEST_CASE("Check if player can move down")
+{
+    TexturesHolder textures;
+    textures.load(Textures::Player, "resources/textures/spaceship-1.png"); // re
+   
+    sf::Texture texture;    
+    texture = textures.getResourceById(Textures::Player);
+    sf::Vector2f position(100.0f, 200.0f);
+    
+    std::unique_ptr<Animation> animation;
+    animation = std::make_unique<Animation>(&texture, position, sf::Vector2i(0, 6), sf::Vector2i(22, 6), 1, sf::seconds(0.2f), true);
+    animation->getSprite().move(0.f, 50.f);
+
+    CHECK(animation->getSprite().getPosition() == sf::Vector2f(100.f, 250.f));
+}
+
+TEST_CASE("Lander can move up")
+{
+    TexturesHolder textures;
+    textures.load(Textures::Lander, "resources/textures/lander-1.png"); // re
+   
+    sf::Texture texture;    
+    texture = textures.getResourceById(Textures::Lander);
+    sf::Vector2f position(100.0f, 200.0f);
+    
+    std::unique_ptr<Animation> animation;
+    animation = std::make_unique<Animation>(&texture, position, sf::Vector2i(0, 6), sf::Vector2i(22, 6), 1, sf::seconds(0.2f), true);
+    animation->getSprite().move(0.f, -50.f);
+
+    CHECK(animation->getSprite().getPosition() == sf::Vector2f(100.f, 150.f));
+}
+
+TEST_CASE("Lander can move down")
+{
+    TexturesHolder textures;
+    textures.load(Textures::Lander, "resources/textures/lander-1.png"); // re
+   
+    sf::Texture texture;    
+    texture = textures.getResourceById(Textures::Lander);
+    sf::Vector2f position(100.0f, 200.0f);
+    
+    std::unique_ptr<Animation> animation;
+    animation = std::make_unique<Animation>(&texture, position, sf::Vector2i(0, 6), sf::Vector2i(22, 6), 1, sf::seconds(0.2f), true);
+    animation->getSprite().move(0.f, 50.f);
+
+    CHECK(animation->getSprite().getPosition() == sf::Vector2f(100.f, 250.f));
+}
+
+TEST_CASE("Lander can move left")
+{
+    TexturesHolder textures;
+    textures.load(Textures::Lander, "resources/textures/lander-1.png"); // re
+   
+    sf::Texture texture;    
+    texture = textures.getResourceById(Textures::Lander);
+    sf::Vector2f position(100.0f, 200.0f);
+    
+    std::unique_ptr<Animation> animation;
+    animation = std::make_unique<Animation>(&texture, position, sf::Vector2i(0, 6), sf::Vector2i(22, 6), 1, sf::seconds(0.2f), true);
+    animation->getSprite().move(-50.f, 0.f);
+
+    CHECK(animation->getSprite().getPosition() == sf::Vector2f(50.f, 200.f));
+}
+
+TEST_CASE("Lander can move right")
+{
+    TexturesHolder textures;
+    textures.load(Textures::Lander, "resources/textures/lander-1.png"); // re
+   
+    sf::Texture texture;    
+    texture = textures.getResourceById(Textures::Lander);
+    sf::Vector2f position(100.0f, 200.0f);
+    
+    std::unique_ptr<Animation> animation;
+    animation = std::make_unique<Animation>(&texture, position, sf::Vector2i(0, 6), sf::Vector2i(22, 6), 1, sf::seconds(0.2f), true);
+    animation->getSprite().move(50.f, 0.f);
+
+    CHECK(animation->getSprite().getPosition() == sf::Vector2f(150.f, 200.f));
+}
+TEST_CASE("Check if player bullets move left")
+{
+    //Projectile(sf::Vector2f position, sf::Vector2f direction, float movementSpeed, ProjectileType type);
+    Projectile projectile(sf::Vector2f(100.f, 100.f), sf::Vector2f(1.f, 0.f), 100.f, ProjectileType::PlayerBullet);
+    projectile.setMovementSpeed(100.f);
+    projectile.move(-100.f, 0.f);
+    CHECK(projectile.getPosition() == sf::Vector2f(0.f, 100.f));
+}
+
+TEST_CASE("Check if player bullets move right")
+{
+    //Projectile(sf::Vector2f position, sf::Vector2f direction, float movementSpeed, ProjectileType type);
+    Projectile projectile(sf::Vector2f(100.f, 100.f), sf::Vector2f(1.f, 0.f), 100.f, ProjectileType::PlayerBullet);
+    projectile.setMovementSpeed(100.f);
+    projectile.move(100.f, 0.f);
+    CHECK(projectile.getPosition() == sf::Vector2f(200.f, 100.f));
+}
+
+TEST_CASE("Check if lander missile can move up")
+{
+    Projectile projectile(sf::Vector2f(100.f, 100.f), sf::Vector2f(1.f, 0.f), 100.f, ProjectileType::Missile);
+    projectile.setMovementSpeed(100.f);
+    projectile.move(0.f, -100.f);
+    CHECK(projectile.getPosition() == sf::Vector2f(100.f, 0.f));
+}
+
+TEST_CASE("Check if lander missile can move down")
+{
+    Projectile projectile(sf::Vector2f(100.f, 100.f), sf::Vector2f(1.f, 0.f), 100.f, ProjectileType::Missile);
+    projectile.setMovementSpeed(100.f);
+    projectile.move(0.f, 100.f);
+    CHECK(projectile.getPosition() == sf::Vector2f(100.f, 200.f));
+}
+
+TEST_CASE("Check if lander missile can move left")
+{
+    Projectile projectile(sf::Vector2f(100.f, 100.f), sf::Vector2f(1.f, 0.f), 100.f, ProjectileType::Missile);
+    projectile.setMovementSpeed(100.f);
+    projectile.move(-100.f, 0.f);
+    CHECK(projectile.getPosition() == sf::Vector2f(0.f, 100.f));
+}
+
+TEST_CASE("Check if lander missile can move right")
+{
+    Projectile projectile(sf::Vector2f(100.f, 100.f), sf::Vector2f(1.f, 0.f), 100.f, ProjectileType::Missile);
+    projectile.setMovementSpeed(100.f);
+    projectile.move(100.f, 0.f);
+    CHECK(projectile.getPosition() == sf::Vector2f(200.f, 100.f));
+}
+

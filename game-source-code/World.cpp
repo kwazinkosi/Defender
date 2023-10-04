@@ -33,6 +33,8 @@ World::World(Context &context)
         mMountains = std::make_unique<Mountains>(context, true, 100.f, posY);
         initpowerUps();
         std::cout << "World::World() - World created" << std::endl;
+        mHighScoreManager = std::make_unique<HighScoreManager>();
+        initAsteroid();
     }
     catch (std::exception &e)
     {
@@ -59,6 +61,39 @@ void World::initEnemies()
     }
     // Add landers to the player's collidable list
 }
+sf::Vector2f World::SpawnPosition()
+{
+    sf::Vector2f position;
+    position.x = rand() % int(mContext->mWorldView.getSize().x);
+    position.y = ((mContext->mWorldView.getCenter().y - mContext->mWorldView.getSize().y / 2.f) - 100.f);
+    if(position.x < 50.f)
+    {
+        position.x = 50.f;
+    }
+    if(position.x > mContext->mWorldView.getSize().x - 50.f)
+    {
+        position.x = mContext->mWorldView.getSize().x - 50.f;
+    }
+    return position;
+}
+void World::initAsteroid()
+{
+    std::cout << "World::initEnemies() - Creating Asteroid" << std::endl;
+    // Asteroid position should start at the top of the screen
+    
+    for (int i = 0; i < 5; i++)
+    {
+        
+        auto position = SpawnPosition();
+        auto asteroid = std::make_unique<Asteroid>(*mContext, position);
+        mAsteroids.push_back(std::move(asteroid));
+    }
+    std::cout<<"World::initAsteroid() - Asteroid created"<<std::endl;
+
+    // clear asteroids beyond the bottom screen
+         
+    std::cout << "world::initAsteroid() - Done clearing asteroids" << std::endl;
+}
 void World::initpowerUps()
 {
     std::cout << "World::initpowerUps() - Creating powerUp" << std::endl;
@@ -80,7 +115,7 @@ void World::handleRealtimeInput(CommandQueue &commands)
     // Handle player realtime input
     mSpaceship->handleRealtimeInput(commands);
 }
-std::pair<bool, int> World::update(sf::Time deltaTime)
+Data World::update(sf::Time deltaTime)
 {
     // mWorldView->move(-100.f * deltaTime.asSeconds(), 0.f);
     // Update star generator
@@ -96,6 +131,7 @@ std::pair<bool, int> World::update(sf::Time deltaTime)
     // update Enemies
     // std::cout << "World::update() - Updating enemies" << std::endl;
     updateEnemies(deltaTime);
+    updateAsteroids(deltaTime);
     onCollission();
     updateCollisions();
     // Check if game is over
@@ -112,6 +148,26 @@ void World::updateEnemies(sf::Time deltaTime)
         // std::cout << "World::updateEnemies() - Updating lander" << std::endl;
         lander->update(deltaTime, mSpaceship->getPlayerPosition());
         // Check if lander is collides with player bullets
+    }
+}
+
+void World::updateAsteroids(sf::Time deltaTime)
+{
+    for (auto &asteroid : mAsteroids)
+    {
+        asteroid->update(deltaTime);
+    }
+    //std::cout << "Asteroids left: " << mAsteroids.size() << std::endl;   
+    if(mAsteroids.empty())
+    {
+        initAsteroid();
+    }   
+
+    if(mAsteroids.size() < 5)
+    {
+        auto position = SpawnPosition();
+        auto asteroid = std::make_unique<Asteroid>(*mContext, position);
+        mAsteroids.push_back(std::move(asteroid));
     }
 }
 
@@ -174,6 +230,8 @@ void World::drawView(sf::View &view)
     mMountains->draw(*mWindow);
     //Draw enemies
     drawEnemies(*mWindow);
+    // Draw asteroids
+    drawAsteroids(*mWindow);
     // Draw powerUps
     drawPowerUps(*mWindow);
     // Draw player
@@ -185,6 +243,14 @@ void World::drawEnemies(sf::RenderTarget &target)
     for (auto &lander : mLanders)
     {
         lander->draw(target);
+    }
+}
+
+void World::drawAsteroids(sf::RenderTarget &target)
+{
+    for (auto &asteroid : mAsteroids)
+    {
+        asteroid->draw(target);
     }
 }
 
@@ -231,6 +297,21 @@ void World::onCollission()
             std::cout << "World::onCollission() - Player collided with powerUp" << std::endl;
             powerUp->OnDestroy(); // Destroy powerUp
             mSpaceship->setFuel(100.f);
+        }
+    }
+
+    // check if player collides with asteroid
+    for (auto &asteroid : mAsteroids)
+    {
+        if (mSpaceship->getBounds().intersects(asteroid->getBounds()))
+        {
+            //auto data = asteroid->getData();
+             
+            mSpaceship->OnDestroy();
+            asteroid->OnDestroy();
+            //data.spawnTime = sf::seconds(0.f);
+            //asteroid->setData(data);
+            return;
         }
     }
     // Check if Lander collides with player bullet and destroy both, player bullet and lander bullet
@@ -296,6 +377,16 @@ void World::updateCollisions()
         }
 
     } 
+
+    // remove all destroyed asteroids
+    for (size_t i = 0; i < mAsteroids.size(); i++)
+    {
+        if (mAsteroids[i]->isDestroyed())
+        {
+            mAsteroids.erase(mAsteroids.begin() + i);
+        }
+        
+    }
     
     // Remove all collected powerUps
     for (size_t i = 0; i < mPowerUps.size(); i++)
