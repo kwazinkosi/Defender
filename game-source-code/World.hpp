@@ -18,6 +18,9 @@
 #include "Context.hpp"
 #include "Entity.hpp"
 #include "PowerUp.hpp"
+#include "Score.hpp"
+#include "HighScoreManager.hpp"
+#include "Asteroid.hpp"
 
 
 class World
@@ -36,12 +39,14 @@ class World
         void loadTextures();
         void initEnemies();
         void initpowerUps();
-
+        void initAsteroid();
         void updateEnemies(sf::Time deltaTime);
+        void updateAsteroids(sf::Time deltaTime);
         void updatePowerUps(sf::Time deltaTime);
 
         void drawView(sf::View &view);
         void drawEnemies(sf::RenderTarget &target);
+        void drawAsteroids(sf::RenderTarget &target);
         void drawPowerUps(sf::RenderTarget &target);
         
         void onCollission(); // handle collission
@@ -51,8 +56,9 @@ class World
         std::unique_ptr<StarGenerator> mStarGenerator;
         std::unique_ptr<Player> mSpaceship;
         std::unique_ptr<Mountains> mMountains;
-        
+        std::unique_ptr<HighScoreManager> mHighScoreManager;
         std::vector <std::unique_ptr<Lander>> mLanders; // This is the vector that will hold all the landers that the player shoots out.
+        std::vector <std::unique_ptr<Asteroid>> mAsteroids;
         std::vector<std::unique_ptr<Entity>> mEntities; // This is the vector that will hold all the entities that the player can collide with, unique_ptr because we want to transfer ownership of the entity objects to the world.
         std::vector<std::unique_ptr<PowerUp>> mPowerUps; // This is the vector that will hold all the powerUps that the player can collide with, unique_ptr because we want to transfer ownership of the powerUp objects to the world.
 

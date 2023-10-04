@@ -3,6 +3,6 @@
 
 enum class States
 {
-    LoadingState, SplashState, MainMenuState, GameState, PauseState, GameOverState, HelpState,  ExitState
+    LoadingState, SplashState, MainMenuState, GameState, PauseState, GameOverState, HelpState, ScoreState,  ExitState
 };
 #endif
