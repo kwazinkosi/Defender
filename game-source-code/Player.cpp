@@ -213,7 +213,7 @@ void Player::shoot(sf::Time deltaTime)
 
 void Player::draw(sf::RenderTarget &target)
 {
-    target.draw(mAnimation->getSprite());
+    mAnimation[static_cast<int>(mCurrentAnimation)].draw(target);
     for (auto &bullet : mProjectiles)
     {
         target.draw(bullet->getSprite());
@@ -296,22 +296,29 @@ void Player::onCollision()
 
 void Player::screenCollision()
 {
-    if (mAnimation->getPosition().x < mLeftBound)
+    mAnimation[static_cast<int>(mCurrentAnimation)].setPosition(getPosition());
+    if (getPosition().x < mLeftBound)
     {
-        mAnimation->setPosition(sf::Vector2f(mLeftBound, mAnimation->getPosition().y));
+        std::cout << "Player::onCollision() -- Player collided with left bound -- mLeftBound: " << mLeftBound << " | mRightBound: " << mRightBound << std::endl;
+        setPosition(sf::Vector2f(mLeftBound, getPosition().y));
     }
-    else if (mAnimation->getPosition().x > mRightBound - mAnimation->getSprite().getGlobalBounds().width)
+    else if (getPosition().x > mRightBound - getBounds().width)
     {
-         mAnimation->setPosition(sf::Vector2f(mRightBound- mAnimation->getSprite().getGlobalBounds().width, mAnimation->getPosition().y));
+        std::cout << "Player::onCollision() -- Player collided with right bound -- mLeftBound: " << mLeftBound << " | mRightBound: " << mRightBound << std::endl;
+        setPosition(sf::Vector2f(mRightBound- getBounds().width, getPosition().y));
     }
     
-    if (mAnimation->getPosition().y < mTopBound)
+    if (getPosition().y < mTopBound)
     {
-         mAnimation->setPosition(sf::Vector2f(mAnimation->getPosition().x, mTopBound));
+        std::cout << "Player::onCollision() -- Player position: " << getPosition().y << std::endl;
+         std::cout << "Player::onCollision() -- Player collided with top bound -- mTopBound: " << mTopBound << " | mBottomBound: " << mBottomBound << std::endl;
+        setPosition(sf::Vector2f(getPosition().x, mTopBound));
     }
-    else if (mAnimation->getPosition().y > mBottomBound - mAnimation->getSprite().getGlobalBounds().height)
+    
+    else if (getPosition().y > mBottomBound - getBounds().height)
     {
-        mAnimation->setPosition(sf::Vector2f(mAnimation->getPosition().x, mBottomBound - mAnimation->getSprite().getGlobalBounds().height));
+        std::cout << "Player::onCollision() -- Player collided with bottom bound -- mTopBound: " << mTopBound << " | mBottomBound: " << mBottomBound << std::endl;
+        setPosition(sf::Vector2f(getPosition().x, mBottomBound - getBounds().height));
     }
 }
 
@@ -362,9 +369,45 @@ float Player::getFuel() const
     return mCurrFuel;
 }
 
+void Player::setLives(int lives)
+{
+    mLives = lives;
+    std::cout << "Player::setLives() -- Lives remaining: " << mLives << std::endl;
+}
+
+void Player::addHumanoid(std::shared_ptr<Humanoid> humanoid)
+{
+    if (humanoid != nullptr) {
+        mHumanoids.push_back(humanoid);
+        std::cout << "Player::addHumanoid() -- Humanoids size: " << mHumanoids.size() << std::endl;
+    }
+    else
+    {
+        std::cout << "Player::addHumanoid() -- Humanoid is null." << std::endl;
+    }
+}
+
+void Player::removeHumanoid(std::shared_ptr<Humanoid> humanoid)
+{
+    if (humanoid != nullptr)
+    {
+        mHumanoids.erase(std::remove(mHumanoids.begin(), mHumanoids.end(), humanoid), mHumanoids.end());
+        std::cout << "Player::removeHumanoid() -- Humanoids size: " << mHumanoids.size() << std::endl;
+    }
+    else
+    {
+        std::cout << "Player::removeHumanoid() -- Humanoid is null." << std::endl;
+    }
+}
+
+int Player::getHumanoidsCount() const
+{
+    return int(mHumanoids.size());
+}
+
 ENTITYTYPE Player::getEntityType() const
 {
-    return mEntityType;
+    return ENTITYTYPE::PLAYER;
 }
 
 void Player::shoot()
