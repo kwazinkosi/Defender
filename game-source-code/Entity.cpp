@@ -1,34 +1,28 @@
 #include "Entity.hpp"
 
 Entity::Entity(int health, float movementSpeed, sf::Vector2f position, ENTITYTYPE entityType)
-: mAnimation(nullptr)
-, mPosition(position)
+: mPosition(position)
 , mEntityType(entityType)
 , mMovementSpeed(movementSpeed)
 , mDestroyed(false)  
 , mHealth(health)
-  
 {
 }
 
 Entity::~Entity()
 {
-    
 }
 
 void Entity::move(float x, float y)
 {
-   sprite.move(x, y);
+    sprite.move(x, y);
+    mPosition.x += x;
+    mPosition.y += y;
 }
 
 void Entity::OnDestroy()
 {
     mDestroyed = true;
-}
-
-void Entity::changeAnimation(sf::Vector2f position, sf::Vector2i frameStart, sf::Vector2i frameSize, std::size_t numFrames, sf::Time duration, bool repeat)
-{
-    mAnimation = std::make_unique<Animation>(&texture, position, frameStart, frameSize, numFrames, duration, repeat);
 }
 
 bool Entity::isDestroyed() const
@@ -41,14 +35,17 @@ void Entity::setHealth(int health)
     mHealth = health;
 }
 
-void Entity::setCollisionType(CollisionType collisionType)
-{
-    mCollisionType = collisionType;
-}
-
 void Entity::setPosition(sf::Vector2f position)
 {
+    sprite.setPosition(position);
     mPosition = position;
+}
+
+void Entity::setPosition(float x, float y)
+{
+    sprite.setPosition(x, y);
+    mPosition.x = x;
+    mPosition.y = y;
 }
 
 void Entity::setMovementSpeed(float movementSpeed)
@@ -61,15 +58,6 @@ int Entity::getHealth() const
     return mHealth;
 }
 
-float Entity::getSpeed() const
-{
-    return mMovementSpeed;
-}
-
-int Entity::getCollisionMask() const
-{
-    return static_cast<int>(mCollisionType);
-}
 sf::FloatRect Entity::getBounds() const
 {
     return sprite.getGlobalBounds();
@@ -82,5 +70,16 @@ sf::Sprite &Entity::getSprite()
 
 sf::Vector2f Entity::getPosition() const
 {
-    return mPosition;
+    //return mPosition;
+    return sprite.getPosition();
+}
+
+sf::Vector2f Entity::getCenter() const
+{
+    return sf::Vector2f(getPosition().x + getBounds().width / 2.f, getPosition().y + getBounds().height / 2.f);
+}
+
+bool Entity::collisionCheck(Entity* other)
+{
+    return getBounds().intersects(other->getBounds());
 }
