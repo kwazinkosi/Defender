@@ -121,11 +121,29 @@ void Lander::setState(ENEMYSTATE state)
     enemyState = state;
 }
 
+void Lander::setTargetHumanoid(std::shared_ptr<Humanoid> human)
+{
+    mTargetHumanoid = human;
+}
+
+void Lander::setTargetPosition(sf::Vector2f position)
+{
+    mTargetPosition = position;
+}
+
+void Lander::setKidnapping(bool kidnapping)
+{
+    mKidnapping = kidnapping;
+}
+
 void Lander::spawnPosition()
 {
-    auto randX = rand() % int (mContext->mRightBound - mLanderSprite.getGlobalBounds().width);
-    auto randY = rand() % int (mContext->mTopBound/4);
-    mLanderSprite.setPosition(static_cast<float>(randX), static_cast<float>(randY));
+    auto randX = (rand() % int ((mContext->mRightBound - getBounds().width)/5.f))*5.f;
+    auto randY = rand() % int (mContext->mTopBound/4) - getBounds().height;
+    mPosition.x = randX;
+    mPosition.y = randY;
+    setPosition(mPosition);
+    animation[static_cast<int>(mCurrentAnimation)].move(mPosition.x, mPosition.y);
 }
 
 bool Lander::isAlive() const
@@ -140,17 +158,42 @@ std::vector<std::unique_ptr<Projectile>>& Lander::getMissiles()
 
 void Lander::moveDown(sf::Time deltaTime)
 {
-    auto randDirX = rand() % 2;
-    auto randSpeedX = (rand() % int(speed)) / 3;
-    auto randSpeedY = (rand() % int(speed)) / 2 + speed / 2;
+    static sf::Time timeSinceLastMove = sf::Time::Zero;
+    static sf::Clock moveClock;
+    timeSinceLastMove += moveClock.restart();
+    if (timeSinceLastMove.asSeconds() >= 1.f)
+    {
+        timeSinceLastMove = sf::Time::Zero;
+        randDirX = rand() % 2;
+        randSpeedX = (rand() % int(speed)) / 3;
+        randSpeedY = (rand() % int(speed)) / 2 + speed / 2;
+    }
 
     if (randDirX)
     {
-        mLanderSprite.move(randSpeedX * deltaTime.asSeconds(), randSpeedY * deltaTime.asSeconds());
+        mPosition.y += randSpeedY*deltaTime.asSeconds();
+        mPosition.x += randSpeedX*deltaTime.asSeconds();
     }
     else
     {
-        mLanderSprite.move(-randSpeedX * deltaTime.asSeconds(), randSpeedY * deltaTime.asSeconds());
+        mPosition.y += randSpeedY * deltaTime.asSeconds();
+        mPosition.x -= randSpeedX * deltaTime.asSeconds();
+    }
+    setPosition(mPosition);
+    animation[static_cast<int>(mCurrentAnimation)].move(mPosition.x, mPosition.y);
+
+    auto seekOrNot = rand() % 5;
+    // if at 1/4 bottom of the screen, then seek
+    if(mContext->mBottomBound - mPosition.y <= mContext->mBottomBound/4)
+    {
+        if (seekOrNot == 0)
+        {
+            moveRandom(deltaTime);
+        }
+        else
+        {
+            enemyState = ENEMYSTATE::SEEK;
+        }
     }
 }
 
@@ -297,32 +340,19 @@ void Lander::updateMissiles(sf::Time deltaTime)
     for (int i = 0; i < int(mMissiles.size()); i++)
     {
         mMissiles[i]->update(deltaTime);
-         sf::Vector2f missilePosition = mMissiles[i]->getSprite().getPosition();
-        
-        
+        sf::Vector2f missilePosition = mMissiles[i]->getSprite().getPosition();
         // Check if the missile is out of bounds and remove it if necessary
         if (missilePosition.x < mContext->mLeftBound || missilePosition.x > mContext->mRightBound ||
             missilePosition.y < mContext->mTopBound || missilePosition.y > mContext->mBottomBound)
         {
             mMissiles.erase(mMissiles.begin() + i);
         }
-        
     }
 }
 
 void Lander::onCollision()
 {
     // isActive = false;
-}
-
-bool Lander::isStatic() const
-{
-    return false;
-}
-
-bool Lander::collissionCheck(Entity *other)
-{
-    return getBounds().intersects(other->getBounds());
 }
 
 ENTITYTYPE Lander::getEntityType() const
@@ -423,10 +453,27 @@ void Lander::moveRight(sf::Time deltaTime)
 
 void Lander::draw(sf::RenderTarget &target)
 {
-    target.draw(mLanderSprite);
+    animation[static_cast<int>(mCurrentAnimation)].draw(target);
 
     for (auto &missile : mMissiles)
     {
         target.draw(missile->getSprite());
     }
+}
+
+bool Lander::abductionInProgress()
+{
+    if(!mHumanoids.empty())
+    {
+        for(auto &humanoid : mHumanoids)
+        {
+            if(humanoid->isKidnapped()  && getBounds().intersects(humanoid->getBounds()))
+            {
+                
+                std::cout << "Lander::abductionInProgress() -- Abduction in progress." << std::endl;
+                return true;
+            }
+        }
+    }
+    return false;
 }
