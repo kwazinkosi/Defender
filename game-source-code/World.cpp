@@ -115,7 +115,7 @@ void World::handleRealtimeInput(CommandQueue &commands)
     // Handle player realtime input
     mSpaceship->handleRealtimeInput(commands);
 }
-std::pair<bool, int> World::update(sf::Time deltaTime)
+Data World::update(sf::Time deltaTime)
 {
     // mWorldView->move(-100.f * deltaTime.asSeconds(), 0.f);
     // Update star generator
@@ -131,6 +131,7 @@ std::pair<bool, int> World::update(sf::Time deltaTime)
     // update Enemies
     // std::cout << "World::update() - Updating enemies" << std::endl;
     updateEnemies(deltaTime);
+    updateAsteroids(deltaTime);
     onCollission();
     updateCollisions();
     // Check if game is over
@@ -298,6 +299,21 @@ void World::onCollission()
             mSpaceship->setFuel(100.f);
         }
     }
+
+    // check if player collides with asteroid
+    for (auto &asteroid : mAsteroids)
+    {
+        if (mSpaceship->getBounds().intersects(asteroid->getBounds()))
+        {
+            //auto data = asteroid->getData();
+             
+            mSpaceship->OnDestroy();
+            asteroid->OnDestroy();
+            //data.spawnTime = sf::seconds(0.f);
+            //asteroid->setData(data);
+            return;
+        }
+    }
     // Check if Lander collides with player bullet and destroy both, player bullet and lander bullet
     for (size_t i = 0; i < mSpaceship->getBullets().size(); i++)
     {
@@ -361,6 +377,16 @@ void World::updateCollisions()
         }
 
     } 
+
+    // remove all destroyed asteroids
+    for (size_t i = 0; i < mAsteroids.size(); i++)
+    {
+        if (mAsteroids[i]->isDestroyed())
+        {
+            mAsteroids.erase(mAsteroids.begin() + i);
+        }
+        
+    }
     
     // Remove all collected powerUps
     for (size_t i = 0; i < mPowerUps.size(); i++)

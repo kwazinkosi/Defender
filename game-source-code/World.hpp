@@ -22,12 +22,28 @@
 #include "HighScoreManager.hpp"
 #include "Asteroid.hpp"
 
+struct Data
+    {
+        bool Win = false;
+        bool Lose = false;
+        int Score = 0;
+        int Lives = 0;
+    }; 
+
 
 class World
 {
     public:
+
+        enum class Layer
+    {
+        Ground,
+        Mountains,
+        Sky,
+        LayerCount
+    };
         World(Context &context);
-        std::pair<bool, int> update(sf::Time deltaTime);
+        Data update(sf::Time deltaTime);
         void handleInput(CommandQueue &commands, sf::Event &event);
         void handleRealtimeInput(CommandQueue &commands);
         void render();
