@@ -14,6 +14,7 @@
 #include "Projectile.hpp"
 #include "Lander.hpp"
 #include "PowerUp.hpp"
+#include "Humanoid.hpp"
 
 
 
@@ -22,47 +23,62 @@ class Player: public Entity
     public:
         Player(Context &context, sf::Vector2f position);
         ~Player();
-        virtual void update(sf::Time deltaTime);
-        virtual void draw(sf::RenderTarget &target);
+        void update(sf::Time deltaTime);
+        void draw(sf::RenderTarget &target);
+        ENTITYTYPE getEntityType() const;
         void handleInput(CommandQueue& commands, sf::Event& event);
         void handleRealtimeInput(CommandQueue& commands);
-        virtual void onCollision();
-        sf::FloatRect getBounds() const;
-        virtual bool isStatic() const;
-        virtual bool collissionCheck(Entity* other);
-        virtual void move(float x, float y);
-        virtual void OnDestroy();
-        virtual ENTITYTYPE getEntityType() const;
+        void onCollision();
 
-        void addCollidable(std::shared_ptr<Entity> collidable);
         void shoot();
         void setPlayerState(PLAYERSTATE state);
-        void setAnimation(Command command, bool &isHorizontalAccelerating);
         void setFuelBar();
         void setFuel(float fuel);
-        float getFuel();
+        void setLives(int lives);
+        void addHumanoid(std::shared_ptr<Humanoid> humanoid);
+        void removeHumanoid(std::shared_ptr<Humanoid> humanoid);
+        int getHumanoidsCount() const;
+        int getLives() const;
         void drawHUD(sf::RenderTarget &target);
         sf::Vector2f getPlayerPosition() const;
+        // get bullets
         std::vector<std::unique_ptr<Projectile>>& getBullets();
 
     private:
+        enum class Direction
+        {
+            IDLE = 0, UP, DOWN, LEFT, RIGHT,COUNT
+        };
         void moveLeft(sf::Time deltaTime);
         void moveRight(sf::Time deltaTime);
         void moveUp(sf::Time deltaTime);
         void moveDown( sf::Time deltaTime);
         void shoot(sf::Time deltaTime);
-        //void screenWrap();
+        void screenWrap();
         void screenCollision();
         void initPlayer();
         void flipShip();
         void crashShip(sf::Time deltaTime);
         void updateInput(sf::Time deltaTime);
         void updateBullets(sf::Time deltaTime);
-        std::vector<std::unique_ptr<Entity>> collidables; // List of collidables that the player can collide with, unique_ptr because we want to transfer ownership of the collidable objects to the player.
+        void resqueHumanoid(sf::Time deltaTime);
         PLAYERSTATE mPlayerState;
         Context *mContext;
         CommandQueue *mCommandQueue;
+        // vector of collidable objects
         std::vector<std::unique_ptr<Projectile>> mProjectiles; // This is the vector that will hold all the projectiles that the player shoots out.
+        std::vector<std::shared_ptr<Humanoid>> mHumanoids; // This is the vector that will hold all the humanoids that the player rescues.
+        Animation mAnimation[static_cast<int>(Direction::COUNT)]; // Array of spaceship animations
+        // Variables for the player
+        sf::Text mFuelBarText;
+        sf::Vector2f mScale;
+        sf::Clock mPlayerClock; 
+        sf::Time mFuelTimer;
+        sf::RectangleShape mFuelBar;
+        sf::RectangleShape mFuelBarBackground;
+        sf::Vector2f mPosition;
+        Direction mCurrentAnimation;
+        Direction mPreviousAnimation;
         float mLeftBound;
         float mRightBound;
         float mTopBound;
@@ -74,13 +90,7 @@ class Player: public Entity
         float mCurrFuel;
         float mMaxFuel;
         float mFuelBurnRate;
-        sf::Text mFuelBarText;
-        sf::Vector2f mScale;
-        sf::Clock mPlayerClock; 
-        sf::Time mFuelTimer;
-        sf::RectangleShape mFuelBar;
-        sf::RectangleShape mFuelBarBackground;
-        sf::Vector2f mPosition;
+        bool mIsShipFlipped;
 };
 
 #endif //PLAYER_H

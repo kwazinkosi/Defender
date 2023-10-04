@@ -5,6 +5,10 @@ Player::Player(Context &context, sf::Vector2f position)
 , mPlayerState(PLAYERSTATE::IDLE)
 , mContext(&context)
 , mCommandQueue(nullptr)
+, mFuelTimer(sf::Time::Zero)
+, mPosition(position)
+, mCurrentAnimation(Direction::IDLE)
+, mPreviousAnimation(Direction::IDLE)
 , mLeftBound(context.mWorldView.getCenter().x - context.mWorldView.getSize().x / 2.f)
 , mRightBound(context.mWorldView.getCenter().x + context.mWorldView.getSize().x / 2.f)
 , mTopBound(context.mWorldView.getCenter().y - context.mWorldView.getSize().y / 2.f)
@@ -16,10 +20,9 @@ Player::Player(Context &context, sf::Vector2f position)
 , mCurrFuel(float(getHealth()))
 , mMaxFuel(100.f)
 , mFuelBurnRate(0.1f)
-, mFuelTimer(sf::Time::Zero)
+, mIsShipFlipped(false)
 {
-    this->initPlayer();
-    mAnimation = std::make_unique<Animation>(&texture, position, sf::Vector2i(0, 6), sf::Vector2i(22, 6), 1, sf::seconds(0.2f), true);
+     this->initPlayer();
     mFuelBarText = sf::Text("Fuel: ", context.mFonts->getResourceById(Fonts::GamePlayed), 16);
     mFuelBarText.setPosition(sf::Vector2f((mContext->mHudView.getCenter().x - mContext->mHudView.getSize().x / 2.f) + 5.f, mContext->mHudView.getCenter().y - mContext->mHudView.getSize().y / 2.f + 11.f));
     mFuelBarText.setFillColor(sf::Color::Yellow);
@@ -28,12 +31,10 @@ Player::Player(Context &context, sf::Vector2f position)
     mFuelBarBackground.setSize(sf::Vector2f(mContext->mHudView.getSize().x -55.f, 16.f));
     mFuelBarBackground.setPosition(sf::Vector2f((mContext->mHudView.getCenter().x - mContext->mHudView.getSize().x / 2.f )+55.f, mContext->mHudView.getCenter().y - mContext->mHudView.getSize().y / 2.f + 10.f));
     
-
     mFuelBar.setFillColor(sf::Color::Green);
     mFuelBar.setSize(sf::Vector2f(mContext->mHudView.getSize().x -55.f, 12.f));
     mFuelBar.setPosition(sf::Vector2f((mContext->mHudView.getCenter().x - mContext->mHudView.getSize().x / 2.f)+55.f, mContext->mHudView.getCenter().y - mContext->mHudView.getSize().y / 2.f + 12.f));
     std::cout << "Player::Player() -- Player created." << std::endl;
-    std::cout<< "Bar size: " << mFuelBar.getSize().x << std::endl;
 }
 
 Player::~Player()
@@ -85,12 +86,6 @@ void Player::update(sf::Time deltaTime)
     }
 }
 
-bool Player::isStatic() const
-{
-    return false;
-}
-
-
 void Player::setPlayerState(PLAYERSTATE state)
 {
     this->mPlayerState = state;
@@ -99,57 +94,78 @@ void Player::setPlayerState(PLAYERSTATE state)
 void Player::updateInput(sf::Time deltaTime)
 {
     static int shootTimer = 0;
-    bool isHorizontalAccelerating = false;
     while (!mCommandQueue->isEmpty())
     {
         Command command = mCommandQueue->pop();
-
-        setAnimation(command, isHorizontalAccelerating);
 
         if (command.category == Category::Player)
         {
             if (command.action == Action::MoveLeft)
             {
+                // std::cout << "Moving left : mMovementSpeed: " << mMovementSpeed << std::endl;
+                mCurrentAnimation = Direction::LEFT;
+                if(!isLeft)
+                {
+                    mCurrentAnimation = Direction::RIGHT;
+                }
                 moveLeft(deltaTime);
             }
             else if (command.action == Action::MoveRight)
             {
+                // std::cout << "Moving right : mMovementSpeed: " << mMovementSpeed << std::endl;
+                mCurrentAnimation = Direction::LEFT;
+                if(!isLeft)
+                {
+                    mCurrentAnimation = Direction::RIGHT;
+                }
                 moveRight(deltaTime);
             }
             else if (command.action == Action::MoveUp)
             {
+                // std::cout << "Moving up : mMovementSpeed: " << mMovementSpeed << std::endl;
+                if(isLeft)
+                {
+                    mCurrentAnimation = Direction::UP;
+                }
+                else
+                {
+                    mCurrentAnimation = Direction::DOWN;
+                }
                 moveUp(deltaTime);
             }
             else if (command.action == Action::MoveDown)
             {
+                // std::cout << "Moving down : mMovementSpeed: " << mMovementSpeed << std::endl;
+                if(isLeft)
+                {
+                    mCurrentAnimation = Direction::UP;
+                }
+                else
+                {
+                    mCurrentAnimation = Direction::DOWN;
+                }
                 moveDown(deltaTime);
             }
             else if (command.action == Action::Shoot)
             {
-                //  Shoot
+                std::cout << "Player::update() -- Shooting." << std::endl;
                 
                 shootTimer++;
                 if (shootTimer >= 5)
-                {   
-
+                {
                     shoot();
                     shootTimer = 0;
                 }
             }
-            
             else if (command.action == Action::FlipShip)
             {
-                std::cout << "Player::update() -- Flipping spaceship" << std::endl;
+                // std::cout << "Flipping ship." << std::endl;
                 flipShip();
             }
             else
             {
                 std::cout << "Player::update() -- Command action is not valid" << std::endl;
             }
-        }
-        else
-        {
-            std::cout << "Player::update() -- Command category is not player" << std::endl;
         }
     }
 }
@@ -261,27 +277,6 @@ void Player::onCollision()
 {
     // handle collision with the screen
     screenCollision();
-
-    // player collides with other entity
-    for (auto &collidable : collidables)
-    {
-        if (collissionCheck(collidable.get()))
-        {
-           // std::cout << "Player::onCollision() -- Player collided with other entity." << std::endl;
-            if ((collidable->getEntityType() == ENTITYTYPE::ENEMY) || (collidable->getEntityType() == ENTITYTYPE::ASTEROID) 
-            || (collidable->getEntityType() == ENTITYTYPE::MINEBOMB) || (collidable->getEntityType() == ENTITYTYPE::PROJECTILE))
-            {
-                // player collided with enemy, asteroid, minebomb or projectile so destroy player
-                OnDestroy(); // destroy player
-            }
-            else if (collidable->getEntityType() == ENTITYTYPE::POWERUP)
-            {
-                // player collided with powerup
-                setHealth(100); // set player health to 100
-                setFuel(100.f); // set player fuel to 100
-            }
-        }
-    }
 }
 
 void Player::screenCollision()
@@ -308,13 +303,28 @@ void Player::screenCollision()
 void Player::initPlayer()
 {
     texture = mContext->mTextures->getResourceById(Textures::Player);
+    // Set sprite
+    sprite.setTextureRect(sf::IntRect(0, 0, 22, 6));
+    sprite.setScale(4.f, 4.f);
+    setPosition(mPosition);
     sprite.setTexture(texture);
-    this->sprite.setTextureRect(sf::IntRect(0, 6, 22, 6)); // to fix
-    this->sprite.setScale(2.f, 2.f);
-    this->sprite.setPosition(200.f, 500.f);
-    this->sprite.setTexture(this->texture);
-    mMovementSpeed = 100.f;
-    mCollisionType = CollisionType::Player;
+    std::cout << "SpaceShip::initSpaceShip() -- Sprite set" << std::endl;
+    // Set animations
+    
+    mAnimation[static_cast<int>(Direction::IDLE)] = Animation(&texture, sf::Vector2i(0, 6), sf::Vector2i(22, 6), 2, sf::seconds(0.2f), true);
+    mAnimation[static_cast<int>(Direction::UP)] =   Animation(&texture, sf::Vector2i(0, 6), sf::Vector2i(22, 6), 3, sf::seconds(0.2f), true);
+    mAnimation[static_cast<int>(Direction::DOWN)] = Animation(&texture, sf::Vector2i(0, 0), sf::Vector2i(22, 6), 3, sf::seconds(0.2f), true);
+    mAnimation[static_cast<int>(Direction::RIGHT)]= Animation(&texture, sf::Vector2i(0, 0), sf::Vector2i(22, 6), 4, sf::seconds(0.2f), true);
+    mAnimation[static_cast<int>(Direction::LEFT)] = Animation(&texture, sf::Vector2i(0, 6), sf::Vector2i(22, 6), 4, sf::seconds(0.2f), true);
+    // Set movement speed
+    setMovementSpeed(100.f);
+    std::cout << "SpaceShip::initSpaceShip() -- SpaceShip initialized" << std::endl;for (auto &animation : mAnimation)
+    for(auto &animation : mAnimation)
+    {
+        animation.setScale(4.f, 4.f);
+    }
+    mAnimation[static_cast<int>(Direction::IDLE)].setPosition(mPosition);
+
 }
 
 bool Player::collissionCheck(Entity *other)
@@ -406,18 +416,20 @@ void Player::shoot()
 
 void Player::flipShip()
 {
+    std::cout << "Changing direction." << std::endl;
     isLeft = !isLeft;
-    auto position = mAnimation->getPosition();
+    auto position = getPosition();
+    mIsShipFlipped = !mIsShipFlipped;
     if (isLeft)
     {
-        std::cout << "Player::flipShip() -- Flipping spaceship left" << std::endl;
-        changeAnimation(position, sf::Vector2i(0, 6), sf::Vector2i(22, 6), 4, sf::seconds(0.2f), true);
+        mCurrentAnimation = Direction::LEFT;
     }
     else
     {
-        std::cout << "Player::flipShip() -- Flipping spaceship right" << std::endl;
-        changeAnimation(position, sf::Vector2i(0, 0), sf::Vector2i(22, 6), 4, sf::seconds(0.2f), true);
+        mCurrentAnimation = Direction::RIGHT;
     }
+    mAnimation[static_cast<int>(mCurrentAnimation)].setPosition(position);
+    setPosition(position);
 }
 
 void Player::drawHUD(sf::RenderTarget &target)
