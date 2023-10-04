@@ -31,92 +31,84 @@ Lander::~Lander()
 
 void Lander::update(sf::Time deltaTime, sf::Vector2f playerPosition)
 {
-    // Check if it's time to change direction
-    if (mLanderClock.getElapsedTime() - spawnTime >= sf::seconds(7.f))
-    {
-        // Waited for 7 seconds, change direction randomly
-        int randomDirection = rand() % 4; // 0: Up, 1: Down, 2: Left, 3: Right
-        switch (randomDirection)
-        {
-        case 0:
-            setState(ENEMYSTATE::MOVINGUP);
-            break;
-        case 1:
-            setState(ENEMYSTATE::MOVINGDOWN);
-            break;
-        case 2:
-            setState(ENEMYSTATE::MOVINGLEFT);
-            break;
-        case 3:
-            setState(ENEMYSTATE::MOVINGRIGHT);
-            break;
-        default:
-            break;
-        }
-        // Reset spawn time
-        spawnTime = mLanderClock.getElapsedTime();
+    if(!mIsSeeking)
+    {   
+        //std::cout << "Lander::update() -- Lander is not seeking -- Humanoid count: " << getHumanoidCount() << std::endl;
+        initLanderState(); // Choose a random action to perform (0: Up, 1: Down, 2: Left, 3: Right, 4: seek humanoid)
     }
     mTargetPosition = playerPosition;
-    sf::Vector2f landerPosition = mLanderSprite.getPosition();
-    float distance = std::sqrt(pow(mTargetPosition.x - landerPosition.x, 2) + pow(mTargetPosition.y - landerPosition.y, 2));
-    //std::cout<<"distance: " << distance << std::endl;
+    sf::Vector2f landerPosition = getPosition();
+    float targetDistance = std::sqrt(pow(mTargetPosition.x - landerPosition.x, 2) + pow(mTargetPosition.y - landerPosition.y, 2));
     updateMissiles(deltaTime);
-    if (distance <= 200.f && mMissileTimer.getElapsedTime().asSeconds() >= 5.0f)
+   
+    if ((targetDistance <= 200.f && mMissileTimer.getElapsedTime().asSeconds() >= 5.0f) && (!abductionInProgress()))
     {
+        // engage the player
         fireMissile();
         mMissileTimer.restart(); 
     }
+
     // Handle movement based on the current state
-    if (enemyState == ENEMYSTATE::MOVINGDOWN)
-    {
-        moveDown(deltaTime);
-    }
-    else if (enemyState == ENEMYSTATE::MOVINGUP)
-    {
-        moveUp(deltaTime);
-    }
-    else if (enemyState == ENEMYSTATE::MOVINGLEFT)
-    {
-        moveLeft(deltaTime);
-    }
-    else if (enemyState == ENEMYSTATE::MOVINGRIGHT)
-    {
-        moveRight(deltaTime);
-    }
+    moveLander(deltaTime);
+    // Update the animation based on the current state
+    updateAnimation(deltaTime);
+    // Update the kidnapping  
+    updateKidnapping(deltaTime);
     // Check if the Lander is going out of the screen boundaries
-    const sf::Vector2f position = mLanderSprite.getPosition();
-    if (position.x < mContext->mLeftBound)
-    {
-        // check if the lander is going out of the left bound
-        mLanderSprite.setPosition(mContext->mLeftBound, position.y);
-        setState(ENEMYSTATE::MOVINGRIGHT);
-    }
-    else if (position.x  > mContext->mRightBound - mLanderSprite.getGlobalBounds().width)
-    {
-        mLanderSprite.setPosition(mContext->mRightBound - mLanderSprite.getGlobalBounds().width, position.y);
-        setState(ENEMYSTATE::MOVINGLEFT);
-    }
-    if (position.y < mContext->mTopBound)
-    {
-        // check if the lander is going out of the top bound
-        mLanderSprite.setPosition(position.x, mContext->mTopBound);
-        setState(ENEMYSTATE::MOVINGDOWN);
-    }
-    else if (position.y > mContext->mBottomBound - mLanderSprite.getGlobalBounds().height)
-    {
-        mLanderSprite.setPosition(position.x, mContext->mBottomBound - mLanderSprite.getGlobalBounds().height);
-        setState(ENEMYSTATE::MOVINGUP);
-    }
+    landerScreenCollision();
 }
 
 void Lander::initLander()
 {
     texture = mContext->mTextures->getResourceById(Textures::Lander);
-    std::cout << "size: " << texture.getSize().x/5 << " " << texture.getSize().y << std::endl;
-    mLanderSprite.setTextureRect(sf::IntRect(0, 0, 26, 24));
-    mLanderSprite.setTexture(texture);
-    speed = 100.0f;
+    std::cout << "size: " << texture.getSize().x/4 << " " << texture.getSize().y/2 << std::endl;
+
+    // sprite.setPosition(100.0f, 100.0f); // Set an initial position (adjust as needed)
+    sprite.setTextureRect(sf::IntRect(0, 0, 52, 48));
+    sprite.setScale(0.7f, 0.7f);
+    sprite.setTexture(texture);
+    //sprite.setOrigin(getBounds().width / 2.f, getBounds().height / 2.f);
+    setPosition(mPosition);
+    //  Set animations
+    animation[static_cast<int>(LANDERSTATE::IDLE)] = Animation(&texture, sf::Vector2i(0, 0), sf::Vector2i(52, 48), 4, sf::seconds(0.4f), true);
+    animation[static_cast<int>(LANDERSTATE::MOVING)] = Animation(&texture, sf::Vector2i(0, 0), sf::Vector2i(52, 48), 4, sf::seconds(0.4f), true);
+    animation[static_cast<int>(LANDERSTATE::KIDNAPPING)] = Animation(&texture, sf::Vector2i(0, 0), sf::Vector2i(52, 48), 4, sf::seconds(0.35f), true);
+    // Set movement speed
+    setMovementSpeed(50.f);
+    std::cout << "Lander::initLander() -- Lander initialized at position: " << getPosition().x << ", " << getPosition().y << std::endl;
     spawnPosition();
+    animation[static_cast<int>(LANDERSTATE::IDLE)].setScale(0.7f, 0.7f);
+    animation[static_cast<int>(LANDERSTATE::MOVING)].setScale(0.7f, 0.7f);
+    animation[static_cast<int>(LANDERSTATE::KIDNAPPING)].setScale(0.7f, 0.7f);
+}
+void Lander::addHumanoid(std::shared_ptr<Humanoid> human)
+{
+    if(human != nullptr)
+    {
+        mHumanoids.push_back(human);
+    }
+    else
+    {
+        std::cout << "Lander::addHumanoid() -- Humanoid is null." << std::endl;
+    }
+}
+
+void Lander::removeHumanoid(std::shared_ptr<Humanoid> human)
+{
+    if(human != nullptr)
+    {
+        mHumanoids.erase(std::remove(mHumanoids.begin(), mHumanoids.end(), human), mHumanoids.end());
+    }
+    else
+    {
+        std::cout << "Lander::removeHumanoid() -- Humanoid is null." << std::endl;
+    }
+    std::cout << "Lander::removeHumanoid() -- Humanoids size: " << mHumanoids.size() << std::endl;
+}
+
+int Lander::getHumanoidCount() const
+{
+    return int(mHumanoids.size());
 }
 
 ENEMYSTATE Lander::getState() const
@@ -164,7 +156,10 @@ void Lander::moveDown(sf::Time deltaTime)
 
 void Lander::move(float x, float y)
 {
-    mLanderSprite.move(x, y);
+    mPosition.x += x;
+    mPosition.y += y;
+    setPosition(mPosition);
+    animation[static_cast<int>(mCurrentAnimation)].move(mPosition.x, mPosition.y);
 }
 
 sf::FloatRect Lander::getBounds() const
@@ -240,7 +235,6 @@ void Lander::OnDestroy()
     isActive = false;
     mDestroyed = true;
 }
-
 
 void Lander::moveUp(sf::Time deltaTime)
 {
