@@ -375,6 +375,11 @@ void Player::setLives(int lives)
     std::cout << "Player::setLives() -- Lives remaining: " << mLives << std::endl;
 }
 
+int Player::getLives() const
+{
+    return mLives;
+}
+
 void Player::addHumanoid(std::shared_ptr<Humanoid> humanoid)
 {
     if (humanoid != nullptr) {
@@ -412,7 +417,7 @@ ENTITYTYPE Player::getEntityType() const
 
 void Player::shoot()
 {
-    auto bulletPos = mAnimation->getPosition();
+    auto bulletPos = getPosition();
     if (isLeft)
     {
         bulletPos.x += 10.f;
@@ -470,9 +475,48 @@ void Player::crashShip(sf::Time deltaTime)
         mAnimation->move(0.f, 100.f * deltaTime.asSeconds());
         if(mAnimation->getSprite().getPosition().y >= mContext->mBottomBound - mAnimation->getSprite().getGlobalBounds().height)
         {
-            mAnimation->setPosition(sf::Vector2f(mAnimation->getPosition().x, mContext->mBottomBound - mAnimation->getSprite().getGlobalBounds().height));
-            OnDestroy();
+            mCurrFuel = 0.f;
+            mPosition.y += 100.f * deltaTime.asSeconds();
+            mAnimation[static_cast<int>(mCurrentAnimation)].move(mPosition.x, mPosition.y);
+            mAnimation[static_cast<int>(mCurrentAnimation)].setPosition(mPosition);
+            sprite.setPosition(mPosition);
+            setPosition(mPosition);
+
+            if(getPosition().y >= mContext->mBottomBound - getBounds().height)
+            {
+                setPosition(sf::Vector2f(getPosition().x, mContext->mBottomBound - getBounds().height));
+                OnDestroy();
+            }
         }
     }
 }
 
+void Player::resqueHumanoid(sf::Time deltaTime)
+{
+    //std::cout << "SpaceShip::resqueHumanoid() -- Rescued humanoid" << std::endl;
+    if(mHumanoids.empty())
+    {
+        return;
+    }
+
+    for (auto &humanoid : mHumanoids)
+    {
+        if(humanoid->isReleased() && getBounds().intersects(humanoid->getBounds()))
+        {
+            std::cout << "SpaceShip::resqueHumanoid() -- Rescueing humanoid" << std::endl;
+            humanoid->setRescued(true);
+            humanoid->setReleased(false);
+            humanoid->setKidnapped(false);
+            humanoid->setHumanoidPosition(getPosition().x + getBounds().width / 2.f, getPosition().y + getBounds().height);
+        }
+        else if(humanoid->isRescued())
+        {
+            std::cout << "SpaceShip::resqueHumanoid() -- Rescued humanoid" << std::endl;
+            humanoid->setHumanoidPosition(getPosition().x + getBounds().width / 2.f, getPosition().y + getBounds().height);
+            if(humanoid->getPosition().y + humanoid->getBounds().height >= 600.f)
+            {
+                humanoid->setRescued(false);
+            }
+        }
+    }
+}
