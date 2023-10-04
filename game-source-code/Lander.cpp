@@ -172,6 +172,59 @@ void Lander::update(sf::Time deltaTime)
 
 }
 
+void Lander::updateAnimation(sf::Time deltaTime)
+{
+    if (mCurrentAnimation == LANDERSTATE::IDLE)
+    {
+        animation[static_cast<int>(mCurrentAnimation)].move(mPosition.x, mPosition.y);
+        setPosition(mPosition);
+        animation[static_cast<int>(mCurrentAnimation)].update(deltaTime);
+        // start moving after 3 seconds
+        static float timeSinceLastMove = 0.f;
+        timeSinceLastMove += mLanderClock.restart().asSeconds();
+        if (timeSinceLastMove >= 3.f)
+        {
+            mCurrentAnimation = LANDERSTATE::MOVING;
+            timeSinceLastMove = 0.f;
+        }
+    }
+    else if (mCurrentAnimation == LANDERSTATE::MOVING)
+    {
+        animation[static_cast<int>(mCurrentAnimation)].move(mPosition.x, mPosition.y);
+        setPosition(mPosition);
+        animation[static_cast<int>(mCurrentAnimation)].update(deltaTime);
+    }
+    else if (mCurrentAnimation == LANDERSTATE::KIDNAPPING)
+    {
+        animation[static_cast<int>(mCurrentAnimation)].move(mPosition.x, mPosition.y);
+        setPosition(mPosition);
+        animation[static_cast<int>(mCurrentAnimation)].update(deltaTime);
+    }
+}
+
+void Lander::initLanderState()
+{
+    static sf::Time stateTime = sf::Time::Zero;
+    static sf::Clock stateClock;
+    stateTime += stateClock.restart();
+    // Check if it's time to change direction
+    if (stateTime.asSeconds() >= directionTime)
+    {
+        stateTime = sf::Time::Zero;
+        directionTime = rand() % 2 + 1.f;
+        if(!mHumanoids.empty() && (getPosition().y + getBounds().height < mContext->mBottomBound/2.f))
+        {
+            setState(ENEMYSTATE::SEEK);
+        }
+        else
+        {
+            moveRandom(stateTime); // move randomly
+        }
+        // Reset spawn time
+        spawnTime = mLanderClock.getElapsedTime();
+    }
+}
+
 void Lander::fireMissile()
  {
     sf::Vector2f playerPosition = mTargetPosition;
@@ -236,6 +289,50 @@ void Lander::OnDestroy()
     mDestroyed = true;
 }
 
+void Lander::moveLander(sf::Time deltaTime)
+{
+    if (enemyState == ENEMYSTATE::MOVINGDOWN)
+    {
+        moveDown(deltaTime);
+    }
+    else if (enemyState == ENEMYSTATE::MOVINGUP)
+    {
+        moveUp(deltaTime);
+    }
+    else if (enemyState == ENEMYSTATE::MOVINGLEFT)
+    {
+        moveLeft(deltaTime);
+    }
+    else if (enemyState == ENEMYSTATE::MOVINGRIGHT)
+    {
+        moveRight(deltaTime);
+    }
+    else if (enemyState == ENEMYSTATE::SEEK)
+    {
+        seekHumanoid(deltaTime);
+    }
+}
+
+void Lander::moveRandom(sf::Time deltaTime)
+{
+    int randomDirection = rand() % 4; // 0: Up, 1: Down, 2: Left, 3: Right
+    if (randomDirection == 0)
+    {
+        setState(ENEMYSTATE::MOVINGUP);
+    }
+    else if (randomDirection == 1)
+    {
+        setState(ENEMYSTATE::MOVINGDOWN);
+    }
+    else if (randomDirection == 2)
+    {
+        setState(ENEMYSTATE::MOVINGLEFT);
+    }
+    else if (randomDirection == 3)
+    {
+        setState(ENEMYSTATE::MOVINGRIGHT);
+    }
+}
 void Lander::moveUp(sf::Time deltaTime)
 {
     auto randDirX = rand() % 2;
