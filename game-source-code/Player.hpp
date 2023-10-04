@@ -39,6 +39,7 @@ class Player: public Entity
         void removeHumanoid(std::shared_ptr<Humanoid> humanoid);
         int getHumanoidsCount() const;
         int getLives() const;
+        float getFuel() const;
         void drawHUD(sf::RenderTarget &target);
         sf::Vector2f getPlayerPosition() const;
         // get bullets

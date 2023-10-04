@@ -64,12 +64,14 @@ void Player::updateBullets(sf::Time deltaTime)
 
 void Player::update(sf::Time deltaTime)
 {
-
     if (!isDestroyed())
     {
-        mAnimation->update(deltaTime);
+        //std::cout << "Player::update() -- Updating player" << std::endl;
+        resqueHumanoid(deltaTime);  
         updateInput(deltaTime);
         updateBullets(deltaTime);
+        mAnimation[static_cast<int>(mCurrentAnimation)].update(deltaTime);
+        setPosition(mAnimation[static_cast<int>(mCurrentAnimation)].getPosition());
         onCollision(); // check for collision with other entities
     }
 
@@ -78,11 +80,6 @@ void Player::update(sf::Time deltaTime)
         mCurrFuel = 0.f;
         crashShip(deltaTime);
         isDestroyed();
-    }
-
-    if(isDestroyed())
-    {
-        //std::cout << "Player::update() -- Player destroyed." << std::endl;
     }
 }
 
@@ -172,20 +169,38 @@ void Player::updateInput(sf::Time deltaTime)
 
 void Player::moveLeft(sf::Time deltaTime)
 {
-    mAnimation->move(-mMovementSpeed * deltaTime.asSeconds(), 0.f);
+    mPosition = getPosition();
+    mPosition.x -= mMovementSpeed * deltaTime.asSeconds();
+    mAnimation[static_cast<int>(mCurrentAnimation)].move(mPosition.x, mPosition.y);
+    mAnimation[static_cast<int>(mCurrentAnimation)].setPosition(mPosition);
+    setPosition(mPosition);
+    sprite.setPosition(mPosition);
 }
 void Player::moveRight(sf::Time deltaTime)
 {
-    
-    mAnimation->move(mMovementSpeed * deltaTime.asSeconds(), 0.f);
+    mPosition = getPosition();
+    mPosition.x += mMovementSpeed * deltaTime.asSeconds();
+    mAnimation[static_cast<int>(mCurrentAnimation)].move(mPosition.x, mPosition.y);
+    mAnimation[static_cast<int>(mCurrentAnimation)].setPosition(mPosition);
+    setPosition(mPosition);
+    sprite.setPosition(mPosition);
 }
 void Player::moveDown(sf::Time deltaTime)
 {
-    mAnimation->move(0.f, mMovementSpeed * deltaTime.asSeconds());
+    mPosition = getPosition();
+    mPosition.y += mMovementSpeed * deltaTime.asSeconds();
+    mAnimation[static_cast<int>(mCurrentAnimation)].move(mPosition.x, mPosition.y);
+    mAnimation[static_cast<int>(mCurrentAnimation)].setPosition(mPosition);
+    setPosition(mPosition);
 }
 void Player::moveUp(sf::Time deltaTime)
 {
-    mAnimation->move(0.f, -mMovementSpeed * deltaTime.asSeconds());
+    mPosition = getPosition();
+    mPosition.y -= mMovementSpeed * deltaTime.asSeconds();
+    mAnimation[static_cast<int>(mCurrentAnimation)].move(mPosition.x, mPosition.y);
+    mAnimation[static_cast<int>(mCurrentAnimation)].setPosition(mPosition);
+    setPosition(mPosition);
+    sprite.setPosition(mPosition);
 }
 
 void Player::shoot(sf::Time deltaTime)
@@ -327,51 +342,6 @@ void Player::initPlayer()
 
 }
 
-bool Player::collissionCheck(Entity *other)
-{
-    return getBounds().intersects(other->getBounds()); // Check if the player collides with the other entity.
-}
-
-sf::FloatRect Player::getBounds() const
-{
-    return mAnimation->getSprite().getGlobalBounds();
-}
-
-void Player::move(float x, float y)
-{
-    mAnimation->move(x, y);
-}
-
-void Player::OnDestroy()
-{
-    mDestroyed = true;
-}
-
-void Player::setAnimation(Command command, bool &isHorizontalAccelerating)
-{
-    if (command.action == Action::MoveLeft || command.action == Action::MoveRight)
-    {
-        isHorizontalAccelerating = true;
-    }
-
-    // Change animation based on acceleration and direction
-    auto position = mAnimation->getPosition();
-    if (!isHorizontalAccelerating && !isSetDefault)
-    {
-        // Spaceship is not accelerating horizontally
-        changeAnimation(position, sf::Vector2i(0, isLeft ? 6 : 0), sf::Vector2i(22, 6), 2, sf::seconds(0.2f), true);
-        isSetDefault = true;
-        isSetAccelerate = false;
-    }
-    else if (isHorizontalAccelerating && !isSetAccelerate)
-    {
-        // Spaceship is accelerating horizontally
-        changeAnimation(position, sf::Vector2i(0, isLeft ? 6 : 0), sf::Vector2i(22, 6), 4, sf::seconds(0.2f), true);
-        isSetAccelerate = true;
-        isSetDefault = false;
-    }
-}
-
 void Player::setFuelBar()
 {
     if (mCurrFuel <= 0.f)
@@ -387,7 +357,7 @@ void Player::setFuel(float fuel)
     mCurrFuel = fuel;
 }
 
-float Player::getFuel()
+float Player::getFuel() const
 {
     return mCurrFuel;
 }
