@@ -225,6 +225,53 @@ void Lander::initLanderState()
     }
 }
 
+void Lander::landerScreenCollision()
+{
+    const sf::Vector2f position = getPosition();
+    if (position.x < mContext->mLeftBound)
+    {
+        // check if the lander is going out of the left bound
+        setPosition(mContext->mLeftBound, position.y);
+        setState(ENEMYSTATE::MOVINGRIGHT);
+    }
+    else if (position.x  > mContext->mRightBound - getBounds().width)
+    {
+        // check if the lander is going out of the right bound
+        setPosition(mContext->mRightBound - getBounds().width, position.y);
+        setState(ENEMYSTATE::MOVINGLEFT);
+    }
+    // if lander is going out of the top or bottom bound whilst kidnapping the humanoid, then kill the humanoid turn the lander around
+    if (position.y < mContext->mTopBound - getBounds().height && mKidnapping)
+    {
+        // kill the humanoid
+        std::cout << "Lander::landerScreenCollision() -- Lander is going out of the top bound whilst kidnapping the humanoid" << std::endl;
+        mIsSeeking = false; // reset the seeking flag
+        mTargetHumanoid->setKidnapped(false);
+        mTargetHumanoid->setAbductionSuccess(true);
+        mTargetHumanoid->OnDestroy(); // destroy the humanoid
+        setPosition(position.x, mContext->mTopBound);
+        setState(ENEMYSTATE::MOVINGUP);
+        if (position.y < mContext->mTopBound - getBounds().height -50.f)
+        {
+            mKidnapping = false;
+            // spawnPosition();
+            setState(ENEMYSTATE::MOVINGDOWN);
+        }
+    }
+    
+    // =========================================================//
+    else if (position.y < mContext->mTopBound && !mKidnapping) 
+    {
+        setPosition(position.x, mContext->mTopBound);
+        setState(ENEMYSTATE::MOVINGDOWN);
+    }
+    else if (position.y > mContext->mBottomBound - getBounds().height)
+    {
+        setPosition(position.x, mContext->mBottomBound - getBounds().height);
+        setState(ENEMYSTATE::MOVINGUP);
+    }
+}
+
 void Lander::fireMissile()
  {
     sf::Vector2f playerPosition = mTargetPosition;
@@ -333,30 +380,45 @@ void Lander::moveRandom(sf::Time deltaTime)
         setState(ENEMYSTATE::MOVINGRIGHT);
     }
 }
+
 void Lander::moveUp(sf::Time deltaTime)
 {
-    auto randDirX = rand() % 2;
-    auto randSpeedX = (rand() % int(speed) / 3);
-    auto randSpeedY = (rand() % int(speed) / 2) + speed / 2;
-
+    static sf::Time timeSinceLastMove = sf::Time::Zero;
+    static sf::Clock moveClock;
+    timeSinceLastMove += moveClock.restart();
+    if (timeSinceLastMove.asSeconds() >= 1.f)
+    {
+        timeSinceLastMove = sf::Time::Zero;
+        randDirX = rand() % 2;
+        randSpeedX = (rand() % int(speed)) / 3;
+        randSpeedY = (rand() % int(speed)) / 2 + speed / 2;
+    }
     if (randDirX)
     {
-        mLanderSprite.move(randSpeedX * deltaTime.asSeconds(), -randSpeedY * deltaTime.asSeconds());
+        mPosition.x += randSpeedX * deltaTime.asSeconds();
+        mPosition.y -= randSpeedY * deltaTime.asSeconds();
     }
     else
     {
-        mLanderSprite.move(-randSpeedX * deltaTime.asSeconds(), -randSpeedY * deltaTime.asSeconds());
+        mPosition.x -= randSpeedX * deltaTime.asSeconds();
+        mPosition.y -= randSpeedY * deltaTime.asSeconds();
     }
+    setPosition(mPosition);
+    animation[static_cast<int>(mCurrentAnimation)].move(mPosition.x, mPosition.y);
 }
 
 void Lander::moveLeft(sf::Time deltaTime)
 {
-    mLanderSprite.move(-speed * deltaTime.asSeconds(), 0.f);
+    mPosition.x -= speed * deltaTime.asSeconds();
+    setPosition(mPosition);
+    animation[static_cast<int>(mCurrentAnimation)].move(mPosition.x, mPosition.y);
 }
 
 void Lander::moveRight(sf::Time deltaTime)
 {
-    mLanderSprite.move(speed * deltaTime.asSeconds(), 0.f);
+    mPosition.x += speed * deltaTime.asSeconds();
+    setPosition(mPosition);
+    animation[static_cast<int>(mCurrentAnimation)].move(mPosition.x, mPosition.y);
 }
 
 void Lander::draw(sf::RenderTarget &target)
