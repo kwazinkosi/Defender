@@ -566,3 +566,79 @@ void Lander::seekHumanoid(sf::Time deltaTime)
         continueSeekingHumanoid(deltaTime, distance);
     }
 }
+
+sf::Vector2f Lander::getHumanoidPosition()
+{
+    static float timeSinceLastCheck = 0.f;
+    static sf::Clock mTrackClock;
+    static sf::Vector2f humanoidPosition = sf::Vector2f(-1.f, -1.f);
+    
+    timeSinceLastCheck += mTrackClock.restart().asSeconds();
+    // std::cout << "Lander::getHumanoidPosition() -- timeSinceLastCheck: " << timeSinceLastCheck << std::endl;
+    if(!mHumanoids.empty() && timeSinceLastCheck >= 2.f)
+    {
+        auto humanoidTarget = mHumanoids[0];
+        for(auto &humanoid : mHumanoids)
+        {
+            // if not already kidnapped
+            if(!humanoid->isKidnapped())
+            {
+                // if the current humanoid is closer to the lander than the previous one
+                if(std::sqrt(pow(humanoid->getPosition().x - getPosition().x, 2) + pow(humanoid->getPosition().y - getPosition().y, 2)) < 
+                    std::sqrt(pow(humanoidTarget->getPosition().x - getPosition().x, 2) + pow(humanoidTarget->getPosition().y - getPosition().y, 2)))
+                {
+                    humanoidTarget = humanoid;
+                }
+            }
+        }
+        mTargetHumanoid = humanoidTarget; // set the target humanoid
+        humanoidPosition = humanoidTarget->getPosition();
+        timeSinceLastCheck = 0.f;
+    }
+    // std::cout << "Lander::getHumanoidPosition() -- Humanoid position: " << humanoidPosition.x << ", " << humanoidPosition.y << std::endl;
+    return humanoidPosition;
+}
+
+void Lander::continueSeekingHumanoid(sf::Time deltaTime, sf::Vector2f distance)
+{
+    mIsSeeking = true;
+    //std::cout << "Lander::continueSeekingHumanoid() -- Lander is seeking the humanoid" << std::endl;
+    static float acceleration = 1.f;
+    
+    // If in range and moving towards the target
+    if (abs(distance.x) < 50.f && getPosition().y + getBounds().height < 600.f) {
+        acceleration = 2.f; // Increase acceleration when close to the target
+    }
+    
+    // Calculate the direction vector towards the humanoid
+    sf::Vector2f direction = normalize(distance);
+    
+    // Calculate a desired position to move toward
+    sf::Vector2f desiredPosition = getPosition() + direction * mMovementSpeed * acceleration * deltaTime.asSeconds();
+    // Limit the lander's movement within screen boundaries
+    desiredPosition.x = std::max(0.f, std::min(desiredPosition.x, 768.f));
+    desiredPosition.y = std::max(0.f, std::min(desiredPosition.y, 600.f));
+    auto posVector = getPosition();
+    // Update the position based on interpolation
+    mPosition = lerp(posVector, desiredPosition, 0.5f); // Adjust the interpolation factor as needed
+    // Set the updated position to the sprite
+    sprite.setPosition(mPosition);
+}
+
+sf::Vector2f Lander::normalize(sf::Vector2f &vector)
+{
+    float length = std::sqrt(vector.x * vector.x + vector.y * vector.y);
+    if (length != 0)
+    {
+        vector.x /= length;
+        vector.y /= length;
+    }
+    return vector;
+}
+
+sf::Vector2f Lander::lerp(sf::Vector2f &vector, const sf::Vector2f &target, float speed)
+{
+    vector.x += (target.x - vector.x) * speed;
+    vector.y += (target.y - vector.y) * speed;
+    return vector;
+}
