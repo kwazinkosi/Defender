@@ -477,3 +477,92 @@ bool Lander::abductionInProgress()
     }
     return false;
 }
+
+void Lander::updateKidnapping(sf::Time deltaTime)
+{
+    // if the Lander is closer to the player, then it should ingage and move towards the player and shoot
+    if (getBounds().intersects(mTargetHumanoid->getBounds()) && !mTargetHumanoid->isKidnapped() &&
+      !mKidnapping )
+    {
+        mKidnapping = true;
+        mCurrentAnimation = LANDERSTATE::KIDNAPPING;
+    }
+
+    if (mKidnapping)
+    {
+        abductHumanoid(deltaTime);
+    }
+}
+
+void Lander::abductHumanoid(sf::Time deltaTime)
+{
+    auto landerCenter = getCenter();
+    mTargetHumanoid->setHumanoidPosition(landerCenter.x - mTargetHumanoid->getBounds().width / 2.f, landerCenter.y );
+    mTargetHumanoid->setKidnapped(true);
+    mTargetHumanoid->setReleased(false);
+    mCurrentAnimation = LANDERSTATE::KIDNAPPING;
+    // move up
+    mPosition.y -= mMovementSpeed * deltaTime.asSeconds();
+}
+
+void Lander::dropHumanoid()
+{
+    if(mTargetHumanoid == nullptr|| mTargetHumanoid->isKidnapped() == false)
+    {
+        std::cout << "Lander::dropHumanoid() -- Target humanoid is null." << std::endl;
+        return;
+    }
+    mKidnapping = false;
+    mTargetHumanoid->setKidnapped(false);
+    mTargetHumanoid->setReleased(true);
+    mTargetHumanoid = nullptr;
+    std::cout << "Lander::dropHumanoid() -- humanoids size: " << mHumanoids.size() << std::endl;
+}
+
+void Lander::seekHumanoid(sf::Time deltaTime)
+{
+    static  bool outOfRange = false;
+    if(mHumanoids.empty())
+    {
+        return;
+    }
+    if (getBounds().intersects(mTargetHumanoid->getBounds()))
+    {
+        std::cout << "Lander::seekHumanoid() -- Lander has reached the humanoid" << std::endl;
+        mCurrentAnimation = LANDERSTATE::KIDNAPPING;
+        mKidnapping = true;
+        return;
+    }
+    // move towards the humanoid
+    auto humanoidPosition = getHumanoidPosition();
+    auto distance =  humanoidPosition - getPosition();
+    if(humanoidPosition == sf::Vector2f(-1.f, -1.f))
+    {
+        return;
+    }
+    // Check if out of range and update the outOfRange flag
+    if (abs(distance.x) > rangeDistance && abs(distance.y) < rangeDistance)
+    {
+        outOfRange = true;
+    }
+    if (outOfRange || getPosition().y + getBounds().height >= 600.f)
+    {
+        static sf::Clock outOfRangeClock;
+        //std::cout << "Lander::updateKidnapping() -- Lander is out of range -- time: " << outOfRangeClock.getElapsedTime().asSeconds() << std::endl;
+        if (outOfRangeClock.getElapsedTime().asSeconds() >= rand() % 2 + 2.f) // wait for at least 2 seconds
+        {
+            // After waiting for 2 seconds, reset the flag and continue moving down
+            outOfRange = false;
+            outOfRangeClock.restart();
+        } 
+        else
+        {
+            // continue moving up
+            mPosition.y -= mMovementSpeed/2.f * deltaTime.asSeconds();
+        }
+    }
+    else
+    {
+        continueSeekingHumanoid(deltaTime, distance);
+    }
+}
