@@ -23,12 +23,12 @@
 #include "Asteroid.hpp"
 
 struct Data
-    {
-        bool Win = false;
-        bool Lose = false;
-        int Score = 0;
-        int Lives = 0;
-    }; 
+{
+    bool Win = false;
+    bool Lose = false;
+    int Score = 0;
+    int Lives = 0;
+}; 
 
 
 class World
@@ -36,12 +36,12 @@ class World
     public:
 
         enum class Layer
-    {
-        Ground,
-        Mountains,
-        Sky,
-        LayerCount
-    };
+        {
+            Ground,
+            Mountains,
+            Sky,
+            LayerCount
+        };
         World(Context &context);
         Data update(sf::Time deltaTime);
         void handleInput(CommandQueue &commands, sf::Event &event);
@@ -54,17 +54,22 @@ class World
     private:
         void loadTextures();
         void initEnemies();
+        void initHumanoids();  
         void initpowerUps();
         void initAsteroid();
+
         void updateEnemies(sf::Time deltaTime);
         void updateAsteroids(sf::Time deltaTime);
         void updatePowerUps(sf::Time deltaTime);
-        sf::Vector2f SpawnPosition();
+        void updateHumanoids(sf::Time deltaTime);
+
         void drawView(sf::View &view);
         void drawEnemies(sf::RenderTarget &target);
         void drawAsteroids(sf::RenderTarget &target);
         void drawPowerUps(sf::RenderTarget &target);
-        
+        void drawHumanoids(sf::RenderTarget &target);
+
+        sf::Vector2f SpawnPosition();
         void onCollission(); // handle collission
         void updateCollisions();
         std::pair<bool, int> gameOver() const;
@@ -73,8 +78,10 @@ class World
         std::unique_ptr<Player> mSpaceship;
         std::unique_ptr<Mountains> mMountains;
         std::unique_ptr<HighScoreManager> mHighScoreManager;
+        
         std::vector <std::unique_ptr<Lander>> mLanders; // This is the vector that will hold all the landers that the player shoots out.
         std::vector <std::unique_ptr<Asteroid>> mAsteroids;
+        std::vector<std::shared_ptr<Humanoid>> mHumanoids; // This is the vector that will hold all the humanoids that the player can collide with, unique_ptr because we want to transfer ownership of the humanoid objects to the world.
         std::vector<std::unique_ptr<Entity>> mEntities; // This is the vector that will hold all the entities that the player can collide with, unique_ptr because we want to transfer ownership of the entity objects to the world.
         std::vector<std::unique_ptr<PowerUp>> mPowerUps; // This is the vector that will hold all the powerUps that the player can collide with, unique_ptr because we want to transfer ownership of the powerUp objects to the world.
 

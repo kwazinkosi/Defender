@@ -17,8 +17,7 @@ World::World(Context &context)
     {
         std::cout << "World::World() - Creating the world" << std::endl;
         loadTextures();
-        //initHumanoids();
-        std::cout << "World::World() - Creating enemies" << std::endl;
+        initHumanoids();
         initEnemies();
         std::cout << "World::World() - Creating layers" << std::endl;
         auto posY = context.mWorldView.getSize().y; // == groundPos
@@ -35,6 +34,15 @@ World::World(Context &context)
         std::cout << "World::World() - World created" << std::endl;
         mHighScoreManager = std::make_unique<HighScoreManager>();
         initAsteroid();
+        // Add humanoids to the player's abductable humanoids list
+        for (auto &humanoid : mHumanoids)
+        {
+            mSpaceship->addHumanoid(humanoid);
+            for(auto &lander : mLanders)
+            {
+                lander->addHumanoid(humanoid);
+            }
+        }
     }
     catch (std::exception &e)
     {
@@ -103,6 +111,17 @@ void World::initpowerUps()
     mPowerUps.push_back(std::move(powerUp));
 }
 
+void World::initHumanoids()
+{
+    auto maxHumanoids = rand() % 5 + 5; // 5 to 10 humanoids
+    for (int i = 0; i < maxHumanoids; i++)
+    {
+        auto humanoid = std::make_shared<Humanoid>(*mContext);
+        std::cout << "World::initHumanoids() - Adding humanoid to mHumanoids" << std::endl;
+        mHumanoids.push_back(std::move(humanoid));
+    }
+    // Add humanoids to the player's collidable list
+}
 
 void World::handleInput(CommandQueue &commands, sf::Event &event)
 {
@@ -198,6 +217,21 @@ void World::updatePowerUps(sf::Time deltaTime)
         }
     } 
 }
+void World::updateHumanoids(sf::Time deltaTime)
+{
+    //std::cout << "World::updateHumanoids() - Updating humanoids | player position: " << mSpaceship->getPlayerPosition().x << ", " << mSpaceship->getPlayerPosition().y << std::endl;
+    // std::cout << "World::updateHumanoids() - mHumanoids.size() = " << mHumanoids.size() << std::endl;
+    for (auto &humanoid : mHumanoids)
+    {
+        // std::cout << "World::updateHumanoids() - Updating humanoid" << std::endl;
+        humanoid->update(deltaTime);
+        // Check if humanoid is collides with player bullets
+        if(humanoid->isDestroyed())
+        {
+            std::cout << "World::updateHumanoids() - Humanoid destroyed- erase it on the onCollission() method" << std::endl;
+        }
+    }
+}
 
 void World::render()
 {
@@ -218,8 +252,6 @@ void World::render()
 
 }
 
-
-
 void World::drawView(sf::View &view)
 {
     // Draw background
@@ -232,6 +264,8 @@ void World::drawView(sf::View &view)
     drawEnemies(*mWindow);
     // Draw asteroids
     drawAsteroids(*mWindow);
+    // Draw humanoids
+    drawHumanoids(*mWindow);
     // Draw powerUps
     drawPowerUps(*mWindow);
     // Draw player
@@ -262,7 +296,13 @@ void World::drawPowerUps(sf::RenderTarget &target)
     }
 }
 
-
+void World::drawHumanoids(sf::RenderTarget &target)
+{
+    for (auto &humanoid : mHumanoids)
+    {
+        humanoid->draw(target);
+    }
+}
 void World::onCollission()
 {
         // Check if player collides with lander

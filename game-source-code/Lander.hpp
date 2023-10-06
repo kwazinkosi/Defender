@@ -11,7 +11,7 @@
 #include "Projectile.hpp"
 #include "Entity.hpp"
 #include "CommandQueue.hpp"
-#include "Humanoid"
+#include "Humanoid.hpp"
 
 enum class LANDERSTATE
 {

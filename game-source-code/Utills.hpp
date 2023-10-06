@@ -32,6 +32,7 @@ enum class ENEMYSTATE
     MOVINGUP,
     MOVINGDOWN,
     SHOOTING,
+    SEEK,
     DEAD,
 };  
 

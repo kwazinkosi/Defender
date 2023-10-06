@@ -1,6 +1,6 @@
 #include "Lander.hpp"
 
-Lander::Lander(Context &context)
+Lander::Lander(Context &context, sf::Vector2f position)
 : Entity(100, 0.f, sf::Vector2f(0.f, 0.f), ENTITYTYPE::ENEMY)
 , mContext(&context)
 , enemyState(ENEMYSTATE::MOVINGDOWN)
@@ -205,11 +205,6 @@ void Lander::move(float x, float y)
     animation[static_cast<int>(mCurrentAnimation)].move(mPosition.x, mPosition.y);
 }
 
-sf::FloatRect Lander::getBounds() const
-{
-    return mLanderSprite.getGlobalBounds();
-}
-
 void Lander::update(sf::Time deltaTime)
 {
 
@@ -318,7 +313,7 @@ void Lander::landerScreenCollision()
 void Lander::fireMissile()
  {
     sf::Vector2f playerPosition = mTargetPosition;
-    sf::Vector2f landerPosition = mLanderSprite.getPosition();
+    sf::Vector2f landerPosition = getPosition();
     float distance = std::sqrt(pow(playerPosition.x - landerPosition.x, 2) + pow(playerPosition.y - landerPosition.y, 2));
 
     if (distance <= 200.f) {
