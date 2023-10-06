@@ -345,12 +345,8 @@ void World::onCollission()
     {
         if (mSpaceship->getBounds().intersects(asteroid->getBounds()))
         {
-            //auto data = asteroid->getData();
-             
             mSpaceship->OnDestroy();
             asteroid->OnDestroy();
-            //data.spawnTime = sf::seconds(0.f);
-            //asteroid->setData(data);
             return;
         }
     }
@@ -377,11 +373,40 @@ void World::onCollission()
                 }
             }
         }
+
+        // Check if player bullet collides with Humanoid
+        for (auto &humanoid : mHumanoids)
+        {
+            if (mSpaceship->getBullets()[i]->getBounds().intersects(humanoid->getBounds()))
+            {
+                std::cout << "World::onCollission() - Player bullet collided with humanoid" << std::endl;
+                mSpaceship->getBullets()[i]->OnDestroy(); // Destroy bullet
+                humanoid->OnDestroyAll(); // Destroy humanoid
+            }
+        }
     }
     
-    // Check if player collides with enemy
-    // Check if player collides with asteroid
-    // Check if player collides with asteroid fragment
+    // Check if humanoid collides with the ground
+    for (auto &humanoid: mHumanoids)
+    {
+        if(humanoid->getPosition().y >= mContext->mBottomBound)
+        {
+            std::cout << "World::onCollission() - Humanoid collided with the ground" << std::endl;
+            humanoid->OnDestroyAll(); // Destroy humanoid
+        }
+
+        // check if humanoid collides with lander
+        for (auto &lander : mLanders)
+        {
+            // && !humanoid->isReleased()
+            if (humanoid->getBounds().intersects(lander->getBounds()) && !humanoid->isKidnapped())
+            {
+                std::cout << "World::onCollission() - Humanoid collided with lander" << std::endl;
+                lander->setTargetHumanoid(humanoid);
+                lander->setKidnapping(true);
+            }
+        }
+    }
 }
 
 void World::updateCollisions()
@@ -425,7 +450,6 @@ void World::updateCollisions()
         {
             mAsteroids.erase(mAsteroids.begin() + i);
         }
-        
     }
     
     // Remove all collected powerUps
@@ -437,24 +461,55 @@ void World::updateCollisions()
             std::cout << "World::updateCollisions() - PowerUp destroyed" << std::endl;
         }
     }
-    // Remove all destroyed asteroids  
+    // Remove all destroyed humanoids
+    for (size_t i = 0; i < mHumanoids.size(); i++)
+    {
+        if (mHumanoids[i]->isDestroyed())
+        {
+            mHumanoids.erase(mHumanoids.begin() + i); 
+            std::cout << "World::updateCollisions() - Humanoid destroyed" << std::endl;
+        }
+        // Remove humanoid from player's abductable humanoids list, Lander's humanoids list, and from the world's humanoids list
+        if(mHumanoids[i]->isDead())
+        {
+            mHumanoids.erase(mHumanoids.begin() + i); // Remove humanoid from world's humanoids list
+            for(auto &lander : mLanders)
+            {
+                lander->removeHumanoid(mHumanoids[i]); // Remove humanoid from lander's humanoids list
+            }
+            // Remove humanoid from player's abductable humanoids list
+            mSpaceship->removeHumanoid(mHumanoids[i]);
+            std::cout << "World::updateCollisions() - Humanoid size: " << mHumanoids.size() << std::endl;
+        }
+    }
 }
 
-std::pair<bool, int> World::gameOver() const
+Data World::gameOver() const
 {
-    if (mSpaceship->isDestroyed())
+    Data data;
+
+    data.Lives = mSpaceship->getLives();
+    data.Score = mContext->mScore.getScore();   
+    data.Lose = (mSpaceship->isDestroyed() || mSpaceship->getLives() == 0);
+    data.Win = (mLanders.empty());
+
+    if(data.Lose)
     {
-        // Game over
-        std::cout << "Game over!!! You died." << std::endl;
-        return std::make_pair(true, 1);
+        std::cout << "World::gameOver() - Game over" << std::endl;
+        mContext->mScore.appendHighscore(data.Score);
+        mHighScoreManager->setHighScore(data.Score);
+        mContext->mScore.reset();
+        return data;
     }
-    else if(mLanders.empty())
+    else if(data.Win)
     {
-        // Game over
-        std::cout << "Game over!!! You won." << std::endl;
-        return std::make_pair(true, 2);
+        std::cout << "World::gameOver() - Game won" << std::endl;
+        mContext->mScore.appendHighscore(data.Score);
+        mHighScoreManager->setHighScore(data.Score);
+        mContext->mScore.reset();
+        return data;
     }
-    return std::make_pair(false, -1);
+    return data;
 }
 
 std::shared_ptr<CommandQueue> World::getCommandQueue()

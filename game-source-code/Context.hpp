@@ -6,6 +6,7 @@
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 #include <memory>
+#include "Score.hpp"
 
 typedef ResourceManager<sf::Texture, Textures> TexturesHolder; // Typedef for the Textures resource manager.
 typedef ResourceManager<sf::Texture, Backgrounds> BackgroundsHolder; // Typedef for the Backgrounds resource manager.
@@ -30,7 +31,7 @@ class Context
         sf::RectangleShape mMapRect; // Rectangle for the minimap
         sf::RectangleShape mHudRect; // Rectangle for the HUD
         sf::RectangleShape mWorldRect; // Rectangle for the world
-
+        Score mScore; // Score object
         float mLeftBound;
         float mRightBound;
         float mTopBound;

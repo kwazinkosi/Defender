@@ -72,7 +72,7 @@ class World
         sf::Vector2f SpawnPosition();
         void onCollission(); // handle collission
         void updateCollisions();
-        std::pair<bool, int> gameOver() const;
+        Data gameOver() const;
         std::shared_ptr<CommandQueue> mCommandQueue;
         std::unique_ptr<StarGenerator> mStarGenerator;
         std::unique_ptr<Player> mSpaceship;
