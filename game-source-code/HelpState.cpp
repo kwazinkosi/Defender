@@ -107,3 +107,7 @@ void HelpState::drawHelp(sf::RenderWindow &window)
     increment = 0.0f;
     file.close();
 }
+std::string HelpState::getStateID() const
+{
+    return "HelpState";
+}
