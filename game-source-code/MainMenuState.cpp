@@ -1,6 +1,5 @@
 #include "MainMenuState.hpp"
 
-
 MainMenuState::MainMenuState(StateStack &stack, Context &context) : State(stack, context)
 {
     //loading of resources is done in the constructor of the State class 
@@ -74,6 +73,7 @@ bool MainMenuState::handleEvent(const sf::Event &event, sf::RenderWindow &window
         }
         else if (event.key.code == sf::Keyboard::Return)
         {
+            std::cout << "MenuState::handleEvent() - Return key pressed\n"; 
             if (mMenuOptionsIterator == mMenuOptions.begin())
             {
                 requestStackPop();
@@ -81,27 +81,28 @@ bool MainMenuState::handleEvent(const sf::Event &event, sf::RenderWindow &window
             }
             else if (mMenuOptionsIterator == mMenuOptions.begin() + 1)
             {
-                // requestStackPop();
-                // requestStackPush(States::HelpState);
+                requestStackPop();
+                requestStackPush(States::ScoreState);
             }
              else if (mMenuOptionsIterator == mMenuOptions.begin() + 2)
             {
-                // requestStackPop();
-                // requestStackPush(States::ExitState);
+                requestStackPop();
+                requestStackPush(States::HelpState);
             }
             else if (mMenuOptionsIterator == mMenuOptions.begin() + 3)
             {
-                // requestStackPop();
-                // requestStackPush(States::ExitState);
+                mContext->mWindow.close();
             }
         }
     }
     updateOptionText();
     return true;
 }
+
 void MainMenuState::handleRealtimeInput(sf::RenderWindow &window)
 {
 }
+
 void MainMenuState::updateOptionText()
 {
     if (mMenuOptions.empty())
@@ -125,22 +126,23 @@ void MainMenuState::updateOptionText()
 
 void MainMenuState::setupMenuOptions()
 {
-    sf::Text play, options, help, exit;
+    std::cout << "MainMenuState::setupMenuOptions()\n";
+    sf::Text play, highScore, help, exit;
 
     // The first argument is the text, the second is the position, the third is the color, the fourth is the style, and the fifth is the size
     play = mTextFormater.formatText("Play", sf::Vector2f(400.f, 250.f), sf::Color::White, sf::Text::Style::Regular, 20);
-    options = mTextFormater.formatText("Options", sf::Vector2f(400.f, 300.f), sf::Color::White, sf::Text::Style::Regular, 20);   
+    highScore = mTextFormater.formatText("High scores", sf::Vector2f(400.f, 300.f), sf::Color::White, sf::Text::Style::Regular, 20);   
     help = mTextFormater.formatText("Help", sf::Vector2f(400.f, 350.f), sf::Color::White, sf::Text::Style::Regular, 20);
     exit = mTextFormater.formatText("Exit", sf::Vector2f(400.f, 400.f), sf::Color::White, sf::Text::Style::Regular, 20);
 
     // Set the origin of the text to the center of the text
     play.setOrigin(play.getLocalBounds().width / 2.f, play.getLocalBounds().height / 2.f);
-    options.setOrigin(options.getLocalBounds().width / 2.f, options.getLocalBounds().height / 2.f);
+    highScore.setOrigin(highScore.getLocalBounds().width / 2.f, highScore.getLocalBounds().height / 2.f);
     help.setOrigin(help.getLocalBounds().width / 2.f, help.getLocalBounds().height / 2.f);
     exit.setOrigin(exit.getLocalBounds().width / 2.f, exit.getLocalBounds().height / 2.f);
     // Add the menu options to the vector of menu options
     mMenuOptions.push_back(play);
-    mMenuOptions.push_back(options);
+    mMenuOptions.push_back(highScore);
     mMenuOptions.push_back(help);
     mMenuOptions.push_back(exit);
 
@@ -150,6 +152,9 @@ void MainMenuState::setupMenuOptions()
         text.setFont(mContext->mFonts->getResourceById(Fonts::SpaceObsessed));
     }
 }
+
+
+
 void MainMenuState::drawMenuOptions(sf::RenderWindow &window)
 {
     for (auto &text : mMenuOptions)

@@ -7,7 +7,7 @@
 
 enum class MenuOptions
 {
-   Play, Help, Options, Exit
+   Play, Help, ScoreState, Options, Exit
 };
 class MainMenuState : public State
 {
