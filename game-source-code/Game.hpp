@@ -1,23 +1,24 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
-#include <SFML/System.hpp>
+#include "Context.hpp"
 #include "StateStack.hpp"
+#include "Player.hpp"
 #include "LoadingState.hpp"
 #include "SplashState.hpp"
 #include "MainMenuState.hpp"
-#include "GameOverState.hpp"
 #include "GameState.hpp"
 #include "PauseState.hpp"
-#include "Context.hpp"
+#include "ScoreState.hpp"
+#include "HelpState.hpp"
+#include "GameOverState.hpp"
+
 class Game
 {
     public:
         Game();
         ~Game();
-        void runGame();
+        void run();
 
     private:
         void registerStates();

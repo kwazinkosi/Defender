@@ -24,10 +24,11 @@ void Game::registerStates()
     mStateStack.registerState<LoadingState>(States::LoadingState, mContext);
     mStateStack.registerState<SplashState>(States::SplashState, mContext);
     mStateStack.registerState<MainMenuState>(States::MainMenuState, mContext);
-    //mStateStack.registerState<HelpState>(States::HelpState, mContext);
+    mStateStack.registerState<HelpState>(States::HelpState, mContext);
     mStateStack.registerState<GameState>(States::GameState, mContext);
     mStateStack.registerState<GameOverState>(States::GameOverState, mContext);
     mStateStack.registerState<PauseState>(States::PauseState, mContext);
+    mStateStack.registerState<ScoreState>(States::ScoreState, mContext);
 
     //std::cout<<"Done registering"<<std::endl;
     //mStateStack.registerState<OptionsState>(States::OptionsState, mContext);
@@ -46,7 +47,7 @@ void Game::registerStates()
  * - Renders the updated game state to the window for display.
  * 
  */
-void Game::runGame()
+void Game::run()
 {
     sf::Clock clock;
     sf::Time timeSinceLastUpdate = sf::Time::Zero;

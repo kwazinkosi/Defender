@@ -18,7 +18,7 @@ GameState::GameState(StateStack &stack, Context &context) : State(stack, context
 }
 
 void GameState::pauseGame()
-{ 
+{
     requestStackPush(States::PauseState);
     std::cout << "GameState::pauseGame()\n";
 }
@@ -32,7 +32,7 @@ void GameState::gameOver()
 
 void GameState::draw(sf::RenderWindow &window)
 {
-   mWorld->render();
+    mWorld->render();
 }
 
 bool GameState::update(sf::Time dt)
@@ -41,10 +41,9 @@ bool GameState::update(sf::Time dt)
    // Update the player
     auto gameResult = mWorld->update(dt);
     //std::cout << "GameState::update() -- Game result: " << gameResult.first << std::endl;
-    if (gameResult.first == true)
+    if(gameResult.Lose || gameResult.Win)
     {
         gameOver();
-
     }
     
     return true;
@@ -55,27 +54,14 @@ bool GameState::handleEvent(const sf::Event &event, sf::RenderWindow &window)
     auto ev = event;
     auto commands = mWorld->getCommandQueue(); // get command queue from world
     
-    if (event.type == sf::Event::Closed )
+    if (event.type == sf::Event::Closed)
     {
         requestStateClear(); // Clear the stack
         window.close();      // Close the window
     }
-    
-    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::P)
-    {
-        pauseGame();
-        std::cout << "GameState::handleEvent() -- Paused game" << std::endl;
-    }
-    
 
     mWorld->handleInput(*commands, ev);
     return true; // Consume the event, don't pass it to lower states
-}
-
-void GameState::handleRealtimeInput(sf::RenderWindow &window)
-{
-    auto commands = mWorld->getCommandQueue(); // get command queue from world
-    mWorld->handleRealtimeInput(*commands);
 }
 
 std::string GameState::getStateID() const
@@ -83,3 +69,8 @@ std::string GameState::getStateID() const
     return "GameState";
 }
 
+void GameState::handleRealtimeInput(sf::RenderWindow &window)
+{
+    auto commands = mWorld->getCommandQueue(); // get command queue from world
+    mWorld->handleRealtimeInput(*commands);
+}
