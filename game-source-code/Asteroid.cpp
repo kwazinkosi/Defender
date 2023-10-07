@@ -23,7 +23,7 @@ void Asteroid::initAsteroid()
     sprite.setTexture(texture);
     sprite.setPosition(mData.position);
     sprite.setScale(0.5f, 0.5f);
-    setCollisionType(CollisionType::Asteroid);
+    //setCollisionType(CollisionType::Asteroid);
 }
 void Asteroid::update(sf::Time deltaTime)
 {
