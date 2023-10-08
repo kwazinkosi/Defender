@@ -10,7 +10,7 @@ int main()
     try
     {
         Game game;
-        game.runGame();
+        game.run();
     }
     catch (std::exception &e)
     {

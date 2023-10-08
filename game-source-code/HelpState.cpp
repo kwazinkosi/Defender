@@ -47,15 +47,6 @@ bool HelpState::update(sf::Time dt)
     return false;
 }
 
-
-void HelpState::draw(sf::RenderWindow &window)
-{
-}
-
-bool HelpState::update(sf::Time dt)
-{
-    return false;
-}
 bool HelpState::handleEvent(const sf::Event &event, sf::RenderWindow &window)
 {
     if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::BackSpace)

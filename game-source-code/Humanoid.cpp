@@ -81,6 +81,7 @@ void Humanoid::update(sf::Time deltaTime)
 
 void Humanoid::draw(sf::RenderTarget& target)
 {
+    std::cout<<"Humanoid::draw() -- Drawing Humanoid"<<std::endl;
     animation[static_cast<int>(mCurrentAnimation)].draw(target);
 }
 

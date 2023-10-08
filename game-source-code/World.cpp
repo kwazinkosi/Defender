@@ -143,6 +143,8 @@ Data World::update(sf::Time deltaTime)
     // std::cout << "World::update() - Updating mountains" << std::endl;
     mMountains->update(deltaTime);
     // Update player
+    //update humanoids
+    updateHumanoids(deltaTime);
     // std::cout << "World::update() - Updating player" << std::endl;
     mSpaceship->update(deltaTime);
     // update powerUps

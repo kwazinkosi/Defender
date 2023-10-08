@@ -449,7 +449,7 @@ void Lander::moveRight(sf::Time deltaTime)
 void Lander::draw(sf::RenderTarget &target)
 {
     animation[static_cast<int>(mCurrentAnimation)].draw(target);
-
+    std::cout<<"Lander::draw() -- Lander drawn." << std::endl;
     for (auto &missile : mMissiles)
     {
         target.draw(missile->getSprite());
