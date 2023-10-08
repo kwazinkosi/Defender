@@ -21,12 +21,47 @@ struct AsteroidData
 class Asteroid: public Entity
 {
     public:
+        /**
+         * @brief Construct a new Asteroid object
+         * 
+         * @param context 
+         * @param position 
+         */
         Asteroid(Context &context, sf::Vector2f position);
+        /**
+         * @brief Destroy the Asteroid object
+         * 
+         */
         ~Asteroid();
+        /**
+         * @brief   Initializes the asteroid.
+         * 
+         */
         void initAsteroid();
+        /**
+         * @brief  Updates the asteroid's state.
+         * 
+         * @param deltaTime 
+         */
         void update(sf::Time deltaTime);
+        /**
+         * @brief  Draws the asteroid to the screen.
+         * 
+         * @param target 
+         */
         void draw(sf::RenderTarget& target);
+        /**
+         * @brief  checks if the asteroid is static.
+         * 
+         * @return true 
+         * @return false 
+         */
         bool isStatic() const;
+        /**
+         * @brief Get the Entity Type object
+         * 
+         * @return ENTITYTYPE 
+         */
         ENTITYTYPE getEntityType() const; 
         bool collissionCheck(Entity* other);
         void onCollision();
