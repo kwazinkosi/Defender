@@ -18,6 +18,13 @@ void Score::updateScore(ENTITYTYPE type)
             break;
         case ENTITYTYPE::ENEMY:
             addToScore(30);
+            break;
+        case ENTITYTYPE::HUMANOID:
+            addToScore(50);
+            break;
+        case ENTITYTYPE::PROJECTILE:
+            addToScore(2);
+            break;
             
         default:
             break;

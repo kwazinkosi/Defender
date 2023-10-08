@@ -64,7 +64,7 @@ void World::initEnemies()
     for (int i = 0; i < 3; i++)
     {
         std::cout << "World::initEnemies() - Creating lander" << std::endl;
-        auto lander = std::make_unique<Lander>(*mContext, sf::Vector2f(0.f, 0.f));
+        auto lander = std::make_unique<Lander>(*mContext); 
         mLanders.push_back(std::move(lander));
     }
     // Add landers to the player's collidable list
@@ -143,8 +143,6 @@ Data World::update(sf::Time deltaTime)
     // std::cout << "World::update() - Updating mountains" << std::endl;
     mMountains->update(deltaTime);
     // Update player
-    //update humanoids
-    updateHumanoids(deltaTime);
     // std::cout << "World::update() - Updating player" << std::endl;
     mSpaceship->update(deltaTime);
     // update powerUps
@@ -155,6 +153,8 @@ Data World::update(sf::Time deltaTime)
     updateAsteroids(deltaTime);
     onCollission();
     updateCollisions();
+    mContext->mScore.setScoreText(mContext->mFonts->getResourceById(Fonts::GamePlayed));
+    
     // Check if game is over
     auto gameOverResult = gameOver();
     // std::cout << "World::update() - Game over result: " << gameOverResult.first << std::endl;
@@ -351,6 +351,18 @@ void World::onCollission()
             asteroid->OnDestroy();
             return;
         }
+        // Check if player bullet collides with asteroid
+        for (size_t i = 0; i < mSpaceship->getBullets().size(); i++)
+        {
+            if (mSpaceship->getBullets()[i]->getBounds().intersects(asteroid->getBounds()))
+            {
+                mSpaceship->getBullets()[i]->OnDestroy();
+                asteroid->OnDestroy();
+                mContext->mScore.updateScore(ENTITYTYPE::ASTEROID);
+                mContext->mScore.setScoreText(mContext->mFonts->getResourceById(Fonts::GamePlayed));
+                std::cout << "World::onCollission() - Asteroids destroyed: " << mContext->mScore.getScore() << std::endl;
+            }
+        }
     }
     // Check if Lander collides with player bullet and destroy both, player bullet and lander bullet
     for (size_t i = 0; i < mSpaceship->getBullets().size(); i++)
@@ -362,6 +374,9 @@ void World::onCollission()
                 std::cout << "World::onCollission() - Player bullet collided with lander" << std::endl;
                 mSpaceship->getBullets()[i]->OnDestroy(); // Destroy bullet
                 lander->OnDestroy(); // Destroy lander
+                mContext->mScore.updateScore(ENTITYTYPE::ENEMY);
+                mContext->mScore.setScoreText(mContext->mFonts->getResourceById(Fonts::GamePlayed));
+                std::cout << "World::onCollission() - Enemies killed: " << mContext->mScore.getScore() << std::endl;
             }
 
             // Check if player bullet collides with lander missile

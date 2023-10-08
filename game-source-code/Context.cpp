@@ -43,6 +43,7 @@ mWindow(sf::VideoMode(800, 600), "Defender Shooter", sf::Style::Close)
     mRightBound =mWorldView.getCenter().x + mWorldView.getSize().x / 2.f;
     mTopBound =mWorldView.getCenter().y - mWorldView.getSize().y / 2.f;
     mBottomBound =mWorldView.getCenter().y + mWorldView.getSize().y / 2.f;
+    std::cout<<"Left: "<<mLeftBound<<" Right: "<<mRightBound<<" Top: "<<mTopBound<<" Bottom: "<<mBottomBound<<std::endl;
 }
 Context::~Context()
 {

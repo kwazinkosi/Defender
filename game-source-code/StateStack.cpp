@@ -194,8 +194,8 @@ std::string StateStack::getStateName(States stateID) const
         return "GameOverState";
     case States::PauseState:
         return "PauseState";
-    /*case States::OptionsState:
-        return "OptionsState";*/
+    case States::ScoreState:
+        return "ScoreState";
     default:
         return "Unknown state";
     }
