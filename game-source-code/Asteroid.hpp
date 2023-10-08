@@ -63,12 +63,42 @@ class Asteroid: public Entity
          * @return ENTITYTYPE 
          */
         ENTITYTYPE getEntityType() const; 
+        /**
+         * @brief  Checks if the asteroid collides with another entity.
+         * 
+         * @param other 
+         * @return true 
+         * @return false 
+         */
         bool collissionCheck(Entity* other);
+        /**
+         * @brief  checks for collisions with other entities.
+         * 
+         */
         void onCollision();
+        /**
+         * @brief  Destroys the asteroid.
+         * 
+         */
         void onDestroy();
+        /**
+         * @brief   Returns true if the asteroid is destroyed.
+         * 
+         * @return true 
+         * @return false 
+         */
         bool isDestroyed() const;
+        /**
+         * @brief Get the Data object
+         * 
+         * @return AsteroidData 
+         */
         AsteroidData getData();
-
+        /**
+         * @brief Set the Data object
+         * 
+         * @param data 
+         */
         void setData(AsteroidData data);
     private:
         sf::Vector2f spawnPosition();
