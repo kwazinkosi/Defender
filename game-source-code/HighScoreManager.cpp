@@ -1,7 +1,7 @@
 #include "HighScoreManager.hpp"
 
 HighScoreManager::HighScoreManager()
-    : filePath_{"highscore.txt"}
+    : filePath_{"resources/files/highscores.txt"}
 {
     // ctor
 }
@@ -32,7 +32,7 @@ void HighScoreManager::setHighScore(int score)
         }
         file_.close();
     } else {
-        std::cerr << "Error: Unable to open the file for writing high scores." << std::endl;
+        std::cerr << "HighScoreManager::setHighScore() - Unable to open file for writing" << std::endl;
     }
 }
 
@@ -54,8 +54,6 @@ void HighScoreManager::initScoreVector()
     file_.close();
     // Sort the vector in descending order
     std::sort(highScores.rbegin(), highScores.rend());
-    std::cout << "Highscore size: " << highScores.size() << std::endl;
-
     // Resize the vector to a maximum of 10 scores
     highScores.resize(std::min(highScores.size(), static_cast<size_t>(10)));
 }

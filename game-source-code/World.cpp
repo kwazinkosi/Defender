@@ -252,6 +252,7 @@ void World::render()
     // Draw on hud view
     mWindow->draw(mContext->mHudRect);
     mSpaceship->drawHUD(*mWindow);
+    mContext->mScore.drawScore(*mWindow);
 
 }
 
@@ -311,7 +312,6 @@ void World::onCollission()
         // Check if player collides with lander
     for (auto &lander : mLanders)
     {
-        //std::cout << "World::onCollission() - Checking collission between player and lander" << mSpaceship->playerBounds().top << std::endl <<" and Lander: " << lander->getBounds().top << std::endl;
         if (mSpaceship->getBounds().intersects(lander->getBounds()))
         {
             std::cout << "World::onCollission() - Player collided with lander" << std::endl;
@@ -370,16 +370,6 @@ void World::onCollission()
     {
         for (auto &lander : mLanders)
         {
-            if (mSpaceship->getBullets()[i]->getBounds().intersects(lander->getBounds()))
-            {
-                std::cout << "World::onCollission() - Player bullet collided with lander" << std::endl;
-                mSpaceship->getBullets()[i]->OnDestroy(); // Destroy bullet
-                lander->OnDestroy(); // Destroy lander
-                mContext->mScore.updateScore(ENTITYTYPE::ENEMY, 30);
-                mContext->mScore.setScoreText(mContext->mFonts->getResourceById(Fonts::GamePlayed));
-                std::cout << "World::onCollission() - Enemies killed: " << mContext->mScore.getScore() << std::endl;
-            }
-
             // Check if player bullet collides with lander missile
             for (size_t j = 0; j < lander->getMissiles().size(); j++)
             {
@@ -391,6 +381,17 @@ void World::onCollission()
                     mContext->mScore.updateScore(ENTITYTYPE::PROJECTILE, 5);
                     mContext->mScore.setScoreText(mContext->mFonts->getResourceById(Fonts::GamePlayed));
                 }
+            }
+
+            if (mSpaceship->getBullets()[i]->getBounds().intersects(lander->getBounds()))
+            {
+                std::cout << "World::onCollission() - Player bullet collided with lander" << std::endl;
+                mSpaceship->getBullets()[i]->OnDestroy(); // Destroy bullet
+                lander->OnDestroy(); // Destroy lander
+                mContext->mScore.updateScore(ENTITYTYPE::ENEMY, 30);
+                mContext->mScore.setScoreText(mContext->mFonts->getResourceById(Fonts::GamePlayed));
+                std::cout << "World::onCollission() - Enemies killed: " << mContext->mScore.getScore() << std::endl;
+                //return;
             }
         }
 
@@ -518,15 +519,13 @@ Data World::gameOver() const
     if(data.Lose)
     {
         std::cout << "World::gameOver() - Game over" << std::endl;
-        mContext->mScore.appendHighscore(data.Score);
         mHighScoreManager->setHighScore(data.Score);
         mContext->mScore.reset();
         return data;
     }
     else if(data.Win)
     {
-        std::cout << "World::gameOver() - Game won" << std::endl;
-        mContext->mScore.appendHighscore(data.Score);
+        std::cout << "World::gameOver() - Game won -- score: " << data.Score << std::endl;
         mHighScoreManager->setHighScore(data.Score);
         mContext->mScore.reset();
         return data;

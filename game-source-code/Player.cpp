@@ -205,7 +205,7 @@ void Player::moveUp(sf::Time deltaTime)
 
 void Player::shoot(sf::Time deltaTime)
 {
-    auto bulletPos = mAnimation->getPosition();
+    auto bulletPos = getPosition();
     bulletPos.x += 30.f;
     bulletPos.y += 70.f;
     mProjectiles.push_back(std::make_unique<Projectile>(bulletPos, (isLeft ? sf::Vector2f(-1.f, 0) : sf::Vector2f(1.f, 0)), 300.f, ProjectileType::PlayerBullet));
