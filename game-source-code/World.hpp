@@ -124,6 +124,11 @@ class World
          * @return std::shared_ptr<CommandQueue> 
          */
         std::shared_ptr<CommandQueue> getCommandQueue();
+        /**
+         * @brief add an entity to the world
+         * 
+         * @param entity 
+         */
         void addEntity(std::unique_ptr<Entity> entity);
 
 
