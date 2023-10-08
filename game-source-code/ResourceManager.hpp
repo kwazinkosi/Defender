@@ -14,13 +14,35 @@
 #include <cassert>
 #include "Utills.hpp"
 
-
+/**
+ * @brief 
+ * 
+ * @tparam Resource 
+ * @tparam Identifier 
+ */
 template<typename Resource, typename Identifier>
 class ResourceManager                       
 {
     public:
+    /**
+     * @brief  Loads a resource from a file.
+     * 
+     * @param ID 
+     * @param filename 
+     */
         void load(Identifier ID, const std::string& filename); // Loads a resource from a file.
+        /**
+         * @brief Get the Resource By Id object
+         * 
+         * @param ID 
+         * @return Resource& 
+         */
         Resource& getResourceById(Identifier ID); 
+        /**
+         * @brief  Get the Resource By Id object
+         * 
+         * @return const int 
+         */
         const int resourseSize() const; // Returns the size of the resource map.
         
     

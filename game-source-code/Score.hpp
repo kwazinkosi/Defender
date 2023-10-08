@@ -61,7 +61,17 @@ public:
      * 
      */
     std::vector<int> mHighscores;
+    /**
+     * @brief  appending high scores
+     * 
+     * @param score 
+     */
     void appendHighscore(int score);
+    /**
+     * @brief  sets the score
+     * @param score
+     * 
+    */
     void setScore(unsigned int score);
 private:
     
