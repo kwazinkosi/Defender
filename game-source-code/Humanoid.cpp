@@ -67,7 +67,8 @@ sf::Vector2f Humanoid::spawnPosition()
     auto x = (rand() % 38)*5.f*multiplier + 20.f; // 38 * 5*4
     auto y = mContext->mBottomBound - 32.f - 10.f;
     auto position = sf::Vector2f(x, y);
-    std::cout << "Humanoid::spawnPosition() -- Bounding box: " << sprite.getGlobalBounds().width << ", " << sprite.getGlobalBounds().height << std::endl;
+    std::cout << "Humanoid::spawnPosition() -- Spawned at position: " << position.x << ", " << position.y << std::endl;
+    std::cout << "Humanoid::spawnPosition() -- Bottom bound: " << mContext->mBottomBound << std::endl;
     return position;
 }
 

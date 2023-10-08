@@ -1,7 +1,7 @@
 #include "Lander.hpp"
 
 Lander::Lander(Context &context, sf::Vector2f position)
-: Entity(100, 0.f, sf::Vector2f(0.f, 0.f), ENTITYTYPE::ENEMY)
+: Entity(100, 0.f, sf::Vector2f(position), ENTITYTYPE::ENEMY)
 , mContext(&context)
 , enemyState(ENEMYSTATE::MOVINGDOWN)
 , speed(50.f)
@@ -81,6 +81,7 @@ void Lander::initLander()
     animation[static_cast<int>(LANDERSTATE::MOVING)].setScale(0.7f, 0.7f);
     animation[static_cast<int>(LANDERSTATE::KIDNAPPING)].setScale(0.7f, 0.7f);
 }
+
 void Lander::addHumanoid(std::shared_ptr<Humanoid> human)
 {
     if(human != nullptr)
@@ -129,6 +130,7 @@ void Lander::setTargetHumanoid(std::shared_ptr<Humanoid> human)
 void Lander::setTargetPosition(sf::Vector2f position)
 {
     mTargetPosition = position;
+
 }
 
 void Lander::setKidnapping(bool kidnapping)
