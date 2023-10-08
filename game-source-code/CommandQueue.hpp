@@ -28,7 +28,15 @@ enum class Category
 };
 struct Command
 {
+    /**
+     * @brief Construct a new Command object
+     * 
+     */
     Command() :
+        /**
+         * @brief  Set the default category to player.
+         * 
+         */
         category(Category::Player),
         action(Action::Idle)
     {
@@ -46,10 +54,35 @@ struct Command
 class CommandQueue
 {
     public:
+    /**
+     * @brief Construct a new Command Queue object
+     * 
+     */
         CommandQueue();
+        /**
+         * @brief   Pushes a command to the queue.
+         * 
+         * @param command 
+         */
         void push(Command command);
+        /**
+         * @brief  Pops a command from the queue.
+         * 
+         * @return Command 
+         */
         Command pop();
+        /**
+         * @brief  Checks if the queue is empty.
+         * 
+         * @return true 
+         * @return false 
+         */
         bool isEmpty();
+        /**
+         * @brief Get the Queue Size object
+         * 
+         * @return int 
+         */
         int getQueueSize() const;
     private:
         std::queue<Command> mCommandQueue; // command queue, holds commands

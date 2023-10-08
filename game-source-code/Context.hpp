@@ -16,7 +16,15 @@ class ContextInitializationException{};
 class Context
 {
     public:
+        /**
+         * @brief Construct a new Context object
+         * 
+         */
         Context();
+        /**
+         * @brief Destroy the Context object
+         * 
+         */
         ~Context();
         std::unique_ptr<BackgroundsHolder> mBackgrounds; // Unique pointer to the Backgrounds resource manager. 
         std::unique_ptr<TexturesHolder> mTextures; // Unique pointer to the Textures resource manager.

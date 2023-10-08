@@ -5,7 +5,15 @@
 
 class Collidable {
 public:
+    /**
+     * @brief Construct a new Collidable object
+     * 
+     */
     Collidable();
+    /**
+     * @brief Destroy the Collidable object
+     * 
+     */
     virtual ~Collidable();
 
     // Get the bounding box of the collidable object
