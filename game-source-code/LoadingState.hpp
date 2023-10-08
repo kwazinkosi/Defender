@@ -9,12 +9,47 @@
 class  LoadingState : public State  
 {
     public:
+    /**
+     * @brief Construct a new Loading State object 
+     * 
+     * @param stack 
+     * @param context 
+     */
         LoadingState(StateStack& stack, Context &context);
-
+        /**
+         * @brief  Draws the loading state to the screen.
+         * 
+         * @param window 
+         */
         virtual void draw(sf::RenderWindow &window);
+        /**
+         * @brief  Updates the loading state.
+         * 
+         * @param dt 
+         * @return true 
+         * @return false 
+         */
         virtual bool update(sf::Time dt);
+        /**
+         * @brief  Handles the loading state's input.
+         * 
+         * @param event 
+         * @param window 
+         * @return true 
+         * @return false 
+         */
         virtual bool handleEvent(const sf::Event &event, sf::RenderWindow &window);
+        /**
+         * @brief  Handles the loading state's realtime input.
+         * 
+         * @param window 
+         */
         virtual void handleRealtimeInput(sf::RenderWindow &window) ;
+        /**
+         * @brief Get the State I D object
+         * 
+         * @return std::string 
+         */
         virtual std::string getStateID() const;
 
     private:
