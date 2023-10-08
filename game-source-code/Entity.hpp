@@ -15,27 +15,124 @@
 class Entity
 {
     public:
+        /**
+         * @brief Construct a new Entity object 
+         * 
+         * @param health 
+         * @param movementSpeed 
+         * @param position 
+         * @param entityType 
+         */
         explicit Entity(int health, float movementSpeed, sf::Vector2f position, ENTITYTYPE entityType); 
+        /**
+         * @brief Destroy the Entity object
+         * 
+         */
         ~Entity();
 
-        // // Functions
+        /**
+         * @brief  Updates the entity's state.
+         * 
+         * @param deltaTime 
+         */
         virtual void update(sf::Time deltaTime)=0;
+        /**
+         * @brief  Draws the entity to the screen.
+         * 
+         * @param target 
+         */
         virtual void draw(sf::RenderTarget& target)=0;
+        /**
+         * @brief Get the Entity Type object 
+         * 
+         * @return ENTITYTYPE 
+         */
         virtual ENTITYTYPE getEntityType() const = 0; 
-        // Method called when a collision occurs with another collidable object
+        /**
+         * @brief  checks for collision with another entity.
+         * 
+         */
         virtual void onCollision() = 0;
+        /**
+         * @brief  sets collioion check with another entity.
+         * 
+         * @param other 
+         * @return true 
+         * @return false 
+         */
         bool collisionCheck(Entity* other);
+        /**
+         * @brief Get the Center object
+         * 
+         * @return sf::Vector2f 
+         */
         sf::Vector2f getCenter() const;
+        /**
+         * @brief  Moves the entity.
+         * 
+         * @param x 
+         * @param y 
+         */
         void move(float x, float y);
+        /**
+         * @brief Set the Position object 
+         * 
+         * @param position 
+         */
         void setPosition(sf::Vector2f position);
+        /**
+         * @brief Set the Position object 
+         * 
+         * @param x 
+         * @param y 
+         */
         void setPosition(float x, float y);
+        /**
+         * @brief Get the Position object
+         * 
+         * @return sf::Vector2f 
+         */
         sf::Vector2f getPosition() const;
+        /**
+         * @brief Get the Bounds object 
+         * 
+         * @return sf::FloatRect 
+         */
         sf::FloatRect getBounds() const;
+        /**
+         * @brief Get the Sprite object
+         * 
+         * @return sf::Sprite& 
+         */
         sf::Sprite& getSprite();
+        /**
+         * @brief  Destroys the entity.
+         * 
+         */
         void OnDestroy();
+        /**
+         * @brief  Returns true if the entity is destroyed.
+         * 
+         * @return true 
+         * @return false 
+         */
         bool isDestroyed() const;
+        /**
+         *  @brief  Sets the health of the entity.
+         *  @param health
+        */
         void setHealth(int health);
+        /**
+         * @brief Get the Health object
+         * 
+         * @return int 
+         */
         int getHealth() const;
+        /**
+         * @brief Set the Movement Speed object
+         * 
+         * @param movementSpeed 
+         */
         void setMovementSpeed(float movementSpeed);
 
     protected:
