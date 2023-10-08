@@ -1,7 +1,7 @@
 #include "Lander.hpp"
 
 Lander::Lander(Context &context, sf::Vector2f position)
-: Entity(100, 0.f, sf::Vector2f(position), ENTITYTYPE::ENEMY)
+: Entity(100, 0.f, sf::Vector2f(0.f, 0.f), ENTITYTYPE::ENEMY)
 , mContext(&context)
 , enemyState(ENEMYSTATE::MOVINGDOWN)
 , speed(50.f)
@@ -10,7 +10,7 @@ Lander::Lander(Context &context, sf::Vector2f position)
 , isDown(true)
 , mKidnapping(false)
 , mIsSeeking(false)
-, mTargetPosition(0.f, 0.f)
+, mTargetPosition(position)
 , mPosition(position)
 , mCurrentAnimation(LANDERSTATE::IDLE)
 {
@@ -37,6 +37,7 @@ void Lander::update(sf::Time deltaTime, sf::Vector2f playerPosition)
         initLanderState(); // Choose a random action to perform (0: Up, 1: Down, 2: Left, 3: Right, 4: seek humanoid)
     }
     mTargetPosition = playerPosition;
+    std::cout << "Player is at: " << mTargetPosition.x << ", " << mTargetPosition.y << std::endl;
     sf::Vector2f landerPosition = getPosition();
     float targetDistance = std::sqrt(pow(mTargetPosition.x - landerPosition.x, 2) + pow(mTargetPosition.y - landerPosition.y, 2));
     updateMissiles(deltaTime);
@@ -451,7 +452,7 @@ void Lander::moveRight(sf::Time deltaTime)
 void Lander::draw(sf::RenderTarget &target)
 {
     animation[static_cast<int>(mCurrentAnimation)].draw(target);
-    std::cout<<"Lander::draw() -- Lander drawn." << std::endl;
+    //std::cout<<"Lander::draw() -- Lander drawn." << std::endl;
     for (auto &missile : mMissiles)
     {
         target.draw(missile->getSprite());

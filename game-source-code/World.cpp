@@ -64,7 +64,7 @@ void World::initEnemies()
     for (int i = 0; i < 3; i++)
     {
         std::cout << "World::initEnemies() - Creating lander" << std::endl;
-        auto lander = std::make_unique<Lander>(*mContext); 
+        auto lander = std::make_unique<Lander>(*mContext, sf::Vector2f(0.f, 0.f)); 
         mLanders.push_back(std::move(lander));
     }
     // Add landers to the player's collidable list
@@ -118,6 +118,7 @@ void World::initHumanoids()
     {
         auto humanoid = std::make_shared<Humanoid>(*mContext);
         std::cout << "World::initHumanoids() - Adding humanoid to mHumanoids" << std::endl;
+        std::cout <<"left: "<< mContext->mLeftBound << " right: " << mContext->mRightBound << "| top: " << mContext->mTopBound << " bottom: " << mContext->mBottomBound << std::endl;
         mHumanoids.push_back(std::move(humanoid));
     }
     // Add humanoids to the player's collidable list

@@ -32,7 +32,7 @@ void Humanoid::initHumanoid()
     // Load texture
     texture = mContext->mTextures->getResourceById(Textures::Humanoid);
     mCurrentAnimation = static_cast<State>(rand() % 2 + 1); // 1 = moving left, 2 = moving right
-    texture = mContext->mTextures->getResourceById(Textures::Humanoid);
+    //texture = mContext->mTextures->getResourceById(Textures::Humanoid);
     // Set sprite
     sprite.setTextureRect(sf::IntRect(0, 0, 15, 32));
     sprite.setTexture(texture);
@@ -65,7 +65,9 @@ sf::Vector2f Humanoid::spawnPosition()
     // Spawn at random position 
     auto multiplier = rand() % 4 + 1.f; 
     auto x = (rand() % 38)*5.f*multiplier + 20.f; // 38 * 5*4
-    auto y = mContext->mBottomBound - 32.f - 10.f;
+    //auto y = mContext->mBottomBound - 32.f - 10.f;
+
+    auto y = 700.f;
     auto position = sf::Vector2f(x, y);
     std::cout << "Humanoid::spawnPosition() -- Spawned at position: " << position.x << ", " << position.y << std::endl;
     std::cout << "Humanoid::spawnPosition() -- Bottom bound: " << mContext->mBottomBound << std::endl;
@@ -77,12 +79,11 @@ void Humanoid::update(sf::Time deltaTime)
     updatePosition(deltaTime);
     animation[static_cast<int>(mCurrentAnimation)].move(mPosition.x, mPosition.y);
     animation[static_cast<int>(mCurrentAnimation)].update(deltaTime);
-    setPosition(animation[static_cast<int>(mCurrentAnimation)].getPosition());
 }
 
 void Humanoid::draw(sf::RenderTarget& target)
 {
-    std::cout<<"Humanoid::draw() -- Drawing Humanoid"<<std::endl;
+    //std::cout<<"Humanoid::draw() -- Drawing Humanoid"<<std::endl;
     animation[static_cast<int>(mCurrentAnimation)].draw(target);
 }
 
