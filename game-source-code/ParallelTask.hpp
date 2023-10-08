@@ -10,9 +10,29 @@
 class ParallelTask
 {
     public:
+    /**
+     * @brief Construct a new Parallel Task object 
+     * 
+     * @param context 
+     */
         ParallelTask(Context &context);
+        /**
+         * @brief  EXECUTE the task.
+         * 
+         */
         void execute();
+        /**
+         * @brief  Checks if the task is finished.
+         * 
+         * @return true 
+         * @return false 
+         */
         bool isFinished();
+        /**
+         * @brief Get the Completion object 
+         * 
+         * @return float 
+         */
         float getCompletion();
 
     private:
