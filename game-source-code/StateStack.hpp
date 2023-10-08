@@ -24,7 +24,22 @@ enum class StackAction
 class StateStack
 {
 public:
-   
+    /**
+     * @brief Construct a new StateStack object.
+     */
+    explicit StateStack();
+
+    /**
+     * @brief Registers a new state to the state stack.
+     *
+     * The main purpose of this function is to register a new state to the state stack so that it can be created later in createState().
+     * The state is registered by storing a lambda function in the mFactories map.
+     * The lambda function creates a new state and returns a pointer to it.
+     *
+     * @tparam T The type of the state to be registered (e.g., MenuState).
+     * @param stateID The ID of the state to be registered (e.g., States::Menu)
+     * @param context The context object to be passed to the state's constructor.
+     */
     template <typename T>
     void registerState(States stateID, Context &context);
 
