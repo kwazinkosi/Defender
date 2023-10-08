@@ -7,23 +7,23 @@ Score::Score()
     _enemiesKilled = 0.f;
 }
 
-void Score::updateScore(ENTITYTYPE type)
+void Score::updateScore(ENTITYTYPE type, int score)
 {
     _enemiesKilled++;
 
     switch (type)
     {
         case ENTITYTYPE::ASTEROID:
-            addToScore(20);
+            addToScore(score);
             break;
         case ENTITYTYPE::ENEMY:
-            addToScore(30);
+            addToScore(score);
             break;
         case ENTITYTYPE::HUMANOID:
-            addToScore(50);
+            addToScore(score);
             break;
         case ENTITYTYPE::PROJECTILE:
-            addToScore(2);
+            addToScore(score);
             break;
             
         default:
@@ -72,5 +72,10 @@ const unsigned int Score::getScore() const
 
 void Score::addToScore(int points)
 {
+    if(points < 0)
+    {
+        _score = 0;
+        return;
+    }
     _score += points;
 }

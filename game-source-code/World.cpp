@@ -358,7 +358,7 @@ void World::onCollission()
             {
                 mSpaceship->getBullets()[i]->OnDestroy();
                 asteroid->OnDestroy();
-                mContext->mScore.updateScore(ENTITYTYPE::ASTEROID);
+                mContext->mScore.updateScore(ENTITYTYPE::ASTEROID, 10);
                 mContext->mScore.setScoreText(mContext->mFonts->getResourceById(Fonts::GamePlayed));
                 std::cout << "World::onCollission() - Asteroids destroyed: " << mContext->mScore.getScore() << std::endl;
             }
@@ -374,7 +374,7 @@ void World::onCollission()
                 std::cout << "World::onCollission() - Player bullet collided with lander" << std::endl;
                 mSpaceship->getBullets()[i]->OnDestroy(); // Destroy bullet
                 lander->OnDestroy(); // Destroy lander
-                mContext->mScore.updateScore(ENTITYTYPE::ENEMY);
+                mContext->mScore.updateScore(ENTITYTYPE::ENEMY, 30);
                 mContext->mScore.setScoreText(mContext->mFonts->getResourceById(Fonts::GamePlayed));
                 std::cout << "World::onCollission() - Enemies killed: " << mContext->mScore.getScore() << std::endl;
             }
@@ -387,6 +387,8 @@ void World::onCollission()
                     std::cout << "World::onCollission() - Player bullet collided with lander missile" << std::endl;
                     mSpaceship->getBullets()[i]->OnDestroy(); // Destroy bullet
                     lander->getMissiles()[j]->OnDestroy(); // Destroy missile
+                    mContext->mScore.updateScore(ENTITYTYPE::PROJECTILE, 5);
+                    mContext->mScore.setScoreText(mContext->mFonts->getResourceById(Fonts::GamePlayed));
                 }
             }
         }
@@ -399,6 +401,8 @@ void World::onCollission()
                 std::cout << "World::onCollission() - Player bullet collided with humanoid" << std::endl;
                 mSpaceship->getBullets()[i]->OnDestroy(); // Destroy bullet
                 humanoid->OnDestroyAll(); // Destroy humanoid
+                mContext->mScore.updateScore(ENTITYTYPE::HUMANOID, -20);
+                mContext->mScore.setScoreText(mContext->mFonts->getResourceById(Fonts::GamePlayed));
             }
         }
     }

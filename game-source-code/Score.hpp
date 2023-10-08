@@ -13,7 +13,7 @@ class Score
 {
 public:
     Score();
-    void updateScore(ENTITYTYPE type);
+    void updateScore(ENTITYTYPE type, int score);
     void drawScore(sf::RenderWindow& window);
     void reset();
     const unsigned int getScore() const;
