@@ -21,10 +21,35 @@
 class Player: public Entity
 {
     public:
+    /**
+     * @brief Construct a new Player object
+     * 
+     * @param context 
+     * @param position 
+     */
         Player(Context &context, sf::Vector2f position);
+        /**
+         * @brief Destroy the Player object
+         * 
+         */
         ~Player();
+        /**
+         * @brief  UPDATE  the player.
+         * 
+         * @param deltaTime 
+         */
         void update(sf::Time deltaTime);
+        /**
+         * @brief  draws the player to the screen.
+         * 
+         * @param target 
+         */
         void draw(sf::RenderTarget &target);
+        /**
+         * @brief Get the Entity Type object
+         * 
+         * @return ENTITYTYPE 
+         */
         ENTITYTYPE getEntityType() const;
         void handleInput(CommandQueue& commands, sf::Event& event);
         void handleRealtimeInput(CommandQueue& commands);
