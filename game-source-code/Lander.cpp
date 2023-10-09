@@ -37,7 +37,6 @@ void Lander::update(sf::Time deltaTime, sf::Vector2f playerPosition)
         initLanderState(); // Choose a random action to perform (0: Up, 1: Down, 2: Left, 3: Right, 4: seek humanoid)
     }
     mTargetPosition = playerPosition;
-    std::cout << "Player is at: " << mTargetPosition.x << ", " << mTargetPosition.y << std::endl;
     sf::Vector2f landerPosition = getPosition();
     float targetDistance = std::sqrt(pow(mTargetPosition.x - landerPosition.x, 2) + pow(mTargetPosition.y - landerPosition.y, 2));
     updateMissiles(deltaTime);

@@ -21,6 +21,7 @@
 #include "Score.hpp"
 #include "HighScoreManager.hpp"
 #include "Asteroid.hpp"
+#include "Humanoid.hpp"
 
 struct Data
 {
@@ -82,9 +83,8 @@ class World
         std::vector <std::unique_ptr<Lander>> mLanders; // This is the vector that will hold all the landers that the player shoots out.
         std::vector <std::unique_ptr<Asteroid>> mAsteroids;
         std::vector<std::shared_ptr<Humanoid>> mHumanoids; // This is the vector that will hold all the humanoids that the player can collide with, unique_ptr because we want to transfer ownership of the humanoid objects to the world.
-        std::vector<std::unique_ptr<Entity>> mEntities; // This is the vector that will hold all the entities that the player can collide with, unique_ptr because we want to transfer ownership of the entity objects to the world.
         std::vector<std::unique_ptr<PowerUp>> mPowerUps; // This is the vector that will hold all the powerUps that the player can collide with, unique_ptr because we want to transfer ownership of the powerUp objects to the world.
-
+        //std::shared_ptr<Humanoid> mTargHumanoid; // This is the humanoid that the lander is currently targeting.
         Context *mContext;
         sf::RenderWindow *mWindow;
         sf::View *mWorldView;

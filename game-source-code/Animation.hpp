@@ -17,6 +17,7 @@ class Animation
         void draw(sf::RenderTarget& target);
         void move(float x, float y);
         void setPosition(sf::Vector2f position);
+        void setSprite(sf::Sprite &sprite);
         void setAnimation(sf::Vector2i frameStart, sf::Vector2i frameSize, std::size_t numFrames, sf::Time duration, bool repeat);
         void setFrameStart(sf::Vector2i frameStart){
             mFrameStart = frameStart;

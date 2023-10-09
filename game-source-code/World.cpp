@@ -33,6 +33,7 @@ World::World(Context &context)
         initpowerUps();
         std::cout << "World::World() - World created" << std::endl;
         mHighScoreManager = std::make_unique<HighScoreManager>();
+
         initAsteroid();
         // Add humanoids to the player's abductable humanoids list
         for (auto &humanoid : mHumanoids)
@@ -144,6 +145,7 @@ Data World::update(sf::Time deltaTime)
     // std::cout << "World::update() - Updating mountains" << std::endl;
     mMountains->update(deltaTime);
     // Update player
+    updateHumanoids(deltaTime);
     // std::cout << "World::update() - Updating player" << std::endl;
     mSpaceship->update(deltaTime);
     // update powerUps
@@ -223,10 +225,10 @@ void World::updatePowerUps(sf::Time deltaTime)
 void World::updateHumanoids(sf::Time deltaTime)
 {
     //std::cout << "World::updateHumanoids() - Updating humanoids | player position: " << mSpaceship->getPlayerPosition().x << ", " << mSpaceship->getPlayerPosition().y << std::endl;
-    // std::cout << "World::updateHumanoids() - mHumanoids.size() = " << mHumanoids.size() << std::endl;
+    //std::cout << "World::updateHumanoids() - mHumanoids.size() = " << mHumanoids.size() << std::endl;
     for (auto &humanoid : mHumanoids)
     {
-        // std::cout << "World::updateHumanoids() - Updating humanoid" << std::endl;
+        std::cout << "World::updateHumanoids() - Updating humanoid -pos = " << humanoid->getPosition().x << ", " << humanoid->getPosition().y << std::endl;
         humanoid->update(deltaTime);
         // Check if humanoid is collides with player bullets
         if(humanoid->isDestroyed())
@@ -536,10 +538,4 @@ Data World::gameOver() const
 std::shared_ptr<CommandQueue> World::getCommandQueue()
 {
     return mCommandQueue;
-}
-
-void World::addEntity(std::unique_ptr<Entity> entity)
-{
-    std::cout << "World::addEntity() - Adding entity" << std::endl;
-    //mEntities.push_back(std::move(entity));
 }
