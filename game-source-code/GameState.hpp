@@ -14,11 +14,47 @@
 class GameState : public State
 {
     public:
+    /**
+     * @brief Construct a new Game State object 
+     * 
+     * @param stack 
+     * @param context 
+     */
         GameState (StateStack& stack, Context &context);
+        /**
+         * @brief  draws the game state to the screen.  
+         * 
+         * @param window 
+         */
         virtual void draw(sf::RenderWindow& window);
+        /**
+         * @brief  Updates the game state.
+         * 
+         * @param dt 
+         * @return true 
+         * @return false 
+         */
         virtual bool update(sf::Time dt);
+        /**
+         * @brief  Handles the game state's input.
+         * 
+         * @param event 
+         * @param window 
+         * @return true 
+         * @return false 
+         */
         virtual bool handleEvent(const sf::Event& event, sf::RenderWindow &window);
+        /**
+         * @brief  Handles the game state's realtime input.
+         * 
+         * @param window 
+         */
         virtual void handleRealtimeInput(sf::RenderWindow &window);
+        /**
+         * @brief Get the State I D object
+         * 
+         * @return std::string 
+         */
         virtual std::string getStateID() const;
         
     private:

@@ -5,25 +5,57 @@
 
 class Collidable {
 public:
+    /**
+     * @brief Construct a new Collidable object
+     * 
+     */
     Collidable();
+    /**
+     * @brief Destroy the Collidable object
+     * 
+     */
     virtual ~Collidable();
 
-    // Get the bounding box of the collidable object
+    /**
+     * @brief Get the Bounding Box object
+     * 
+     * @return sf::FloatRect 
+     */
     virtual sf::FloatRect getBoundingBox() const = 0;
 
-    // Get the position of the collidable object
+    /**
+     * @brief Get the Position object
+     * 
+     * @return sf::Vector2f 
+     */
     virtual sf::Vector2f getPosition() const = 0;
 
-    // Get the collision type of the collidable object
+    /**
+     * @brief Get the Collision Type object
+     * 
+     * @return std::string 
+     */
     virtual std::string getCollisionType() const = 0;
 
-    // Method called when a collision occurs with another collidable object
+    /**
+     * @brief Get the Collision Response object
+     * 
+     * @return std::string 
+     */
     virtual void onCollision(Collidable* other) = 0;
 
-    // Check if the collidable object is static
+    /**
+     * @brief Get the Collision Response object
+     * 
+     * @return std::string 
+     */
     virtual bool isStatic() const = 0;
 
-    // Get the collision response type for the collidable object
+    /**
+     * @brief Get the Collision Response object
+     * 
+     * @return std::string 
+     */
     virtual std::string getCollisionResponse() const = 0;
 };
 

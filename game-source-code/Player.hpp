@@ -21,28 +21,129 @@
 class Player: public Entity
 {
     public:
+    /**
+     * @brief Construct a new Player object
+     * 
+     * @param context 
+     * @param position 
+     */
         Player(Context &context, sf::Vector2f position);
+        /**
+         * @brief Destroy the Player object
+         * 
+         */
         ~Player();
+        /**
+         * @brief  UPDATE  the player.
+         * 
+         * @param deltaTime 
+         */
         void update(sf::Time deltaTime);
+        /**
+         * @brief  draws the player to the screen.
+         * 
+         * @param target 
+         */
         void draw(sf::RenderTarget &target);
+        /**
+         * @brief Get the Entity Type object
+         * 
+         * @return ENTITYTYPE 
+         */
         ENTITYTYPE getEntityType() const;
+        /**
+         * @brief  Handles the player's input.
+         * 
+         * @param commands 
+         * @param event 
+         */
         void handleInput(CommandQueue& commands, sf::Event& event);
+        /**
+         * @brief  Handles the player's realtime input.
+         * 
+         * @param commands 
+         */
         void handleRealtimeInput(CommandQueue& commands);
+        /**
+         * @brief  Checks if the player collides with another entity.
+         * 
+         */
         void onCollision();
-
+        /**
+         * @brief  shoot a bullet.
+         * 
+         */
         void shoot();
+        /**
+         * @brief Set the Player State object 
+         * 
+         * @param state 
+         */
         void setPlayerState(PLAYERSTATE state);
+        /**
+         * @brief Set the Fuel Bar object
+         * 
+         */
         void setFuelBar();
+        /**
+         * @brief Set the Fuel object
+         * 
+         * @param fuel 
+         */
         void setFuel(float fuel);
+        /**
+         * @brief Set the Lives object
+         * 
+         * @param lives 
+         */
         void setLives(int lives);
+        /**
+         * @brief  Adds a humanoid to the player's vector of humanoids.
+         * 
+         * @param humanoid 
+         */
         void addHumanoid(std::shared_ptr<Humanoid> humanoid);
+        /**
+         * @brief  Removes a humanoid from the player's vector of humanoids.
+         * 
+         * @param humanoid 
+         */
         void removeHumanoid(std::shared_ptr<Humanoid> humanoid);
+        /**
+         * @brief Get the Humanoids Count object 
+         * 
+         * @return int 
+         */
         int getHumanoidsCount() const;
+        /**
+         * @brief Get the Lives object
+         * 
+         * @return int 
+         */
         int getLives() const;
+        /**
+         * @brief Get the Fuel object
+         * 
+         * @return float 
+         */
         float getFuel() const;
+        /**
+         * @brief  draws the player's HUD to the screen.
+         * 
+         * @param target 
+         */
         void drawHUD(sf::RenderTarget &target);
+        /**
+         * @brief Get the Player Position object
+         * 
+         * @return sf::Vector2f 
+         */
         sf::Vector2f getPlayerPosition() const;
-        // get bullets
+        /**
+         * @brief Get the Bullets object
+         * 
+         * @return std::vector<std::unique_ptr<Projectile>>& 
+         */
         std::vector<std::unique_ptr<Projectile>>& getBullets();
 
     private:

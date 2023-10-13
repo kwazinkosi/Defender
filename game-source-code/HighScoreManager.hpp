@@ -14,10 +14,27 @@ using std::fstream;
 class HighScoreManager
 {
     public:
-
+        /**
+         * @brief Construct a new High Score Manager object
+         * 
+         */
         HighScoreManager();
+        /**
+         * @brief Get the High Score object
+         * 
+         * @return int 
+         */
         int getHighScore();
+        /**
+         * @brief Set the High Score object
+         * 
+         * @param score 
+         */
         void setHighScore(int score);
+        /**
+         * @brief Destroy the High Score Manager object
+         * 
+         */
         ~HighScoreManager();
 
     private:

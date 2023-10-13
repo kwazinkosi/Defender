@@ -12,11 +12,40 @@
 class Mountains
 {
     public:
+        /**
+         * @brief Construct a new Mountains object 
+         * 
+         * @param context 
+         * @param isLeft 
+         * @param scrollSpeed 
+         * @param posY 
+         */
         Mountains(Context &context, bool isLeft, float scrollSpeed, float posY);
+        /**
+         * @brief Destroy the Mountains object
+         * 
+         */
         ~Mountains();
+        /**
+         *  @brief  UPDATE the mountains.
+        */
         void update(sf::Time deltaTime);
+        /**
+         * @brief  draws the mountains to the screen.
+         * 
+         * @param window 
+         */
         void draw(sf::RenderTarget& window);
+        /**
+         * @brief  Initializes the mountains.
+         * 
+         */
         void initMountains();
+        /**
+         * @brief Get the Mountain Bounds object 
+         * 
+         * @return sf::FloatRect 
+         */
         sf::FloatRect getMountainBounds() const;
 
     private:

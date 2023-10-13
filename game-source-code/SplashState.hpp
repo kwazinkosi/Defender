@@ -5,16 +5,55 @@
 #include "StateStack.hpp"
 #include "TextFormater.hpp"
 
+/**
+ * @brief  The splash state of the game.
+ * 
+ */
 class SplashState : public State
 {
     public:
+    /**
+     * @brief Construct a new Splash State object
+     * 
+     * @param stack 
+     * @param context 
+     */
         SplashState(StateStack &stack, Context &context);
 
-        //virtual because we are overriding the virtual functions in the State class
+        /**
+         * @brief  Draw the splash state.
+         * 
+         * @param window 
+         */
         virtual void draw(sf::RenderWindow &window);
+        /**
+         * @brief  Update the splash state.
+         * 
+         * @param dt 
+         * @return true 
+         * @return false 
+         */
         virtual bool update(sf::Time dt);
+        /**
+         * @brief  Handle an event.
+         * 
+         * @param event 
+         * @param window 
+         * @return true 
+         * @return false 
+         */
         virtual bool handleEvent(const sf::Event &event, sf::RenderWindow &window);
+        /**
+         * @brief  Handle realtime input.
+         * 
+         * @param window 
+         */
         virtual void handleRealtimeInput(sf::RenderWindow &window) ;
+        /**
+         * @brief Get the State I D object 
+         * 
+         * @return std::string 
+         */
         virtual std::string getStateID() const;
 
     private:

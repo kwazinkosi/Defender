@@ -367,6 +367,18 @@ void World::onCollission()
             }
         }
     }
+    //check if asteroid collides with player bullet
+    for (size_t i = 0; i < mAsteroids.size(); i++)
+    {
+        for (size_t j = 0; j < mSpaceship->getBullets().size(); j++)
+        {
+            if (mAsteroids[i]->getBounds().intersects(mSpaceship->getBullets()[j]->getBounds()))
+            {
+                mAsteroids[i]->OnDestroy();
+                mSpaceship->getBullets()[j]->OnDestroy();
+            }
+        }
+    }
     // Check if Lander collides with player bullet and destroy both, player bullet and lander bullet
     for (size_t i = 0; i < mSpaceship->getBullets().size(); i++)
     {
