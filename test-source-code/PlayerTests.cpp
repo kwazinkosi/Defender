@@ -396,6 +396,23 @@ TEST_CASE("Check if Humanoid can move up")
 
     CHECK(animation->getSprite().getPosition() == sf::Vector2f(100.f, 150.f));
 }
+//check that Humanoids spawn at the bottom of the screen
+TEST_CASE("Check that Humanoids spawn at the bottom of the screen")
+{
+    TexturesHolder textures;
+    textures.load(Textures::Lander, "resources/textures/humanoid.png"); // re
+   
+    sf::Texture texture;    
+    texture = textures.getResourceById(Textures::Lander);
+    std::unique_ptr<Animation> animation;
+    animation = std::make_unique<Animation>(&texture,  sf::Vector2i(0, 6), sf::Vector2i(22, 6), 1, sf::seconds(0.2f), true);
+
+    animation->setPosition(sf::Vector2f(100.f, 200.f));
+    animation->getSprite().move(0.f, -50.f);
+
+    CHECK(animation->getSprite().getPosition() == sf::Vector2f(100.f, 150.f));
+}   
+
 
 //check 
 
