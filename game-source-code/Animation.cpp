@@ -78,7 +78,8 @@ void Animation::draw(sf::RenderTarget &target)
 
 void Animation::move(float x, float y)
 {
-    this->mSprite.move(x, y);
+    this->mSprite.setPosition(x, y);
+
 }
 
 void Animation::setAnimation(sf::Vector2i frameStart, sf::Vector2i frameSize, std::size_t numFrames, sf::Time duration, bool repeat)
