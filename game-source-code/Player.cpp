@@ -339,7 +339,7 @@ void Player::initPlayer()
     mAnimation[static_cast<int>(Direction::RIGHT)]= Animation(&texture, sf::Vector2i(0, 0), sf::Vector2i(22, 6), 4, sf::seconds(0.2f), true);
     mAnimation[static_cast<int>(Direction::LEFT)] = Animation(&texture, sf::Vector2i(0, 6), sf::Vector2i(22, 6), 4, sf::seconds(0.2f), true);
     // Set movement speed
-    setMovementSpeed(100.f);
+    setMovementSpeed(180.f);
     std::cout << "SpaceShip::initSpaceShip() -- SpaceShip initialized" << std::endl;for (auto &animation : mAnimation)
     for(auto &animation : mAnimation)
     {

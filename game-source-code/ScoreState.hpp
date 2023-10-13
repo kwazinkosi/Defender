@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <fstream>
+#include <string>
 #include "State.hpp"
 #include "TextFormater.hpp"
 
