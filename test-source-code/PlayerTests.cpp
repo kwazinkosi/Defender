@@ -298,21 +298,18 @@ TEST_CASE("Check if asteroid can move left")
     animation = std::make_unique<Animation>(&texture, sf::Vector2i(0, 6), sf::Vector2i(22, 6), 1, sf::seconds(0.2f), true);
     animation->setPosition(sf::Vector2f(100.f, 200.f));
     animation->getSprite().move(-50.f, 0.f);
-
     CHECK(animation->getSprite().getPosition() == sf::Vector2f(50.f, 200.f));
 }
 TEST_CASE("Check if asteroid can move right")
 {
     TexturesHolder textures;
     textures.load(Textures::Lander, "resources/textures/Asteroids.png"); // re
-   
     sf::Texture texture;    
     texture = textures.getResourceById(Textures::Lander);
     std::unique_ptr<Animation> animation;
     animation = std::make_unique<Animation>(&texture, sf::Vector2i(0, 6), sf::Vector2i(22, 6), 1, sf::seconds(0.2f), true);
     animation->setPosition(sf::Vector2f(100.f, 200.f));
     animation->getSprite().move(50.f, 0.f);
-
     CHECK(animation->getSprite().getPosition() == sf::Vector2f(150.f, 200.f));
 }
 //collision tests
@@ -320,7 +317,6 @@ TEST_CASE("Check if game entities collide with each other")
 {
     TexturesHolder textures;
     textures.load(Textures::Player, "resources/textures/spaceship-1.png"); // re
-   
     sf::Texture texture;    
     texture = textures.getResourceById(Textures::Player);
     std::unique_ptr<Animation> animation1;
