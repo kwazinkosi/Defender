@@ -33,6 +33,7 @@ World::World(Context &context)
         initpowerUps();
         std::cout << "World::World() - World created" << std::endl;
         mHighScoreManager = std::make_unique<HighScoreManager>();
+
         initAsteroid();
         // Add humanoids to the player's abductable humanoids list
         for (auto &humanoid : mHumanoids)
@@ -64,7 +65,7 @@ void World::initEnemies()
     for (int i = 0; i < 3; i++)
     {
         std::cout << "World::initEnemies() - Creating lander" << std::endl;
-        auto lander = std::make_unique<Lander>(*mContext, sf::Vector2f(0.f, 0.f));
+        auto lander = std::make_unique<Lander>(*mContext, sf::Vector2f(0.f, 0.f)); 
         mLanders.push_back(std::move(lander));
     }
     // Add landers to the player's collidable list
@@ -118,6 +119,7 @@ void World::initHumanoids()
     {
         auto humanoid = std::make_shared<Humanoid>(*mContext);
         std::cout << "World::initHumanoids() - Adding humanoid to mHumanoids" << std::endl;
+        std::cout <<"left: "<< mContext->mLeftBound << " right: " << mContext->mRightBound << "| top: " << mContext->mTopBound << " bottom: " << mContext->mBottomBound << std::endl;
         mHumanoids.push_back(std::move(humanoid));
     }
     // Add humanoids to the player's collidable list
@@ -143,7 +145,6 @@ Data World::update(sf::Time deltaTime)
     // std::cout << "World::update() - Updating mountains" << std::endl;
     mMountains->update(deltaTime);
     // Update player
-    //update humanoids
     updateHumanoids(deltaTime);
     // std::cout << "World::update() - Updating player" << std::endl;
     mSpaceship->update(deltaTime);
@@ -155,6 +156,8 @@ Data World::update(sf::Time deltaTime)
     updateAsteroids(deltaTime);
     onCollission();
     updateCollisions();
+    mContext->mScore.setScoreText(mContext->mFonts->getResourceById(Fonts::GamePlayed));
+    
     // Check if game is over
     auto gameOverResult = gameOver();
     // std::cout << "World::update() - Game over result: " << gameOverResult.first << std::endl;
@@ -222,10 +225,10 @@ void World::updatePowerUps(sf::Time deltaTime)
 void World::updateHumanoids(sf::Time deltaTime)
 {
     //std::cout << "World::updateHumanoids() - Updating humanoids | player position: " << mSpaceship->getPlayerPosition().x << ", " << mSpaceship->getPlayerPosition().y << std::endl;
-    // std::cout << "World::updateHumanoids() - mHumanoids.size() = " << mHumanoids.size() << std::endl;
+    //std::cout << "World::updateHumanoids() - mHumanoids.size() = " << mHumanoids.size() << std::endl;
     for (auto &humanoid : mHumanoids)
     {
-        // std::cout << "World::updateHumanoids() - Updating humanoid" << std::endl;
+        std::cout << "World::updateHumanoids() - Updating humanoid -pos = " << humanoid->getPosition().x << ", " << humanoid->getPosition().y << std::endl;
         humanoid->update(deltaTime);
         // Check if humanoid is collides with player bullets
         if(humanoid->isDestroyed())
@@ -251,6 +254,7 @@ void World::render()
     // Draw on hud view
     mWindow->draw(mContext->mHudRect);
     mSpaceship->drawHUD(*mWindow);
+    mContext->mScore.drawScore(*mWindow);
 
 }
 
@@ -310,7 +314,6 @@ void World::onCollission()
         // Check if player collides with lander
     for (auto &lander : mLanders)
     {
-        //std::cout << "World::onCollission() - Checking collission between player and lander" << mSpaceship->playerBounds().top << std::endl <<" and Lander: " << lander->getBounds().top << std::endl;
         if (mSpaceship->getBounds().intersects(lander->getBounds()))
         {
             std::cout << "World::onCollission() - Player collided with lander" << std::endl;
@@ -351,6 +354,18 @@ void World::onCollission()
             asteroid->OnDestroy();
             return;
         }
+        // Check if player bullet collides with asteroid
+        for (size_t i = 0; i < mSpaceship->getBullets().size(); i++)
+        {
+            if (mSpaceship->getBullets()[i]->getBounds().intersects(asteroid->getBounds()))
+            {
+                mSpaceship->getBullets()[i]->OnDestroy();
+                asteroid->OnDestroy();
+                mContext->mScore.updateScore(ENTITYTYPE::ASTEROID, 10);
+                mContext->mScore.setScoreText(mContext->mFonts->getResourceById(Fonts::GamePlayed));
+                std::cout << "World::onCollission() - Asteroids destroyed: " << mContext->mScore.getScore() << std::endl;
+            }
+        }
     }
     //check if asteroid collides with player bullet
     for (size_t i = 0; i < mAsteroids.size(); i++)
@@ -369,13 +384,6 @@ void World::onCollission()
     {
         for (auto &lander : mLanders)
         {
-            if (mSpaceship->getBullets()[i]->getBounds().intersects(lander->getBounds()))
-            {
-                std::cout << "World::onCollission() - Player bullet collided with lander" << std::endl;
-                mSpaceship->getBullets()[i]->OnDestroy(); // Destroy bullet
-                lander->OnDestroy(); // Destroy lander
-            }
-
             // Check if player bullet collides with lander missile
             for (size_t j = 0; j < lander->getMissiles().size(); j++)
             {
@@ -384,7 +392,20 @@ void World::onCollission()
                     std::cout << "World::onCollission() - Player bullet collided with lander missile" << std::endl;
                     mSpaceship->getBullets()[i]->OnDestroy(); // Destroy bullet
                     lander->getMissiles()[j]->OnDestroy(); // Destroy missile
+                    mContext->mScore.updateScore(ENTITYTYPE::PROJECTILE, 5);
+                    mContext->mScore.setScoreText(mContext->mFonts->getResourceById(Fonts::GamePlayed));
                 }
+            }
+
+            if (mSpaceship->getBullets()[i]->getBounds().intersects(lander->getBounds()))
+            {
+                std::cout << "World::onCollission() - Player bullet collided with lander" << std::endl;
+                mSpaceship->getBullets()[i]->OnDestroy(); // Destroy bullet
+                lander->OnDestroy(); // Destroy lander
+                mContext->mScore.updateScore(ENTITYTYPE::ENEMY, 30);
+                mContext->mScore.setScoreText(mContext->mFonts->getResourceById(Fonts::GamePlayed));
+                std::cout << "World::onCollission() - Enemies killed: " << mContext->mScore.getScore() << std::endl;
+                //return;
             }
         }
 
@@ -396,6 +417,8 @@ void World::onCollission()
                 std::cout << "World::onCollission() - Player bullet collided with humanoid" << std::endl;
                 mSpaceship->getBullets()[i]->OnDestroy(); // Destroy bullet
                 humanoid->OnDestroyAll(); // Destroy humanoid
+                mContext->mScore.updateScore(ENTITYTYPE::HUMANOID, -20);
+                mContext->mScore.setScoreText(mContext->mFonts->getResourceById(Fonts::GamePlayed));
             }
         }
     }
@@ -510,15 +533,13 @@ Data World::gameOver() const
     if(data.Lose)
     {
         std::cout << "World::gameOver() - Game over" << std::endl;
-        mContext->mScore.appendHighscore(data.Score);
         mHighScoreManager->setHighScore(data.Score);
         mContext->mScore.reset();
         return data;
     }
     else if(data.Win)
     {
-        std::cout << "World::gameOver() - Game won" << std::endl;
-        mContext->mScore.appendHighscore(data.Score);
+        std::cout << "World::gameOver() - Game won -- score: " << data.Score << std::endl;
         mHighScoreManager->setHighScore(data.Score);
         mContext->mScore.reset();
         return data;
@@ -529,10 +550,4 @@ Data World::gameOver() const
 std::shared_ptr<CommandQueue> World::getCommandQueue()
 {
     return mCommandQueue;
-}
-
-void World::addEntity(std::unique_ptr<Entity> entity)
-{
-    std::cout << "World::addEntity() - Adding entity" << std::endl;
-    //mEntities.push_back(std::move(entity));
 }

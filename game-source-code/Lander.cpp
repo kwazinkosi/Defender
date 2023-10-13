@@ -10,7 +10,7 @@ Lander::Lander(Context &context, sf::Vector2f position)
 , isDown(true)
 , mKidnapping(false)
 , mIsSeeking(false)
-, mTargetPosition(0.f, 0.f)
+, mTargetPosition(position)
 , mPosition(position)
 , mCurrentAnimation(LANDERSTATE::IDLE)
 {
@@ -81,6 +81,7 @@ void Lander::initLander()
     animation[static_cast<int>(LANDERSTATE::MOVING)].setScale(0.7f, 0.7f);
     animation[static_cast<int>(LANDERSTATE::KIDNAPPING)].setScale(0.7f, 0.7f);
 }
+
 void Lander::addHumanoid(std::shared_ptr<Humanoid> human)
 {
     if(human != nullptr)
@@ -129,6 +130,7 @@ void Lander::setTargetHumanoid(std::shared_ptr<Humanoid> human)
 void Lander::setTargetPosition(sf::Vector2f position)
 {
     mTargetPosition = position;
+
 }
 
 void Lander::setKidnapping(bool kidnapping)
@@ -449,7 +451,7 @@ void Lander::moveRight(sf::Time deltaTime)
 void Lander::draw(sf::RenderTarget &target)
 {
     animation[static_cast<int>(mCurrentAnimation)].draw(target);
-    std::cout<<"Lander::draw() -- Lander drawn." << std::endl;
+    //std::cout<<"Lander::draw() -- Lander drawn." << std::endl;
     for (auto &missile : mMissiles)
     {
         target.draw(missile->getSprite());

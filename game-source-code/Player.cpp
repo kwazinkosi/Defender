@@ -205,7 +205,7 @@ void Player::moveUp(sf::Time deltaTime)
 
 void Player::shoot(sf::Time deltaTime)
 {
-    auto bulletPos = mAnimation->getPosition();
+    auto bulletPos = getPosition();
     bulletPos.x += 30.f;
     bulletPos.y += 70.f;
     mProjectiles.push_back(std::make_unique<Projectile>(bulletPos, (isLeft ? sf::Vector2f(-1.f, 0) : sf::Vector2f(1.f, 0)), 300.f, ProjectileType::PlayerBullet));
@@ -459,7 +459,7 @@ void Player::drawHUD(sf::RenderTarget &target)
 
 sf::Vector2f Player::getPlayerPosition() const
 {
-    return mAnimation->getPosition();
+    return getPosition();
 }
 
 std::vector<std::unique_ptr<Projectile>> &Player::getBullets()
@@ -469,24 +469,20 @@ std::vector<std::unique_ptr<Projectile>> &Player::getBullets()
 
 void Player::crashShip(sf::Time deltaTime)
 {
+    std::cout << "Player::crashShip() -- Crashing ship." << std::endl;
     if (mCurrFuel <= 0.f)
     {
         mCurrFuel = 0.f;
-        mAnimation->move(0.f, 100.f * deltaTime.asSeconds());
-        if(mAnimation->getSprite().getPosition().y >= mContext->mBottomBound - mAnimation->getSprite().getGlobalBounds().height)
-        {
-            mCurrFuel = 0.f;
-            mPosition.y += 100.f * deltaTime.asSeconds();
-            mAnimation[static_cast<int>(mCurrentAnimation)].move(mPosition.x, mPosition.y);
-            mAnimation[static_cast<int>(mCurrentAnimation)].setPosition(mPosition);
-            sprite.setPosition(mPosition);
-            setPosition(mPosition);
+        mPosition.y += 100.f * deltaTime.asSeconds();
+        mAnimation[static_cast<int>(mCurrentAnimation)].move(mPosition.x, mPosition.y);
+        mAnimation[static_cast<int>(mCurrentAnimation)].setPosition(mPosition);
+        sprite.setPosition(mPosition);
+        setPosition(mPosition);
 
-            if(getPosition().y >= mContext->mBottomBound - getBounds().height)
-            {
-                setPosition(sf::Vector2f(getPosition().x, mContext->mBottomBound - getBounds().height));
-                OnDestroy();
-            }
+        if(getPosition().y >= mContext->mBottomBound - getBounds().height)
+        {
+            setPosition(sf::Vector2f(getPosition().x, mContext->mBottomBound - getBounds().height));
+            OnDestroy();
         }
     }
 }

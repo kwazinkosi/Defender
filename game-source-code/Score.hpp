@@ -21,17 +21,7 @@ public:
      * 
      */
     Score();
-    /**
-     * @brief  updates the score.
-     * 
-     * @param type 
-     */
-    void updateScore(ENTITYTYPE type);
-    /**
-     * @brief  Draws the score.
-     * 
-     * @param window 
-     */
+    void updateScore(ENTITYTYPE type, int score);
     void drawScore(sf::RenderWindow& window);
     /**
      * @brief  Resets the score.

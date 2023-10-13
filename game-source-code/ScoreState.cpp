@@ -1,7 +1,7 @@
 #include "ScoreState.hpp"
 
 ScoreState::ScoreState(StateStack &stack, Context &context) : State(stack, context),
-                                                              filePath_{"resources/files/highscore.txt"},
+                                                              filePath_{"resources/files/highscores.txt"},
                                                               mContext(&context),
                                                               backgroundShape(),
                                                               HighScoreText(),

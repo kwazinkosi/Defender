@@ -20,7 +20,6 @@ Game::~Game()
  */
 void Game::registerStates()
 {
-    
     mStateStack.registerState<LoadingState>(States::LoadingState, mContext);
     mStateStack.registerState<SplashState>(States::SplashState, mContext);
     mStateStack.registerState<MainMenuState>(States::MainMenuState, mContext);
@@ -31,7 +30,6 @@ void Game::registerStates()
     mStateStack.registerState<ScoreState>(States::ScoreState, mContext);
 
     //std::cout<<"Done registering"<<std::endl;
-    //mStateStack.registerState<OptionsState>(States::OptionsState, mContext);
     mStateStack.pushState(States::LoadingState);
 }
 /**
