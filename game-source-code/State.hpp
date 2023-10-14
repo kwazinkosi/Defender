@@ -89,10 +89,10 @@ class State
          */
         void requestStateClear();
 
+        Context *mContext; /**< Context used to share resources between states. */
 
     private: // Private because derived classes don't need to access it.
         StateStack *mStack; /**< Pointer to the state stack, used to request changes to the stack. */
-        Context *mContext; /**< Context used to share resources between states. */
 };
 
 #endif // STATE_HPP  

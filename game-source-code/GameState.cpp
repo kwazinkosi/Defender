@@ -60,6 +60,13 @@ bool GameState::handleEvent(const sf::Event &event, sf::RenderWindow &window)
         window.close();      // Close the window
     }
 
+    if (event.type == sf::Event::KeyPressed)
+    {
+        if (event.key.code == sf::Keyboard::Backspace)
+        {
+            pauseGame();
+        }
+    }
     mWorld->handleInput(*commands, ev);
     return true; // Consume the event, don't pass it to lower states
 }

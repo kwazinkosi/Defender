@@ -318,7 +318,7 @@ void Lander::fireMissile()
     sf::Vector2f landerPosition = getPosition();
     float distance = std::sqrt(pow(playerPosition.x - landerPosition.x, 2) + pow(playerPosition.y - landerPosition.y, 2));
 
-    if (distance <= 200.f) {
+    if (distance <= 200.f && !mKidnapping) {
         sf::Vector2f missilePosition = landerPosition;
         sf::Vector2f missileDirection = playerPosition - landerPosition;
         float missileSpeed = 250.f;

@@ -327,7 +327,7 @@ void Player::initPlayer()
     texture = mContext->mTextures->getResourceById(Textures::Player);
     // Set sprite
     sprite.setTextureRect(sf::IntRect(0, 0, 22, 6));
-    sprite.setScale(4.f, 4.f);
+    sprite.setScale(3.f, 3.f);
     setPosition(mPosition);
     sprite.setTexture(texture);
     std::cout << "SpaceShip::initSpaceShip() -- Sprite set" << std::endl;

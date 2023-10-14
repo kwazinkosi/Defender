@@ -87,12 +87,11 @@ sf::Vector2f World::SpawnPosition()
 }
 void World::initAsteroid()
 {
-    std::cout << "World::initEnemies() - Creating Asteroid" << std::endl;
+    //std::cout << "World::initEnemies() - Creating Asteroid" << std::endl;
     // Asteroid position should start at the top of the screen
     
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 3; i++)
     {
-        
         auto position = SpawnPosition();
         auto asteroid = std::make_unique<Asteroid>(*mContext, position);
         mAsteroids.push_back(std::move(asteroid));
@@ -224,11 +223,8 @@ void World::updatePowerUps(sf::Time deltaTime)
 }
 void World::updateHumanoids(sf::Time deltaTime)
 {
-    //std::cout << "World::updateHumanoids() - Updating humanoids | player position: " << mSpaceship->getPlayerPosition().x << ", " << mSpaceship->getPlayerPosition().y << std::endl;
-    //std::cout << "World::updateHumanoids() - mHumanoids.size() = " << mHumanoids.size() << std::endl;
-    for (auto &humanoid : mHumanoids)
+   for (auto &humanoid : mHumanoids)
     {
-        std::cout << "World::updateHumanoids() - Updating humanoid -pos = " << humanoid->getPosition().x << ", " << humanoid->getPosition().y << std::endl;
         humanoid->update(deltaTime);
         // Check if humanoid is collides with player bullets
         if(humanoid->isDestroyed())
@@ -420,7 +416,6 @@ void World::onCollission()
                 mContext->mScore.updateScore(ENTITYTYPE::HUMANOID, -20);
                 mContext->mScore.setScoreText(mContext->mFonts->getResourceById(Fonts::GamePlayed));
             }
-
         }
     }
     
@@ -454,6 +449,7 @@ void World::onCollission()
             std::cout << "World::onCollission() - Humanoid collided with player" << std::endl;
             humanoid->setRescued(true);
             humanoid->setKidnapped(false);
+            mContext->mScore.updateScore(ENTITYTYPE::HUMANOID, 100);
         }
     }
 }
@@ -489,7 +485,6 @@ void World::updateCollisions()
             mSpaceship->getBullets().erase(mSpaceship->getBullets().begin() + i);
             std::cout << "World::updateCollisions() - Player bullet destroyed" << std::endl;
         }
-
     } 
 
     // remove all destroyed asteroids
