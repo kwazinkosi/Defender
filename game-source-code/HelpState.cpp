@@ -1,12 +1,9 @@
 #include "HelpState.hpp"
 
-HelpState::HelpState(StateStack &stack, Context &context) : State(stack, context),
-                                                              filePath_{"resources/files/help.txt"},
-                                                              mContext(&context),
-                                                              backgroundShape(),
-                                                              helpText(),
-                                                              mInstructionText(),
-                                                              mTextFormater()
+HelpState::HelpState(StateStack &stack, Context &context) 
+: State(stack, context),
+mContext(&context),
+filePath_{"resources/files/help.txt"}
 {
     std::cout << "HelpState::HelpState() -- Creating HelpState" << std::endl;
     font = context.mFonts->getResourceById(Fonts::SpaceObsessed);

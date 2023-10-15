@@ -186,7 +186,7 @@ void World::updateAsteroids(sf::Time deltaTime)
         initAsteroid();
     }   
 
-    if(mAsteroids.size() < 5)
+    if(mAsteroids.size() < 3)
     {
         auto position = SpawnPosition();
         auto asteroid = std::make_unique<Asteroid>(*mContext, position);
@@ -326,7 +326,7 @@ void World::spaceShipCollission()
             {
                 if (mSpaceship->getBullets()[i]->getBounds().intersects(lander->getMissiles()[j]->getBounds()))
                 {
-                    std::cout << "World::onCollission() - Player bullet collided with lander missile" << std::endl;
+                    std::cout << "World::spaceShipCollission() - Player bullet collided with lander missile" << std::endl;
                     mSpaceship->getBullets()[i]->OnDestroy(); // Destroy bullet
                     lander->getMissiles()[j]->OnDestroy(); // Destroy missile
                     mContext->mScore.updateScore(ENTITYTYPE::PROJECTILE, 5);
@@ -334,31 +334,35 @@ void World::spaceShipCollission()
                     return;
                 }
             }
-
+            // Check if player bullet collides with lander
             if (mSpaceship->getBullets()[i]->getBounds().intersects(lander->getBounds()) )
             {
-                std::cout << "World::onCollission() - Player bullet collided with lander" << std::endl;
+                std::cout << "World::spaceShipCollission() - Player bullet collided with lander -- kidnappin = " << [](bool b){return b ? "true" : "false";}(lander->isKidnapping()) << std::endl;
+                if (lander->isKidnapping())
+                {
+                    std::cout << "World::spaceShipCollission() - drop humanoid" << std::endl;
+                    lander->dropHumanoid();
+                    lander->setKidnapping(false);
+                }
                 mSpaceship->getBullets()[i]->OnDestroy(); // Destroy bullet
                 lander->OnDestroy(); // Destroy lander
-                lander->dropHumanoid(); // Drop humanoid if any
                 mContext->mScore.updateScore(ENTITYTYPE::ENEMY, 30);
                 mContext->mScore.setScoreText(mContext->mFonts->getResourceById(Fonts::GamePlayed));
-                std::cout << "World::onCollission() - Enemies killed: " << mContext->mScore.getScore() << std::endl;
-                return;
+                std::cout << "World::spaceShipCollission() - Enemies killed: " << mContext->mScore.getScore() << std::endl;
+                // return;
             }
         }
-
         // Check if player bullet collides with Humanoid
         for (auto &humanoid : mHumanoids)
         {
             if (mSpaceship->getBullets()[i]->getBounds().intersects(humanoid->getBounds()))
             {
-                std::cout << "World::onCollission() - Player bullet collided with humanoid" << std::endl;
+                std::cout << "World::spaceShipCollission() - Player bullet collided with humanoid" << std::endl;
                 mSpaceship->getBullets()[i]->OnDestroy(); // Destroy bullet
                 humanoid->OnDestroyAll(); // Destroy humanoid
                 mContext->mScore.updateScore(ENTITYTYPE::HUMANOID, -20);
                 mContext->mScore.setScoreText(mContext->mFonts->getResourceById(Fonts::GamePlayed));
-                return;
+                // return;
             }
         }
     }
@@ -371,11 +375,10 @@ void World::humanoidCollission()
         if(humanoid->getPosition().y >= mContext->mBottomBound && !humanoid->isRescued() && humanoid->isReleased())
         {
             // Check if humanoid collides with the ground, dropped by the lander
-            std::cout << "World::onCollission() - Humanoid collided with the ground" << std::endl;
+            std::cout << "World::humanoidCollission() - Humanoid collided with the ground" << std::endl;
             humanoid->OnDestroyAll(); // Destroy humanoid
             mContext->mScore.updateScore(ENTITYTYPE::HUMANOID, -5);
             mContext->mScore.setScoreText(mContext->mFonts->getResourceById(Fonts::GamePlayed));
-            return;
         }
         else 
         {
@@ -383,19 +386,25 @@ void World::humanoidCollission()
             for (auto &lander : mLanders)
             {
                 // && !humanoid->isReleased()
-                if (humanoid->getBounds().intersects(lander->getBounds()) && !humanoid->isKidnapped())
+                if (humanoid->getBounds().intersects(lander->getBounds()) && !humanoid->isKidnapped() && !lander->isKidnapping())
                 {
-                    std::cout << "World::onCollission() - Humanoid collided with lander" << std::endl;
+                    std::cout << "World::humanoidCollission() - Humanoid collided with lander" << std::endl;
+                    humanoid->setKidnapped(true);   
                     lander->setTargetHumanoid(humanoid);
                     lander->setKidnapping(true);
+                }
+                if (humanoid->isDead())
+                {
+                    lander->setKidnapping(false);
+                    lander->initLanderState();
                 }
             }
         } 
 
-        // check if humanoid collides with player while being kidnapped
+        // check if humanoid collides with player while being released
         if (humanoid->getBounds().intersects(mSpaceship->getBounds()) && !humanoid->isRescued() && humanoid->isReleased())
         {
-            std::cout << "World::onCollission() - Humanoid is rescued" << std::endl;
+            std::cout << "World::humanoidCollission() - Humanoid is rescued" << std::endl;
             humanoid->setRescued(true);
             humanoid->setKidnapped(false);
             mContext->mScore.updateScore(ENTITYTYPE::HUMANOID, 100);
@@ -410,7 +419,7 @@ void World::powerUpCollission()
     {
         if (mSpaceship->getBounds().intersects(powerUp->getBounds()))
         {
-            std::cout << "World::onCollission() - Player collided with powerUp" << std::endl;
+            std::cout << "World::powerUpCollission() - Player collided with powerUp" << std::endl;
             powerUp->OnDestroy(); // Destroy powerUp
             mSpaceship->setFuel(100.f);
         }
@@ -424,7 +433,7 @@ void World::landerCollission()
     {
         if (mSpaceship->getBounds().intersects(lander->getBounds()))
         {
-            std::cout << "World::onCollission() - Player collided with lander" << std::endl;
+            std::cout << "World::landerCollission() - Player collided with lander" << std::endl;
             mSpaceship->OnDestroy(); // Destroy player
             return;
         }
@@ -434,7 +443,7 @@ void World::landerCollission()
         {
             if (mSpaceship->getBounds().intersects(lander->getMissiles()[i]->getBounds()))
             {
-                std::cout << "World::onCollission() - Player collided with lander missile" << std::endl;
+                std::cout << "World::landerCollission() - Player collided with lander missile" << std::endl;
                 lander->getMissiles()[i]->OnDestroy(); // Destroy missile
                 mSpaceship->OnDestroy(); // Destroy player
                 return;
@@ -445,18 +454,6 @@ void World::landerCollission()
 
 void World::asteroidCollission()
 {
-    //check if asteroid collides with player bullet
-    // for (size_t i = 0; i < mAsteroids.size(); i++)
-    // {
-    //     for (size_t j = 0; j < mSpaceship->getBullets().size(); j++)
-    //     {
-    //         if (mAsteroids[i]->getBounds().intersects(mSpaceship->getBullets()[j]->getBounds()))
-    //         {
-    //             mAsteroids[i]->OnDestroy();
-    //             mSpaceship->getBullets()[j]->OnDestroy();
-    //         }
-    //     }
-    // }
     // check if player collides with asteroid
     for (auto &asteroid : mAsteroids)
     {
@@ -475,7 +472,7 @@ void World::asteroidCollission()
                 asteroid->OnDestroy();
                 mContext->mScore.updateScore(ENTITYTYPE::ASTEROID, 10);
                 mContext->mScore.setScoreText(mContext->mFonts->getResourceById(Fonts::GamePlayed));
-                std::cout << "World::onCollission() - Asteroids destroyed: " << mContext->mScore.getScore() << std::endl;
+                std::cout << "World::asteroidCollission() - Asteroids destroyed: " << mContext->mScore.getScore() << std::endl;
                 return;
             }
         }

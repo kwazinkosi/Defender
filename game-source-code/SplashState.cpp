@@ -5,11 +5,10 @@
  * 
  * @param stack The state stack object.
  */
-SplashState::SplashState(StateStack &stack, Context &context) :State(stack, context)
-                                                , mBackgroundSprite()
-                                                , mText()
-                                                , mElapsedTime(sf::Time::Zero)
-                                                , mShowText(false)
+SplashState::SplashState(StateStack &stack, Context &context) 
+:State(stack, context)
+, mShowText(false)
+, mElapsedTime(sf::Time::Zero)
 {
     std::cout<<"Creating Splash State" << std::endl;
     //mKeypadSprite.setTexture(mContext->mTextures->getResourceById(Textures::Keypad));

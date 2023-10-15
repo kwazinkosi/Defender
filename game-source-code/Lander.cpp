@@ -281,18 +281,18 @@ void Lander::landerScreenCollision()
         setState(ENEMYSTATE::MOVINGLEFT);
     }
     // if lander is going out of the top or bottom bound whilst kidnapping the humanoid, then kill the humanoid turn the lander around
-    if (position.y < mContext->mTopBound - getBounds().height && mKidnapping)
+    if (position.y < mContext->mTopBound - getBounds().height && mKidnapping && mTargetHumanoid != nullptr)
     {
         // kill the humanoid
-        //std::cout << "Lander::landerScreenCollision() -- Lander is going out of the top bound whilst kidnapping the humanoid" << std::endl;
-        mIsSeeking = false; // reset the seeking flag
-        mTargetHumanoid->setKidnapped(false);
-        mTargetHumanoid->setAbductionSuccess(true);
-        mTargetHumanoid->OnDestroy(); // destroy the humanoid
         setPosition(position.x, mContext->mTopBound);
         setState(ENEMYSTATE::MOVINGUP);
-        if (position.y < mContext->mTopBound - getBounds().height -30.f)
-        {
+        if (position.y < mContext->mTopBound - getBounds().height - mTargetHumanoid->getBounds().height)
+        {   
+            std::cout << "Lander::landerScreenCollision() -- Lander is going out of the top bound whilst kidnapping the humanoid" << std::endl;
+            mIsSeeking = false; // reset the seeking flag
+            mTargetHumanoid->setKidnapped(false);
+            mTargetHumanoid->setAbductionSuccess(true);
+            mTargetHumanoid->OnDestroyAll();
             mKidnapping = false;
             setState(ENEMYSTATE::MOVINGDOWN);
         }
@@ -472,11 +472,16 @@ bool Lander::abductionInProgress()
     return false;
 }
 
+bool Lander::isKidnapping() const
+{
+    return mKidnapping;
+}
+
 void Lander::updateKidnapping(sf::Time deltaTime)
 {
     // if the Lander is closer to the player, then it should ingage and move towards the player and shoot
-    if (getBounds().intersects(mTargetHumanoid->getBounds()) && !mTargetHumanoid->isKidnapped() &&
-      !mKidnapping )
+    if (getBounds().intersects(mTargetHumanoid->getBounds()) && 
+    !mTargetHumanoid->isKidnapped() && !mKidnapping )
     {
         mKidnapping = true;
         mCurrentAnimation = LANDERSTATE::KIDNAPPING;
@@ -486,14 +491,19 @@ void Lander::updateKidnapping(sf::Time deltaTime)
     {
         abductHumanoid(deltaTime);
     }
+    else
+    {
+    }
 }
 
 void Lander::abductHumanoid(sf::Time deltaTime)
 {
     auto landerCenter = getCenter();
     mTargetHumanoid->setHumanoidPosition(landerCenter.x - mTargetHumanoid->getBounds().width / 2.f, landerCenter.y );
+    mTargetHumanoid->setPosition(mTargetHumanoid->getPosition());
     mTargetHumanoid->setKidnapped(true);
     mTargetHumanoid->setReleased(false);
+    setKidnapping(true);
     mCurrentAnimation = LANDERSTATE::KIDNAPPING;
     // move up
     mPosition.y -= mMovementSpeed * deltaTime.asSeconds();

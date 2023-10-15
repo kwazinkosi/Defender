@@ -37,6 +37,8 @@ class Lander : public Entity
         void dropHumanoid();
         int getHumanoidCount() const;
         ENEMYSTATE getState() const;
+        bool abductionInProgress();
+        bool isKidnapping() const;
         void setState(ENEMYSTATE state);
         void setTargetHumanoid(std::shared_ptr<Humanoid> human);
         void setTargetPosition(sf::Vector2f position);
@@ -45,10 +47,10 @@ class Lander : public Entity
         void fireMissile();
         bool isAlive() const;
         std::vector<std::unique_ptr<Projectile>>& getMissiles();
+        void initLanderState();
 
     private:
         // Functions
-        void initLanderState();
         void landerScreenCollision();
         void moveLander(sf::Time deltaTime);
         void moveDown(sf::Time deltaTime);
@@ -63,7 +65,6 @@ class Lander : public Entity
         void seekHumanoid(sf::Time deltaTime);
         void continueSeekingHumanoid(sf::Time deltaTime, sf::Vector2f distance);
         void abductHumanoid(sf::Time deltaTime);
-        bool abductionInProgress();
         sf::Vector2f normalize(sf::Vector2f& vector);
         sf::Vector2f lerp (sf::Vector2f &vector, const sf::Vector2f &target, float speed);
         Context *mContext;

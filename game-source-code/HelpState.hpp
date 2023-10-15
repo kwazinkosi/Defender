@@ -58,11 +58,11 @@ class HelpState : public State
          */
         void onActivate();
     private:
+        void drawHelp(sf::RenderWindow &window);
         Context* mContext;
         std::fstream file;
         std::string filePath_;
         std::string mHelp;
-        void drawHelp(sf::RenderWindow &window);
         sf::RectangleShape backgroundShape;
         sf::Text helpText;
         sf::Text mInstructionText;

@@ -62,7 +62,7 @@ sf::Vector2f Humanoid::spawnPosition()
     // Spawn at random position 
     auto multiplier = rand() % 4 + 1.f; 
     auto x = (rand() % 38)*5.f*multiplier + 20.f; // 38 * 5*4
-    auto y = mContext->mBottomBound - 32.f - 10.f;
+    auto y = mContext->mBottomBound - getBounds().height - 10.f;
 
     //auto y = 700.f;
     auto position = sf::Vector2f(x, y);
@@ -139,15 +139,15 @@ void Humanoid::updatePosition(sf::Time deltaTime)
         {
             mCurrentAnimation = State::RESCUED;
         }
-        else if (mIsReleased)
-        {
-            std::cout << "Humanoid::updatePosition() -- Released" << std::endl;
-            mCurrentAnimation = State::RELEASED;
-            freeFall(deltaTime);
-        }
         animation[static_cast<int>(mCurrentAnimation)].move(mPosition.x, mPosition.y);
         sprite.setPosition(mPosition);
     }
+    if (mIsReleased)
+    {
+        //std::cout << "Humanoid::updatePosition() -- Released" << std::endl;
+        mCurrentAnimation = State::RELEASED;
+        freeFall(deltaTime);
+    }           
 }
 
 void Humanoid::freeFall(sf::Time deltaTime)

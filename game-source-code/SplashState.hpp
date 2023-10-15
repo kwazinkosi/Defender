@@ -59,7 +59,6 @@ class SplashState : public State
     private:
         bool mShowText;
         sf::Sprite mBackgroundSprite;
-        //sf::Sprite mKeypadSprite;
         sf::Texture mTexture;
         sf::Text mText;
         sf::Time mElapsedTime;

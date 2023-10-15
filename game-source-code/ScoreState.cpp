@@ -1,12 +1,9 @@
 #include "ScoreState.hpp"
 
-ScoreState::ScoreState(StateStack &stack, Context &context) : State(stack, context),
-                                                              filePath_{"resources/files/highscores.txt"},
-                                                              mContext(&context),
-                                                              backgroundShape(),
-                                                              HighScoreText(),
-                                                              mInstructionText(),
-                                                              mTextFormater()
+ScoreState::ScoreState(StateStack &stack, Context &context) 
+: State(stack, context),
+mContext(&context),
+filePath_{"resources/files/highscores.txt"}
 {
     std::cout << "ScoreState::ScoreState() -- Creating ScoreState" << std::endl;
     font = context.mFonts->getResourceById(Fonts::SpaceObsessed);

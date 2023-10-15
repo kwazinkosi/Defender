@@ -295,25 +295,25 @@ void Player::screenCollision()
     mAnimation[static_cast<int>(mCurrentAnimation)].setPosition(getPosition());
     if (getPosition().x < mLeftBound)
     {
-        std::cout << "Player::onCollision() -- Player collided with left bound -- mLeftBound: " << mLeftBound << " | mRightBound: " << mRightBound << std::endl;
+        //std::cout << "Player::screenCollision() -- Player collided with left bound -- mLeftBound: " << mLeftBound << " | mRightBound: " << mRightBound << std::endl;
         setPosition(sf::Vector2f(mLeftBound, getPosition().y));
     }
     else if (getPosition().x > mRightBound - getBounds().width)
     {
-        std::cout << "Player::onCollision() -- Player collided with right bound -- mLeftBound: " << mLeftBound << " | mRightBound: " << mRightBound << std::endl;
+        //std::cout << "Player::screenCollision() -- Player collided with right bound -- mLeftBound: " << mLeftBound << " | mRightBound: " << mRightBound << std::endl;
         setPosition(sf::Vector2f(mRightBound- getBounds().width, getPosition().y));
     }
     
     if (getPosition().y < mTopBound)
     {
-        std::cout << "Player::onCollision() -- Player position: " << getPosition().y << std::endl;
-         std::cout << "Player::onCollision() -- Player collided with top bound -- mTopBound: " << mTopBound << " | mBottomBound: " << mBottomBound << std::endl;
+        //std::cout << "Player::screenCollision() -- Player position: " << getPosition().y << std::endl;
+        //std::cout << "Player::screenCollision() -- Player collided with top bound -- mTopBound: " << mTopBound << " | mBottomBound: " << mBottomBound << std::endl;
         setPosition(sf::Vector2f(getPosition().x, mTopBound));
     }
     
     else if (getPosition().y > mBottomBound - getBounds().height)
     {
-        std::cout << "Player::onCollision() -- Player collided with bottom bound -- mTopBound: " << mTopBound << " | mBottomBound: " << mBottomBound << std::endl;
+        //std::cout << "Player::onCollision() -- Player collided with bottom bound -- mTopBound: " << mTopBound << " | mBottomBound: " << mBottomBound << std::endl;
         setPosition(sf::Vector2f(getPosition().x, mBottomBound - getBounds().height));
     }
 }
@@ -323,7 +323,7 @@ void Player::initPlayer()
     texture = mContext->mTextures->getResourceById(Textures::Player);
     // Set sprite
     sprite.setTextureRect(sf::IntRect(0, 0, 22, 6));
-    sprite.setScale(3.f, 3.f);
+    sprite.setScale(3.5f, 3.5f);
     setPosition(mPosition);
     sprite.setTexture(texture);
     std::cout << "SpaceShip::initSpaceShip() -- Sprite set" << std::endl;
@@ -339,7 +339,7 @@ void Player::initPlayer()
     std::cout << "SpaceShip::initSpaceShip() -- SpaceShip initialized" << std::endl;for (auto &animation : mAnimation)
     for(auto &animation : mAnimation)
     {
-        animation.setScale(4.f, 4.f);
+        animation.setScale(3.5f, 3.5f);
     }
     mAnimation[static_cast<int>(Direction::IDLE)].setPosition(mPosition);
 
@@ -415,9 +415,9 @@ void Player::shoot()
     }
     else
     {
-        bulletPos.x += 88.f;
+        bulletPos.x += 60.f;
     }
-    bulletPos.y += 18.f;
+    bulletPos.y += 15.f;
    
     mProjectiles.push_back(std::make_unique<Projectile>(bulletPos, (isLeft ? sf::Vector2f(-1.f, 0) : sf::Vector2f(1.f, 0)), 300.f, ProjectileType::PlayerBullet));
     
@@ -490,7 +490,6 @@ void Player::resqueHumanoid(sf::Time deltaTime)
     {
         if(humanoid->isReleased() && getBounds().intersects(humanoid->getBounds()))
         {
-            std::cout << "SpaceShip::resqueHumanoid() -- Rescueing humanoid" << std::endl;
             humanoid->setRescued(true);
             humanoid->setReleased(false);
             humanoid->setKidnapped(false);
@@ -498,11 +497,14 @@ void Player::resqueHumanoid(sf::Time deltaTime)
         }
         else if(humanoid->isRescued())
         {
-            std::cout << "SpaceShip::resqueHumanoid() -- Rescued humanoid" << std::endl;
+            //std::cout << "SpaceShip::resqueHumanoid() -- Rescued humanoid" << std::endl;
             humanoid->setHumanoidPosition(getPosition().x + getBounds().width / 2.f, getPosition().y + getBounds().height);
-            if(humanoid->getPosition().y + humanoid->getBounds().height >= 600.f)
+            if(humanoid->getPosition().y  >= mContext->mBottomBound - humanoid->getBounds().height - 10.f)
             {
+                humanoid->setHumanoidPosition(getPosition().x + getBounds().width / 2.f, mContext->mBottomBound - humanoid->getBounds().height - 10.f);
                 humanoid->setRescued(false);
+                humanoid->setReleased(false);
+                humanoid->setKidnapped(false);
             }
         }
     }

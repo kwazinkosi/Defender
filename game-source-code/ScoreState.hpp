@@ -62,12 +62,12 @@ class ScoreState : public State
          */
         void onActivate();
     private:
+        std::string getScore();
+        void drawScore(sf::RenderWindow &window);
         Context* mContext;
         std::fstream file;
         std::string filePath_;
         std::string mScore;
-        std::string getScore();
-        void drawScore(sf::RenderWindow &window);
         sf::RectangleShape backgroundShape;
         sf::Text HighScoreText;
         sf::Text mInstructionText;
