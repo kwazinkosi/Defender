@@ -145,8 +145,6 @@ void Player::updateInput(sf::Time deltaTime)
             }
             else if (command.action == Action::Shoot)
             {
-                std::cout << "Player::update() -- Shooting." << std::endl;
-                
                 shootTimer++;
                 if (shootTimer >= 5)
                 {
@@ -223,13 +221,11 @@ void Player::draw(sf::RenderTarget &target)
 void Player::handleInput(CommandQueue &commands, sf::Event &event)
 {
     // Handle player input
-    std::cout << "Player::handleInput() -- Handling player input" << std::endl;
     if (event.type == sf::Event::KeyReleased)
     {
         // flip spaceship
         if (event.key.code == sf::Keyboard::F)
         {
-            std::cout << "Player::handleInput() -- Flipping spaceship" << std::endl;
             Command command(Action::FlipShip, Category::Player);
             commands.push(command);
         }
@@ -405,11 +401,6 @@ void Player::removeHumanoid(std::shared_ptr<Humanoid> humanoid)
     }
 }
 
-int Player::getHumanoidsCount() const
-{
-    return int(mHumanoids.size());
-}
-
 ENTITYTYPE Player::getEntityType() const
 {
     return ENTITYTYPE::PLAYER;
@@ -515,4 +506,9 @@ void Player::resqueHumanoid(sf::Time deltaTime)
             }
         }
     }
+}
+
+int Player::getHumanoidCount() const
+{
+    return int(mHumanoids.size());
 }

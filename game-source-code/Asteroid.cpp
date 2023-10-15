@@ -5,7 +5,7 @@ Asteroid::Asteroid(Context &context, sf::Vector2f position)
     : Entity(100, 0.f, position, ENTITYTYPE::ASTEROID), mContext(&context)
 {
     initAsteroid();
-    std::cout << "Asteroid::Asteroid() -- Asteroid created." << std::endl;
+    //std::cout << "Asteroid::Asteroid() -- Asteroid created." << std::endl;
 }
 
 Asteroid::~Asteroid()
@@ -14,20 +14,16 @@ Asteroid::~Asteroid()
 
 void Asteroid::initAsteroid()
 {
-    if (!texture.loadFromFile("resources/textures/Asteroids.png"))
-    {
-        throw "ERROR::ASTEROID::INITTEXTURE::Could not load texture file.";
-    }
+    texture = mContext->mTextures->getResourceById(Textures::Asteroid);
 
     mData = getData();
     sprite.setTexture(texture);
     sprite.setPosition(mData.position);
     sprite.setScale(0.35f, 0.35f);
-    //setCollisionType(CollisionType::Asteroid);
 }
 void Asteroid::update(sf::Time deltaTime)
 {
-    static auto timeToSpawn = sf::seconds(rand() % 4 + 2);
+    static auto timeToSpawn = sf::seconds(rand() % 2 + 1);
     if ( mData.spawnTime <= sf::Time::Zero|| mAsteroidClock.getElapsedTime().asSeconds() > timeToSpawn.asSeconds())
     {
         mData.spawnTime = sf::Time::Zero;
@@ -37,6 +33,8 @@ void Asteroid::update(sf::Time deltaTime)
         {
             onDestroy();
         }
+
+        mAsteroidClock.restart();
     }
     onCollision();
     // call the move function
@@ -45,7 +43,7 @@ void Asteroid::update(sf::Time deltaTime)
     {
         // destroy the Asteroid
         mData.spawnTime -= deltaTime;
-        std::cout << "Asteroid::update() -- Asteroid destroyed." << std::endl;
+        //std::cout << "Asteroid::update() -- Asteroid destroyed." << std::endl;
     }
 }
 

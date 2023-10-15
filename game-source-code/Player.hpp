@@ -114,7 +114,7 @@ class Player: public Entity
          * 
          * @return int 
          */
-        int getHumanoidsCount() const;
+        int getHumanoidCount() const;
         /**
          * @brief Get the Lives object
          * 

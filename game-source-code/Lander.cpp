@@ -284,17 +284,16 @@ void Lander::landerScreenCollision()
     if (position.y < mContext->mTopBound - getBounds().height && mKidnapping)
     {
         // kill the humanoid
-        std::cout << "Lander::landerScreenCollision() -- Lander is going out of the top bound whilst kidnapping the humanoid" << std::endl;
+        //std::cout << "Lander::landerScreenCollision() -- Lander is going out of the top bound whilst kidnapping the humanoid" << std::endl;
         mIsSeeking = false; // reset the seeking flag
         mTargetHumanoid->setKidnapped(false);
         mTargetHumanoid->setAbductionSuccess(true);
         mTargetHumanoid->OnDestroy(); // destroy the humanoid
         setPosition(position.x, mContext->mTopBound);
         setState(ENEMYSTATE::MOVINGUP);
-        if (position.y < mContext->mTopBound - getBounds().height -50.f)
+        if (position.y < mContext->mTopBound - getBounds().height -30.f)
         {
             mKidnapping = false;
-            // spawnPosition();
             setState(ENEMYSTATE::MOVINGDOWN);
         }
     }
@@ -315,7 +314,7 @@ void Lander::landerScreenCollision()
 void Lander::fireMissile()
  {
     sf::Vector2f playerPosition = mTargetPosition;
-    sf::Vector2f landerPosition = getPosition();
+    sf::Vector2f landerPosition = getCenter();
     float distance = std::sqrt(pow(playerPosition.x - landerPosition.x, 2) + pow(playerPosition.y - landerPosition.y, 2));
 
     if (distance <= 200.f && !mKidnapping) {
@@ -337,7 +336,7 @@ void Lander::updateMissiles(sf::Time deltaTime)
     for (int i = 0; i < int(mMissiles.size()); i++)
     {
         mMissiles[i]->update(deltaTime);
-        sf::Vector2f missilePosition = mMissiles[i]->getSprite().getPosition();
+        sf::Vector2f missilePosition = mMissiles[i]->getPosition();
         // Check if the missile is out of bounds and remove it if necessary
         if (missilePosition.x < mContext->mLeftBound || missilePosition.x > mContext->mRightBound ||
             missilePosition.y < mContext->mTopBound || missilePosition.y > mContext->mBottomBound)
@@ -466,8 +465,6 @@ bool Lander::abductionInProgress()
         {
             if(humanoid->isKidnapped()  && getBounds().intersects(humanoid->getBounds()))
             {
-                
-                std::cout << "Lander::abductionInProgress() -- Abduction in progress." << std::endl;
                 return true;
             }
         }
@@ -525,7 +522,7 @@ void Lander::seekHumanoid(sf::Time deltaTime)
     }
     if (getBounds().intersects(mTargetHumanoid->getBounds()))
     {
-        std::cout << "Lander::seekHumanoid() -- Lander has reached the humanoid" << std::endl;
+        //std::cout << "Lander::seekHumanoid() -- Lander has reached the humanoid" << std::endl;
         mCurrentAnimation = LANDERSTATE::KIDNAPPING;
         mKidnapping = true;
         return;

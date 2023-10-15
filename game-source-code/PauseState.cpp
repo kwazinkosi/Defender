@@ -47,7 +47,7 @@ bool PauseState::handleEvent(const sf::Event &event, sf::RenderWindow &window)
         window.close();      // Close the window
     }
 
-    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::P)
+    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::BackSpace)
     {
         requestStackPop(); // Pop the pause state
     }

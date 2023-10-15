@@ -142,6 +142,11 @@ class World
 
         sf::Vector2f SpawnPosition();
         void onCollission(); // handle collission
+        void spaceShipCollission(); // handle collission with spaceship
+        void humanoidCollission(); // handle collission with humanoids
+        void powerUpCollission(); // handle collission with powerUps
+        void asteroidCollission(); // handle collission with asteroids
+        void landerCollission(); // handle collission with landers
         void updateCollisions();
         Data gameOver() const;
         std::shared_ptr<CommandQueue> mCommandQueue;
