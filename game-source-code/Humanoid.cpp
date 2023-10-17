@@ -94,12 +94,13 @@ void Humanoid::updatePosition(sf::Time deltaTime)
         mHumanoidTime = sf::Time::Zero;
         direction = rand() % 2; // 0 = left, 1 = right
         distance = (rand() % 50)*4 + 50.f;
+        mDirectionTime = rand() % 3 + 2.f;
     }
     else 
     {
         if(!mIsKidnapped && !mIsRescued && !mIsReleased)
         {
-            mCurrentAnimation = static_cast<State>(direction + 1);
+            mCurrentAnimation = static_cast<State>(direction + 1);// 1 = moving left, 2 = moving right
             if (mCurrentAnimation == State::MOVINGLEFT)
             {
                 if (mPosition.x <= 0.f || distanceMoved >= distance)
@@ -131,23 +132,29 @@ void Humanoid::updatePosition(sf::Time deltaTime)
                 }
             }
         }
-        else if (mIsKidnapped)
-        {
-            mCurrentAnimation = State::KIDNAPPED;
-        }
-        else if (mIsRescued)
-        {
-            mCurrentAnimation = State::RESCUED;
-        }
+       
         animation[static_cast<int>(mCurrentAnimation)].move(mPosition.x, mPosition.y);
         sprite.setPosition(mPosition);
     }
-    if (mIsReleased)
+
+    if (isReleased())   
     {
-        //std::cout << "Humanoid::updatePosition() -- Released" << std::endl;
+        std::cout << "Humanoid::updatePosition() -- Released" << std::endl;
         mCurrentAnimation = State::RELEASED;
         freeFall(deltaTime);
-    }           
+    } 
+    else if (isKidnapped())
+    {
+        mCurrentAnimation = State::KIDNAPPED;
+        setRescued(false);
+        setReleased(false);
+    }
+    else if (mIsRescued)
+    {
+        mCurrentAnimation = State::RESCUED;
+        setKidnapped(false);
+        setReleased(false);
+    }          
 }
 
 void Humanoid::freeFall(sf::Time deltaTime)
@@ -179,6 +186,7 @@ void Humanoid::setRescued(bool rescued)
 
 void Humanoid::setReleased(bool released)
 {
+    std::cout << "Humanoid::setReleased() -- Setting released to: " << (released ? "true" : "false") << std::endl;
     mIsReleased = released;
     if (mIsReleased)
     {
@@ -203,6 +211,7 @@ bool Humanoid::isRescued() const
 
 bool Humanoid::isReleased() const
 {
+    //std::cout <<"Humanoid::isReleased() -- Released: " << (mIsReleased ? "true" : "false") << std::endl;
     return mIsReleased;
 }
 

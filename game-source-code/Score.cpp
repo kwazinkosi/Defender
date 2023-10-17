@@ -72,10 +72,10 @@ const unsigned int Score::getScore() const
 
 void Score::addToScore(int points)
 {
-    if(points < 0)
+    _score += points;
+    if(_score < 0)
     {
         _score = 0;
         return;
     }
-    _score += points;
 }

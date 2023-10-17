@@ -37,8 +37,7 @@ class Lander : public Entity
         void dropHumanoid();
         int getHumanoidCount() const;
         ENEMYSTATE getState() const;
-        bool abductionInProgress();
-        bool isKidnapping() const;
+        bool isKidnapping();
         void setState(ENEMYSTATE state);
         void setTargetHumanoid(std::shared_ptr<Humanoid> human);
         void setTargetPosition(sf::Vector2f position);
@@ -83,6 +82,7 @@ class Lander : public Entity
         bool mKidnapping;
         bool mIsSeeking;
         sf::Vector2f mTargetPosition;
+        sf::Vector2f mTargetHumanoidPosition;
         sf::Vector2f mPosition;
         std::vector<std::unique_ptr<Projectile>> mMissiles;
 
