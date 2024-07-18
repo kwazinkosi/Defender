@@ -81,7 +81,7 @@ void HelpState::drawHelp(sf::RenderWindow &window)
     while (std::getline(file, line))
     {
 
-        std::cout << line << std::endl;
+        // std::cout << line << std::endl;
         sf::Text text;
         text.setFont(instructionFont);
         text.setFillColor(sf::Color::White);

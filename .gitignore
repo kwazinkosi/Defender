@@ -1,6 +1,3 @@
-# Created by https://www.toptal.com/developers/gitignore/api/c++,codeblocks,xcode,visualstudiocode
-# Edit at https://www.toptal.com/developers/gitignore?templates=c++,codeblocks,xcode,visualstudiocode
-
 ### C++ ###
 # Prerequisites
 *.d
@@ -34,54 +31,79 @@
 *.exe
 *.out
 *.app
-
-### CodeBlocks IDE ###
-*.cbp
-*.depend
-*.layout
-# generated directories
-bin/
-obj/
-
 ### VisualStudioCode ###
 .vscode/*
 *.code-workspace
 
-### VisualStudioCode Patch ###
-# Ignore all local history of files
-.history
+### Visual Studio ###
+# User-specific files
+.vs/*
+*.suo
+*.user
+*.sln.docstates
 
-### Xcode ###
-# Xcode
-#
-# gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+build/
+[Bb]in/
+[Oo]bj/
 
-## User settings
-xcuserdata/
+# Test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*_i.c
+*_p.c
 
-## compatibility with Xcode 8 and earlier (ignoring not required starting Xcode 9)
-*.xcscmblueprint
-*.xccheckout
+# Other Visual Studio Generated Files
+*.ilk
+*.meta
+*.pch
+*.pdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.log
+*.scc
 
-## Gcc Patch
-/*.gcno
+# Visual C++ cache files
+ipch/
+*.aps
+*.ncb
+*.opensdf
+*.sdf
+*.cachefile
 
-### Xcode Patch ###
-*.xcodeproj/*
-**/xcshareddata/WorkspaceSettings.xcsettings
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
 
-# End of https://www.toptal.com/developers/gitignore/api/c++,codeblocks,xcode,visualstudiocode
+# TeamCity is a build add-in
+_TeamCity*
 
+# DotCover is a Code Coverage Tool
+*.dotCover
+*.[Rr]e[Ss]harper
 
-### CodeLite ###
-# specific to CodeLite IDE
-*.mk
-*.project
-*.workspace
-compile_commands.json
-Makefile
-# generated directories
-.codelite/
+# DocProject is a documentation generator add-in
+DocProject/buildhelp/
+DocProject/Help/*
 
-### macOS ###
+### Specific to SFML Project
+**/build/*
+
+# macOS
 *.DS_Store
